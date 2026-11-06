@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: '17 */3 * * *'   # 3시간마다 (UTC 기준 :17분)
   workflow_dispatch:
+    inputs:
+      probe:
+        description: 'LH API 진단만 (피드는 안 바꿈)'
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -15,15 +20,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
+      - name: LH API 진단
+        if: ${{ inputs.probe }}
+        run: node scripts/verify/lh_probe.mjs
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
       - name: 공고 받기
+        if: ${{ !inputs.probe }}
         run: node scripts/feed.mjs
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
       - name: 바뀌었으면 커밋
+        if: ${{ !inputs.probe }}
         run: |
           git diff --quiet -- feed/notices.json && { echo "바뀐 것 없음"; exit 0; }
           git config user.name 'github-actions[bot]'

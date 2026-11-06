@@ -24,7 +24,7 @@ export function scrub(msg) {
   for (const k of [raw, dec, dec && encodeURIComponent(dec)]) if (k && k.length >= 8) s = s.split(k).join('***');
   return s.replace(/(service[_]?key=)[^&\s]+/gi, '$1***');
 }
-async function getJson(label, base, params) {
+export async function getJson(label, base, params) {
   const key = dataKey(); if (!key) throw new Error(`${label}: DATA_GO_KR_KEY 없음`);
   let res;
   try { res = await fetch(`${base}?${new URLSearchParams({ serviceKey: key, ...params })}`, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(20000) }); }
