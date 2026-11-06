@@ -1,17 +1,19 @@
 // 공고 피드 만들기: 마이홈포털·LH 공식 API(공공데이터포털) → feed/notices.json
 // GitHub Actions(.github/workflows/feed.yml)가 돌린다. 인증키는 저장소 Secrets 의 DATA_GO_KR_KEY — URL·로그·파일 어디에도 남기지 않는다.
-// 서울 공고만 (API 요청도 서울 코드 11 · 합친 뒤 지역이 '서울'로 시작하는 것만). SH·서울 청년안심주택은 게시판에서 가져오지 않는다 (사이트에는 원문 링크만).
+// 서울 공고만 (API 요청도 서울 코드 11 · 합친 뒤 지역이 '서울'로 시작하는 것만). SH 는 API 에 없어 공고 게시판(주택임대·주택분양) 목록을 읽는다 (2026-11-06 결정). 서울 청년안심주택은 원문 링크만.
 // 출처 코드: jev-harness src/sources/{datagokr,myhome,lh}.js · src/feed.js 를 패키지 없이 옮김 (Node 20+)
 // 사용: DATA_GO_KR_KEY=... node scripts/feed.mjs      검사: node scripts/verify/feed_check.mjs
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 export const FEED_OUT = fileURLToPath(new URL('../feed/notices.json', import.meta.url));
-const SOURCE_LABEL = '마이홈포털·LH 공식 API';
+const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH 게시판';
 const MYHOME = 'https://apis.data.go.kr/1613000/HWSPR02/rsdtRcritNtcList';
 const LH = 'https://apis.data.go.kr/B552555/lhLeaseNoticeInfo1/lhLeaseNoticeInfo1';
 const LH_TYPES = ['06', '13', '39'];   // 임대주택 · 주거복지 · 신혼희망타운
-const NO_PERIOD_DAYS = 21;             // 마감일이 없는 공고는 게시 후 이 일수까지만
+const NO_PERIOD_DAYS = 21;             // 마감일이 없는 공고(SH 게시판 등)는 게시 후 이 일수까지만
+const SH = 'https://www.i-sh.co.kr/app/lay2/program';
+const SH_BOARDS = [{ path: 'S48T1581C563/www/brd/m_247', seq: '2', kind: '임대' }, { path: 'S48T1581C1617/www/brd/m_244', seq: '1', kind: '분양' }];   // 주택임대 · 주택분양
 
 export function dataKey() {
   let k = (process.env.DATA_GO_KR_KEY || '').trim();
@@ -87,6 +89,35 @@ export async function fetchLH({ cnpCd = '11', daysBack = 90 } = {}) {
   return out;
 }
 
+// SH 공고 게시판: 목록 HTML 의 제목·게시일만 쓴다 (상세 글은 형식이 제각각이라 마감일을 읽지 않음 → 게시 후 NO_PERIOD_DAYS 일까지)
+const SH_SKIP = /당첨|발표|채용|돌보미|사무지원|연장|게시|안내|명단|결과|재계약|서류/;   // 모집공고가 아닌 글
+const SEOUL_GU = '강남구 강동구 강북구 강서구 관악구 광진구 구로구 금천구 노원구 도봉구 동대문구 동작구 마포구 서대문구 서초구 성동구 성북구 송파구 양천구 영등포구 용산구 은평구 종로구 중랑구'.split(' ');   // 중구는 다른 이름과 헷갈려 뺌
+const SH_KINDS = ['청년안심주택', '행복주택', '장기전세', '국민임대', '영구임대', '매입임대', '전세임대', '사회주택', '도전숙', '희망하우징', '미리내집', '토지임대부', '신혼부부'];
+const unHtml = h => String(h).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, ' ').trim();
+export function parseSHList(html, board) {
+  const out = [];
+  for (const m of String(html).matchAll(/getDetailView\('(\d+)'\)[^>]*>([\s\S]*?)<\/a>[\s\S]*?<td class="num">\s*(\d{4}-\d{2}-\d{2})/g)) {
+    const title = unHtml(m[2]).replace(/^NEW\s*/, '');
+    if (!/모집/.test(title) || SH_SKIP.test(title)) continue;
+    const gu = SEOUL_GU.find(g => title.includes(g));
+    out.push({ feedId: `sh-${m[1]}`, org: 'SH', title, region: gu ? `서울 ${gu}` : '서울', kind: SH_KINDS.find(k => title.includes(k)) || board.kind,
+      posted: m[3], from: '', to: '', url: `${SH}/${board.path}/view.do?multi_itm_seq=${board.seq}&seq=${m[1]}` });
+  }
+  return out;
+}
+export async function fetchSH({ pages = 4 } = {}) {   // 한 쪽 10개 · 4쪽이면 보통 3주 넘게
+  const out = [];
+  for (const b of SH_BOARDS) for (let page = 1; page <= pages; page++) {
+    let res; try { res = await fetch(`${SH}/${b.path}/list.do`, { method: 'POST', body: new URLSearchParams({ page: String(page), multi_itm_seq: b.seq, seq: '' }),   // 쪽 넘김은 POST 로만 됨
+      headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) }); }
+    catch (e) { throw new Error(`SH 게시판: 연결 실패 (${e?.cause?.code || e?.name || 'network'})`); }
+    if (!res.ok) throw new Error(`SH 게시판: HTTP ${res.status}`);
+    const html = await res.text(); if (!html.includes('getDetailView')) throw new Error('SH 게시판: 목록 모양이 바뀜');
+    out.push(...parseSHList(html, b));
+  }
+  return [...new Map(out.map(i => [i.feedId, i])).values()];
+}
+
 // 같은 공고 판단용 이름: 공백·기호·[정정] 같은 머리말 제거
 export function normTitle(t = '') {
   return t.replace(/^\s*(\[[^\]]*\]|【[^】]*】)\s*/g, m => (/정정|재공고|변경|추가|최초|민간|공공/.test(m) ? '' : m))
@@ -94,7 +125,7 @@ export function normTitle(t = '') {
 }
 // LH 먼저(기관 공식), 같은 이름·같은 마감일(한쪽이 비었으면 이름만)이면 하나로 합치고 빈 칸은 뒤 출처로 채운다
 export function buildFeed(raw) {
-  const rank = i => ({ lh: 0, myhome: 2 })[i.feedId.split('-')[0]] ?? 9, groups = [];
+  const rank = i => ({ lh: 0, sh: 1, myhome: 2 })[i.feedId.split('-')[0]] ?? 9, groups = [];
   for (const it of [...raw].sort((a, b) => rank(a) - rank(b))) {
     const key = normTitle(it.title), g = groups.find(x => x.key === key && (!x.item.to || !it.to || x.item.to === it.to));
     if (!g) { groups.push({ key, item: { ...it } }); continue; }
@@ -115,8 +146,8 @@ export async function writeFeed(feed, out = FEED_OUT) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const got = await Promise.allSettled([fetchLH(), fetchMyHome()]), raw = [], bad = [];
-  got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈'][i]}: ${scrub(r.reason?.message)}`));
+  const got = await Promise.allSettled([fetchLH(), fetchMyHome(), fetchSH()]), raw = [], bad = [];
+  got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH'][i]}: ${scrub(r.reason?.message)}`));
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
   const feed = buildFeed(raw), wrote = await writeFeed(feed);

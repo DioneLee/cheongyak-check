@@ -880,8 +880,8 @@ function renderFeed() {
   box.innerHTML = `<h3>마감 전 서울 공고<small>${f.updated ? `<span class="d">${esc(f.updated.slice(0, 10))} 확인</span>` : ''}${f.source ? ` · ${esc(f.source)}` : ''}</small></h3><ul>${items.map(i => {
     const dd = i.to ? ddayOf({ from: i.from || i.to, to: i.to }, t) : null, isNew = i.posted && daysBetween(i.posted, t) <= 3;
     return `<li><span class="org" title="${esc(i.org)}">${esc(i.org)}</span>${isNew ? '<span class="new">새 공고</span>' : ''}<span class="ttl">${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">${esc(i.title)} ↗</a>` : esc(i.title)}</span>
-      <span class="hint">${[i.region, i.kind, i.from && i.to ? `접수 ${md2(i.from)}~${md2(i.to)}` : ''].filter(Boolean).map(esc).join(' · ')}</span>${i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : ''}</li>`; }).join('')}</ul>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}
-    <p class="hint">SH·청년안심주택 공고는 아래 사이트에서 봐요.</p>`;
+      <span class="hint">${[i.region, i.kind, i.from && i.to ? `접수 ${md2(i.from)}~${md2(i.to)}` : !i.to && i.posted ? `게시 ${md2(i.posted)} · 마감일은 공고문에서` : ''].filter(Boolean).map(esc).join(' · ')}</span>${i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : ''}</li>`; }).join('')}</ul>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}
+    <p class="hint">청년안심주택 공고는 아래 사이트에서 봐요.</p>`;
   const mb = box.querySelector('[data-feedmore]'); if (mb) mb.onclick = () => { feedAll = true; renderFeed(); };
 }
 const setFeed = x => { subFeed = normFeed(x); renderFeed(); };
