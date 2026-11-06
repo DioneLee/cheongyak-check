@@ -1,13 +1,13 @@
 // 공고 피드 만들기: 마이홈포털·LH 공식 API(공공데이터포털) → feed/notices.json
 // GitHub Actions(.github/workflows/feed.yml)가 돌린다. 인증키는 저장소 Secrets 의 DATA_GO_KR_KEY — URL·로그·파일 어디에도 남기지 않는다.
-// 서울 공고만 (API 요청도 서울 코드 11 · 합친 뒤 지역이 '서울'로 시작하는 것만). SH 는 API 에 없어 공고 게시판(주택임대·주택분양) 목록을 읽는다 (2026-11-06 결정). 서울 청년안심주택은 원문 링크만.
+// 서울 공고만 (API 요청도 서울 코드 11 · 합친 뒤 지역이 '서울'로 시작하는 것만). SH 는 API 에 없어 공고 게시판(주택임대·주택분양) 목록을, 서울 청년안심주택은 모집공고 목록 JSON 을 읽는다 (2026-11-06 결정).
 // 출처 코드: jev-harness src/sources/{datagokr,myhome,lh}.js · src/feed.js 를 패키지 없이 옮김 (Node 20+)
 // 사용: DATA_GO_KR_KEY=... node scripts/feed.mjs      검사: node scripts/verify/feed_check.mjs
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 export const FEED_OUT = fileURLToPath(new URL('../feed/notices.json', import.meta.url));
-const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH 게시판';
+const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH·청년안심주택 게시판';
 const MYHOME = 'https://apis.data.go.kr/1613000/HWSPR02/rsdtRcritNtcList';
 const LH = 'https://apis.data.go.kr/B552555/lhLeaseNoticeInfo1/lhLeaseNoticeInfo1';
 const LH_TYPES = ['06', '13', '39'];   // 임대주택 · 주거복지 · 신혼희망타운
@@ -118,6 +118,29 @@ export async function fetchSH({ pages = 4 } = {}) {   // 한 쪽 10개 · 4쪽�
   return [...new Map(out.map(i => [i.feedId, i])).values()];
 }
 
+// 서울 청년안심주택 모집공고 (soco.seoul.go.kr): 목록 화면이 부르는 JSON. optn1 = 공고게시일, optn4 = 청약신청일 (날짜 하나 → 마감일로 씀)
+const YOUTH = 'https://soco.seoul.go.kr/youth';
+export function parseYouth(data) {
+  return (data?.resultList ?? []).filter(r => r?.boardId && r.nttSj).map(r => {
+    const title = unHtml(r.nttSj), to = ymd(r.optn4);
+    return { feedId: `youth-${r.boardId}`, org: '청년안심', title, region: '서울', kind: r.optn2 === '1' ? '청년안심주택(공공)' : r.optn2 === '2' ? '청년안심주택(민간)' : '청년안심주택',
+      posted: ymd(r.optn1), from: '', to, url: `${YOUTH}/bbs/BMSR00015/view.do?boardId=${encodeURIComponent(r.boardId)}&menuNo=400008` };
+  });
+}
+export async function fetchYouth({ pages = 3 } = {}) {   // 한 쪽 10개 · 신청일이 지난 것은 buildFeed 가 뺀다
+  const out = [];
+  for (let page = 1; page <= pages; page++) {
+    let res; try { res = await fetch(`${YOUTH}/pgm/home/yohome/bbsListJson.json`, { method: 'POST', body: new URLSearchParams({ bbsId: 'BMSR00015', pageIndex: String(page) }),
+      headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)', Accept: 'application/json' }, signal: AbortSignal.timeout(20000) }); }
+    catch (e) { throw new Error(`청년안심주택: 연결 실패 (${e?.cause?.code || e?.name || 'network'})`); }
+    if (!res.ok) throw new Error(`청년안심주택: HTTP ${res.status}`);
+    let data; try { data = await res.json(); } catch { throw new Error('청년안심주택: JSON 아님'); }
+    if (!Array.isArray(data?.resultList)) throw new Error('청년안심주택: 목록 모양이 바뀜');
+    out.push(...parseYouth(data)); if (page >= Number(data.pagingInfo?.totPage ?? 1)) break;
+  }
+  return [...new Map(out.map(i => [i.feedId, i])).values()];
+}
+
 // 같은 공고 판단용 이름: 공백·기호·[정정] 같은 머리말 제거
 export function normTitle(t = '') {
   return t.replace(/^\s*(\[[^\]]*\]|【[^】]*】)\s*/g, m => (/정정|재공고|변경|추가|최초|민간|공공/.test(m) ? '' : m))
@@ -125,7 +148,7 @@ export function normTitle(t = '') {
 }
 // LH 먼저(기관 공식), 같은 이름·같은 마감일(한쪽이 비었으면 이름만)이면 하나로 합치고 빈 칸은 뒤 출처로 채운다
 export function buildFeed(raw) {
-  const rank = i => ({ lh: 0, sh: 1, myhome: 2 })[i.feedId.split('-')[0]] ?? 9, groups = [];
+  const rank = i => ({ lh: 0, sh: 1, youth: 1, myhome: 2 })[i.feedId.split('-')[0]] ?? 9, groups = [];
   for (const it of [...raw].sort((a, b) => rank(a) - rank(b))) {
     const key = normTitle(it.title), g = groups.find(x => x.key === key && (!x.item.to || !it.to || x.item.to === it.to));
     if (!g) { groups.push({ key, item: { ...it } }); continue; }
@@ -146,8 +169,8 @@ export async function writeFeed(feed, out = FEED_OUT) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const got = await Promise.allSettled([fetchLH(), fetchMyHome(), fetchSH()]), raw = [], bad = [];
-  got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH'][i]}: ${scrub(r.reason?.message)}`));
+  const got = await Promise.allSettled([fetchLH(), fetchMyHome(), fetchSH(), fetchYouth()]), raw = [], bad = [];
+  got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH', '청년안심주택'][i]}: ${scrub(r.reason?.message)}`));
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
   const feed = buildFeed(raw), wrote = await writeFeed(feed);
