@@ -1,7 +1,73 @@
 {
- "updated": "2026-11-06T21:34:13+09:00",
- "source": "마이홈포털·LH 공식 API · SH 게시판",
+ "updated": "2026-11-06T21:42:51+09:00",
+ "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판",
  "items": [
+  {
+   "id": "youth-6724",
+   "org": "청년안심",
+   "title": "[민간임대] 화랑대역 에이트플레이스 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-05",
+   "from": "",
+   "to": "2026-11-06",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6724&menuNo=400008"
+  },
+  {
+   "id": "youth-6722",
+   "org": "청년안심",
+   "title": "[민간임대] 개봉역 세이지움 개봉 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-05",
+   "from": "",
+   "to": "2026-11-09",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6722&menuNo=400008"
+  },
+  {
+   "id": "youth-6721",
+   "org": "청년안심",
+   "title": "[민간임대] 숭곡초교역(예정) 성북펠릭스 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-05",
+   "from": "",
+   "to": "2026-11-09",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6721&menuNo=400008"
+  },
+  {
+   "id": "youth-6720",
+   "org": "청년안심",
+   "title": "[민간임대] 건대입구역 더포디엄830 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-05",
+   "from": "",
+   "to": "2026-11-09",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6720&menuNo=400008"
+  },
+  {
+   "id": "youth-6719",
+   "org": "청년안심",
+   "title": "[민간임대] 송정역 케이제이타워 최초모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-03",
+   "from": "",
+   "to": "2026-11-11",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6719&menuNo=400008"
+  },
+  {
+   "id": "youth-6718",
+   "org": "청년안심",
+   "title": "[민간임대] 효창공원앞역 해링턴 플레이스 용산 리버뷰 최초모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-03",
+   "from": "",
+   "to": "2026-11-12",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6718&menuNo=400008"
+  },
   {
    "id": "myhome-21471",
    "org": "캠코",
