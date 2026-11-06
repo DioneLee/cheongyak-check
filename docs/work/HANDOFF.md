@@ -12,4 +12,8 @@
 - [x] Secrets `DATA_GO_KR_KEY` · Actions 첫 실행 성공 (해외 서버에서도 API 응답)
 - [x] 안티그래비티 아이콘 적용 (sw VERSION 06b) · AI 붐빔 2초 재시도 · 첫 방문 3단계 안내 · 1단계 카드 누르면 바로 다음
 - LH 0건 원인(2026-11-06 진단 `lh_probe.mjs`): 필터·필드 이름은 정상. 최근 90일 서울 LH 공고 8건이 모두 접수 마감이라 빠짐. 진단은 Actions → 공고 피드 → Run workflow → probe 체크
+- [x] 피드백 반영(2026-11-06, sw 06d): 첫 화면 = 공고 바로가기, 진단은 둘째(제목 밑에 바로 PDF 올리기 + 질문) · 설명·3단계 카드·PC 왼쪽 칸 뺌 → `docs/design/분리설계.md` 화면
+- `check.py` 는 Mac 에서도 돈다 (Chrome 경로 자동 · 포트가 겹치면 `CHECK_PORT=8792 python3 scripts/verify/check.py`)
+- [ ] 피드백 남은 질문: 한부모·세대 분리(부모 밑 등재)·부모님 재정에 따른 공고별 특이사항은 판정에 없음 → 판정 규칙을 넓힐지 결정 (SUITABLE HOME 과 동등성 유지 필요)
+- [ ] 화면 사진 `screenshots/` 는 예전 구성 그대로 (새로 찍기)
 - [ ] 2027-01-20 이후: SUITABLE HOME 청약 탭을 링크로 바꿀지 결정

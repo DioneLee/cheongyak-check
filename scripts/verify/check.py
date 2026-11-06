@@ -7,14 +7,14 @@
   4) 판정 동등성: 같은 내 상황을 SUITABLE HOME(../sjcu)과 이 사이트에 넣고 결과 글자 비교 (시나리오 7 × 신혼부부·청년)
   5) 서비스 워커: index.html·피드는 인터넷 먼저 · 아이콘은 저장본 · 서버가 꺼져도 저장본으로 열림
 """
-import hashlib, json, re, socket, subprocess, sys, tempfile, time, urllib.parse
+import os, hashlib, json, re, socket, subprocess, sys, tempfile, time, urllib.parse
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 REPO = Path(__file__).resolve().parents[2]
 OLD_REPO = REPO.parent / "sjcu"
-CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-NEW_PORT, OLD_PORT = 8766, 8767
+CHROME = os.environ.get("CHROME") or (r"C:\Program Files\Google\Chrome\Application\chrome.exe" if os.name == "nt" else "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+NEW_PORT = int(os.environ.get("CHECK_PORT", 8766)); OLD_PORT = NEW_PORT + 1   # 포트가 겹치면 CHECK_PORT=8790 처럼 바꿔 실행
 SEED = json.loads((REPO / "scripts/verify/seed_subs.json").read_text(encoding="utf-8"))   # 가짜 값 (SUITABLE HOME seed_v10 과 같은 사람)
 rows = []
 def ok(name, cond, got=""): rows.append(("OK" if cond else "NG", name, str(got)))
@@ -76,12 +76,11 @@ old_seed = json.dumps({**SEED, "listings": []}, ensure_ascii=False)   # 가짜 S
 
 PC = r"""
 const q = s => d.querySelector(s), qa = s => [...d.querySelectorAll(s)];
-ok('기존 데이터 없으면 가져오기 숨김', q('#importBanner').hidden && q('#actImport').hidden);
-ok('첫 화면(100svh) 안에 진단·체험 버튼', q('#subSample').getBoundingClientRect().bottom <= fw.innerHeight, Math.round(q('#subSample').getBoundingClientRect().bottom));
-ok('PC 2단 (320px + 본문)', getComputedStyle(q('.dash')).gridTemplateColumns.split(' ').length === 2 && getComputedStyle(q('.side')).position === 'sticky', getComputedStyle(q('.dash')).gridTemplateColumns);
+ok('기존 데이터 없으면 가져오기 숨김', q('#importBanner').hidden);
+ok('맨 위는 공고 바로가기 (원문 사이트 4곳)', q('h1').textContent.includes('공고 바로가기') && qa('#linksSec .src-grid a[target="_blank"]').length === 4 && q('#linksSec').getBoundingClientRect().top < q('#subsSec').getBoundingClientRect().top);
+ok('PC 한 줄 기둥 (880px)', getComputedStyle(q('#subsSec')).maxWidth === '880px' && getComputedStyle(q('#linksSec')).maxWidth === '880px');
 ok('자체검사 함수가 실행됨(판정 코드 옮김)', typeof fw.eval('elig') === 'function' && typeof fw.eval('pickOption') === 'function');
-ok('첫 방문: 오른쪽에 3단계 안내 카드', qa('#subJudge .init-steps li').length === 3 && !!q('#subJudge [data-sample]') && !!q('#subJudge [data-wgo="0"]') && !!q('#subJudge [data-addn]'));
-q('#subJudge [data-wgo="0"]').click(); await W(300);
+ok('진단 제목 바로 밑에 PDF 올리기 + 질문 (안내 카드 없음)', q('#h-diag').textContent.includes('순위·점수') && !q('#subAdd').hidden && !!q('#subAdd #subPdf') && !q('.init-steps') && q('#subAdd').getBoundingClientRect().top < q('#subWiz').getBoundingClientRect().top);
 ok('공고 없이도 질문 시작', !q('#subWiz').hidden && q('#wizCount').textContent.startsWith('1 / 7'));
 ok('유형 고르기에 준비 중 칸', q('.wiz-pick button.soon')?.disabled === true);
 ok('1단계에서는 다음 버튼 숨김', q('#wizNext').hidden);
@@ -91,7 +90,7 @@ for (let i = 0; i < 6; i++) { q('#wizNext').click(); await W(80); }
 ok('질문 끝 → 요약 바 + 공고 안내', !q('#meBar').hidden && q('#subWiz').hidden && q('#subJudge').textContent.includes('공고를 고르면'), q('#meBar').textContent);
 q('#subJudge [data-sample]').click(); await W(900);
 ok('예시 공고 → 내 조건으로 판정(체험 아님)', !!q('#subJudge .sig') && !q('#subJudge').classList.contains('is-demo'), q('#subJudge .sig')?.textContent);
-ok('왼쪽 내 공고 목록', qa('#subList .sub-pick').length === 1 && q('#subList .sig-mini'), qa('#subList .sub-pick').length);
+ok('내 공고 목록', qa('#subList .sub-pick').length === 1 && q('#subList .sig-mini'), qa('#subList .sub-pick').length);
 ok('유형 탭 옆 준비 중 배지', q('#subJudge .sub-tabs .soon-tag')?.textContent.includes('준비 중'));
 const acc = qa('#subJudge .sub-main details.easy-more');
 ok('아코디언 3개 · 기본 닫힘', acc.length === 3 && acc.every(x => !x.open), acc.map(x => x.querySelector('summary').textContent).join(' / '));
@@ -111,7 +110,6 @@ fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포
 ok('피드 5개 + 더 보기', qa('#subFeed li').length === 5 && /2개 더 보기/.test(q('#subFeed [data-feedmore]')?.textContent || ''), qa('#subFeed li').length);
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];
-q('#subAddBtn').click(); await W(100);
 const pdf = await (await fetch('samples/notice_example.pdf')).blob(), dt = new fw.DataTransfer(); dt.items.add(new fw.File([pdf], 'notice_example.pdf', { type: 'application/pdf' }));
 q('#subPdf').files = dt.files; q('#subPdf').dispatchEvent(new fw.Event('change')); for (let n = 0; n < 30 && q('#subSend').hidden; n++) await W(100);   // FileReader 끝날 때까지
 ok('PDF 고르면 보낼 내용 안내 (버튼을 눌러야 보냄)', !q('#subSend').hidden && q('#subSend [data-what]').textContent.includes('notice_example.pdf'));
@@ -134,9 +132,9 @@ ok('확인하면 불러온 내용으로', fw.eval('state.subs.notices.length') =
 
 MOBILE = r"""
 const q = s => d.querySelector(s), before = localStorage.getItem('newlywed-home-v1');
-ok('390 첫 화면 안에 진단·체험 버튼', q('#subSample').getBoundingClientRect().bottom <= fw.innerHeight, Math.round(q('#subSample').getBoundingClientRect().bottom));
+ok('390 첫 화면은 공고 바로가기부터', q('h1').getBoundingClientRect().bottom <= fw.innerHeight && q('#linksSec').getBoundingClientRect().top < q('#subsSec').getBoundingClientRect().top);
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
-ok('기존 사이트 입력 발견 → 배너 + 첫 화면 버튼', !q('#importBanner').hidden && !q('#actImport').hidden);
+ok('기존 사이트 입력 발견 → 배너', !q('#importBanner').hidden);
 q('#importGo').click(); await W(600);
 const S = fw.eval('state.subs'), O = JSON.parse(before).subs;
 ok('가져오기: 공고·내 상황 그대로', S.notices.length === O.notices.length && JSON.stringify(S.me) === JSON.stringify(O.me) && S.tab === O.tab, S.notices.length);
@@ -145,7 +143,7 @@ ok('기존 사이트 데이터는 그대로 (글자 하나 안 바뀜)', localSt
 ok('가져온 뒤 배너 숨김 · 결과 보임', q('#importBanner').hidden && !!q('#subJudge .sig'));
 for (const x of d.querySelectorAll('details')) x.open = true; await W(100);
 ok('390 가로 넘침 없음 (결과·접힌 칸 모두 펼침)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
-ok('휴대폰: 공고 목록 → 진단 → 피드 순서', q('#subListBox').getBoundingClientRect().top < q('#subJudge').getBoundingClientRect().top && q('#subJudge').getBoundingClientRect().top < q('.src-links').getBoundingClientRect().top);
+ok('휴대폰: 공고 바로가기 → 내 공고 → 진단 순서', q('#linksSec').getBoundingClientRect().top < q('#subListBox').getBoundingClientRect().top && q('#subListBox').getBoundingClientRect().top < q('#subJudge').getBoundingClientRect().top);
 await open('');
 ok('다시 열어도 유지 · 배너 안 뜸', fw.eval('state.subs.notices.length') === O.notices.length && d.querySelector('#importBanner').hidden);
 localStorage.removeItem('cheongyak-check-v1'); await open('');
@@ -197,7 +195,7 @@ ok('index.html 은 늘 인터넷 먼저', (h2['/index.html'] || 0) > (h1['/index
 ok('피드는 늘 인터넷 먼저', (h2['/feed/notices.json'] || 0) > (h1['/feed/notices.json'] || 0), JSON.stringify([h1, h2]));
 ok('아이콘은 저장본 (다시 받지 않음)', (h2['/icons/icon-192.png'] || 0) === (h1['/icons/icon-192.png'] || 0), JSON.stringify([h1['/icons/icon-192.png'], h2['/icons/icon-192.png']]));
 await fetch('/__offline/on?' + Date.now(), { cache: 'no-store' }); await open(''); await W(300);
-ok('서버가 꺼져도(503) 저장본으로 열림', !!d.querySelector('#actWiz') && typeof fw.eval('render') === 'function');
+ok('서버가 꺼져도(503) 저장본으로 열림', !!d.querySelector('#subsSec') && typeof fw.eval('render') === 'function');
 d.querySelector('#subSample').click(); await W(500);
 ok('오프라인에서도 예시 공고(저장본)', fw.eval('state.subs.notices.length') === 1);
 await fetch('/__offline/off?' + Date.now(), { cache: 'no-store' });
