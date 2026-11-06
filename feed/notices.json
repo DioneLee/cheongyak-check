@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-06T00:16:56+09:00",
- "source": "마이홈포털·LH 공식 API",
+ "updated": "2026-11-06T21:34:13+09:00",
+ "source": "마이홈포털·LH 공식 API · SH 게시판",
  "items": [
   {
    "id": "myhome-21471",
@@ -12,6 +12,105 @@
    "from": "2026-11-09",
    "to": "2026-11-13",
    "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21471&houseSn=1"
+  },
+  {
+   "id": "sh-312351",
+   "org": "SH",
+   "title": "[토지지원 사회주택]유니버설디자인하우스_수락 입주자 모집 공고",
+   "region": "서울",
+   "kind": "사회주택",
+   "posted": "2026-11-02",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312351"
+  },
+  {
+   "id": "sh-312053",
+   "org": "SH",
+   "title": "[청년형] 특화형 매입임대주택(구로구) 입주자 모집 공고(운영기관 : 마을과집 협동조합)",
+   "region": "서울 구로구",
+   "kind": "매입임대",
+   "posted": "2026-11-02",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312053"
+  },
+  {
+   "id": "sh-312339",
+   "org": "SH",
+   "title": "2026년 3차 희망하우징(공공기숙사) 잔여세대 입주자 모집공고(2026. 10. 28.)",
+   "region": "서울",
+   "kind": "희망하우징",
+   "posted": "2026-10-28",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312339"
+  },
+  {
+   "id": "sh-311962",
+   "org": "SH",
+   "title": "구로구 도전숙(수요자맞춤형) 잔여세대 입주자 모집 공고",
+   "region": "서울 구로구",
+   "kind": "도전숙",
+   "posted": "2026-10-28",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311962"
+  },
+  {
+   "id": "sh-312325",
+   "org": "SH",
+   "title": "[토지임대부 사회주택] 옥류서원 입주자 모집 공고문",
+   "region": "서울",
+   "kind": "사회주택",
+   "posted": "2026-10-28",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312325"
+  },
+  {
+   "id": "sh-311965",
+   "org": "SH",
+   "title": "강북구 신혼부부(수요자맞춤형)주택 1~4차 잔여세대 입주자 모집 공고",
+   "region": "서울 강북구",
+   "kind": "신혼부부",
+   "posted": "2026-10-26",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311965"
+  },
+  {
+   "id": "sh-311987",
+   "org": "SH",
+   "title": "[토지지원 사회주택]유니버설디자인하우스_장안 입주자 모집 공고",
+   "region": "서울",
+   "kind": "사회주택",
+   "posted": "2026-10-26",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311987"
+  },
+  {
+   "id": "sh-311908",
+   "org": "SH",
+   "title": "노원구 도전숙(수요자맞춤형) 잔여세대 입주자 모집 공고",
+   "region": "서울 노원구",
+   "kind": "도전숙",
+   "posted": "2026-10-23",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311908"
+  },
+  {
+   "id": "sh-312005",
+   "org": "SH",
+   "title": "[정정] 고덕강일지구 3단지 토지임대부 분양주택 입주자모집공고",
+   "region": "서울",
+   "kind": "토지임대부",
+   "posted": "2026-10-16",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C1617/www/brd/m_244/view.do?multi_itm_seq=1&seq=312005"
   }
  ]
 }
