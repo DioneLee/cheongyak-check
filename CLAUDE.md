@@ -6,4 +6,5 @@
 - SUITABLE HOME 저장 키 `newlywed-home-v1` 은 읽기만 (check.py 정적 검사가 막음). 테스트는 임시 Chrome 프로필 + localhost 에서만
 - API 키를 코드·로그에 넣지 않는다 (공공데이터 키는 GitHub Secrets `DATA_GO_KR_KEY`). 회원가입·서버 저장·방문자 분석 도구 넣지 않기
 - index.html·아이콘·예시를 바꾸면 `sw.js` 의 VERSION 도 바꾼다 (check.py 가 알려 줌)
+- **push 전에 항상 `git pull --rebase origin main`** (Actions 가 공고 피드 커밋을 올림)
 - 커밋에 Claude 서명 줄 없음 · 커밋/push 는 확인받고

@@ -9,7 +9,7 @@
 
 ## 다음
 
-- [ ] 사용자: Secrets `DATA_GO_KR_KEY` 넣기 → Actions "공고 피드" 수동 실행 (키 넣기 전에는 예약 실행이 실패로 표시됨)
-- [ ] 안티그래비티: 디자인 폴리싱 · PWA 아이콘(`icons/` 임시본 교체 → sw.js VERSION 올리기)
-- [ ] 첫 Actions 실행에서 공공데이터 API 가 해외(GitHub) 서버에서 되는지 확인
+- [x] Secrets `DATA_GO_KR_KEY` · Actions 첫 실행 성공 (해외 서버에서도 API 응답)
+- [x] 안티그래비티 아이콘 적용 (sw VERSION 06b) · AI 붐빔 2초 재시도 · 첫 방문 3단계 안내 · 1단계 카드 누르면 바로 다음
+- LH 0건 원인(2026-11-06 진단 `lh_probe.mjs`): 필터·필드 이름은 정상. 최근 90일 서울 LH 공고 8건이 모두 접수 마감이라 빠짐. 진단은 Actions → 공고 피드 → Run workflow → probe 체크
 - [ ] 2027-01-20 이후: SUITABLE HOME 청약 탭을 링크로 바꿀지 결정

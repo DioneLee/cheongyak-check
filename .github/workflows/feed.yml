@@ -42,4 +42,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add feed/notices.json
           git commit -m "chore: 공고 피드 갱신 $(TZ=Asia/Seoul date +%F)"
+          git pull --rebase origin main   # 그사이 사람이 push 했어도 거절되지 않게
           git push

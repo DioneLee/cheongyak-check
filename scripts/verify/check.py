@@ -80,11 +80,14 @@ ok('기존 데이터 없으면 가져오기 숨김', q('#importBanner').hidden &
 ok('첫 화면(100svh) 안에 진단·체험 버튼', q('#subSample').getBoundingClientRect().bottom <= fw.innerHeight, Math.round(q('#subSample').getBoundingClientRect().bottom));
 ok('PC 2단 (320px + 본문)', getComputedStyle(q('.dash')).gridTemplateColumns.split(' ').length === 2 && getComputedStyle(q('.side')).position === 'sticky', getComputedStyle(q('.dash')).gridTemplateColumns);
 ok('자체검사 함수가 실행됨(판정 코드 옮김)', typeof fw.eval('elig') === 'function' && typeof fw.eval('pickOption') === 'function');
-q('#actWiz').click(); await W(300);
+ok('첫 방문: 오른쪽에 3단계 안내 카드', qa('#subJudge .init-steps li').length === 3 && !!q('#subJudge [data-sample]') && !!q('#subJudge [data-wgo="0"]') && !!q('#subJudge [data-addn]'));
+q('#subJudge [data-wgo="0"]').click(); await W(300);
 ok('공고 없이도 질문 시작', !q('#subWiz').hidden && q('#wizCount').textContent.startsWith('1 / 7'));
 ok('유형 고르기에 준비 중 칸', q('.wiz-pick button.soon')?.disabled === true);
+ok('1단계에서는 다음 버튼 숨김', q('#wizNext').hidden);
 q('[data-wtier="newlywed"]').click(); await W(80);
-const bi = q('#subWiz .wiz-step[data-step="0"]'); for (let i = 0; i < 7; i++) { q('#wizNext').click(); await W(80); }
+ok('유형 카드 누르면 바로 2단계', q('#wizCount').textContent.startsWith('2 / 7') && !q('#wizNext').hidden, q('#wizCount').textContent);
+for (let i = 0; i < 6; i++) { q('#wizNext').click(); await W(80); }
 ok('질문 끝 → 요약 바 + 공고 안내', !q('#meBar').hidden && q('#subWiz').hidden && q('#subJudge').textContent.includes('공고를 고르면'), q('#meBar').textContent);
 q('#subJudge [data-sample]').click(); await W(900);
 ok('예시 공고 → 내 조건으로 판정(체험 아님)', !!q('#subJudge .sig') && !q('#subJudge').classList.contains('is-demo'), q('#subJudge .sig')?.textContent);
@@ -112,9 +115,9 @@ q('#subAddBtn').click(); await W(100);
 const pdf = await (await fetch('samples/notice_example.pdf')).blob(), dt = new fw.DataTransfer(); dt.items.add(new fw.File([pdf], 'notice_example.pdf', { type: 'application/pdf' }));
 q('#subPdf').files = dt.files; q('#subPdf').dispatchEvent(new fw.Event('change')); for (let n = 0; n < 30 && q('#subSend').hidden; n++) await W(100);   // FileReader 끝날 때까지
 ok('PDF 고르면 보낼 내용 안내 (버튼을 눌러야 보냄)', !q('#subSend').hidden && q('#subSend [data-what]').textContent.includes('notice_example.pdf'));
-const real = fw.fetch; fw.fetch = async (u, o) => { calls.push([String(u), String(o?.body || '').slice(0, 5)]); await W(100); return new fw.Response(JSON.stringify({ text: JSON.stringify({ ...(yong.notice ?? yong), id: 'ai-test', name: 'AI 테스트 공고', short: 'AI 테스트' }) })); };
-q('#subSend [data-go]').click(); for (let n = 0; n < 40 && fw.eval('state.subs.notices.length') < 2; n++) await W(100); fw.fetch = real;
-ok('AI 읽기 → 공고 추가 · PDF만 보냄', fw.eval('state.subs.notices.length') === 2 && calls.length === 1 && calls[0][0].endsWith('/notice') && calls[0][1] === 'JVBER', JSON.stringify(calls));
+const real = fw.fetch; fw.fetch = async (u, o) => { calls.push([String(u), String(o?.body || '').slice(0, 5)]); await W(100); if (calls.length === 1) return new fw.Response(JSON.stringify({ error: 'gemini', why: ['m: 503 UNAVAILABLE'] }), { status: 502 }); return new fw.Response(JSON.stringify({ text: JSON.stringify({ ...(yong.notice ?? yong), id: 'ai-test', name: 'AI 테스트 공고', short: 'AI 테스트' }) })); };
+q('#subSend [data-go]').click(); for (let n = 0; n < 60 && fw.eval('state.subs.notices.length') < 2; n++) await W(100); fw.fetch = real;
+ok('AI 붐빔(503) → 2초 뒤 한 번 더 → 공고 추가 · PDF만 보냄', fw.eval('state.subs.notices.length') === 2 && calls.length === 2 && calls.every(c => c[0].endsWith('/notice') && c[1] === 'JVBER'), JSON.stringify(calls));
 const yb = yong.notice ?? yong; fw.eval('addNotice')({ ...yb, id: 'gg', name: '경기 공고', short: '경기 공고', city: '경기', addr: '경기도 성남시 분당구 1', region: '분당구' }, '테스트'); await W(50);
 ok('서울 밖 공고는 넣지 않음', fw.eval('state.subs.notices.length') === 2 && q('#subMsg').textContent.includes('서울 공고만'), q('#subMsg').textContent);
 q('[data-jump="ai"]').click(); await W(100);
