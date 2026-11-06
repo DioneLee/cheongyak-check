@@ -117,12 +117,15 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .sig-mini.ok { color: var(--pass); } .sig-mini.unk { color: var(--warn); } .sig-mini.no { color: var(--fail); }
 .sub-list { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
 .sub-pick { flex: 0 0 min(78%, 300px); scroll-snap-align: start; }
-.sub-feed h3 { font: 700 17px/1.4 var(--sans); } .sub-feed h3 small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; }
-.sub-feed ul { list-style: none; padding: 0; margin: var(--s1) 0 0; }
-.sub-feed li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
-.sub-feed .org { font-weight: 700; color: var(--accent); font-size: 13px; } .sub-feed .new { color: var(--pass); font-weight: 700; font-size: 13px; }
-.sub-feed .ttl { flex-basis: 100%; } .sub-feed .ttl a { color: var(--ink); text-decoration: none; font-weight: 600; } @media (hover: hover) { .sub-feed .ttl a:hover { color: var(--accent); text-decoration: underline; } }
-.sub-feed .dd { font-weight: 700; color: var(--warn); font-size: 13px; } .sub-feed .hint { font-size: 13px; } .sub-feed .more { margin-top: var(--s1); }
+.sub-feed { padding: 0 var(--s2); }
+.sub-feed ul { list-style: none; padding: 0; margin: 0; }
+.sub-feed li + li { border-top: 1px solid var(--line); }
+.sub-feed .frow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 12px 0; color: var(--ink); text-decoration: none; }
+.sub-feed .nm { display: block; font: 700 16px/1.4 var(--sans); } .sub-feed .sub { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
+@media (hover: hover) { .sub-feed a.frow:hover .nm { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; } }
+.sub-feed .dd { flex: none; padding: 4px 10px; border-radius: var(--pill); font: 700 13px/1.2 var(--sans); color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, var(--paper)); }
+.sub-feed .dd.new { color: var(--pass); background: color-mix(in srgb, var(--pass) 10%, var(--paper)); }
+.sub-feed .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
 
 /* 오른쪽: 가져오기 · 질문 · 결과 */
 .import-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s1) var(--s2); padding: 14px var(--s2); border: 1px solid var(--accent); border-radius: var(--r2); background: var(--accent-soft); margin-bottom: var(--s2); }
@@ -262,12 +265,12 @@ footer p + p { margin-top: 6px; }
 <header class="app-header"><div class="wrap">
   <a class="brand" href="#top" aria-label="청약 체크 처음으로"><img src="icons/icon-192.png" alt="" width="28" height="28"><span>청약 체크</span></a>
   <nav class="chips" aria-label="빠른 이동">
-    <button type="button" data-jump="links">공고 바로가기</button><button type="button" data-jump="wiz">순위·점수 진단</button><button type="button" data-jump="ai">AI 설정</button>
+    <button type="button" data-jump="links">진행중 공고</button><button type="button" data-jump="wiz">순위·점수 진단</button><button type="button" data-jump="ai">AI 설정</button>
   </nav>
 </div></header>
 <main id="top">
   <section class="wrap links-sec" id="linksSec" aria-labelledby="h-links">
-    <h1 id="h-links">서울 청약 공고 바로가기</h1>
+    <h1 id="h-links">서울 진행중 공고</h1>
     <section class="card sub-feed" id="subFeed" hidden></section>
     <ul class="src-grid" aria-label="공고 원문 사이트">
       <li><a href="https://apply.lh.or.kr" target="_blank" rel="noopener noreferrer"><b>LH 청약플러스 ↗</b><span>LH 임대·분양</span></a></li>
@@ -866,6 +869,8 @@ function addNotice(raw, msg) {
   $('#subMsg').textContent = `${msg}: ${n.short} · 주택형 ${n.types.length}개 · 일정 ${n.schedule.length}개`; render(); return true;
 }
 // ---------- 새로 올라온 공고 (feed/notices.json · GitHub Actions 가 scripts/feed.mjs 로 만든다 · 마이홈포털·LH 공식 API 만) ----------
+// 목록에 보일 짧은 이름: [민간임대] 같은 머리말·'입주자 모집 공고' 꼬리·(공고일) 괄호를 뺀다 (전체 제목은 title 로)
+const shortTitle = s => s.replace(/^\s*(\[[^\]]*\]\s*)+/, '').replace(/\s*\((?:운영기관|모집공고일|공고일|\d{4}|'?\d{2}\.)[^)]*\)/g, '').replace(/\s*(입주자\s*)?(최초|추가|예비|잔여)?\s*(입주자\s*)?모집\s*공고문?.*$/, '').trim() || s;
 let subFeed = null, feedAll = false;   // feedAll: '더 보기'를 눌렀으면 전부
 function normFeed(x) {
   if (!x || !Array.isArray(x.items)) return null; const str = (v, n = 120) => String(v ?? '').slice(0, n);
@@ -875,12 +880,15 @@ function normFeed(x) {
 function renderFeed() {
   const box = $('#subFeed'), t = todayYmd(), f = subFeed;
   const all = (f?.items || []).filter(i => i.region.startsWith('서울') && (!i.to || i.to >= t)).sort((a, b) => (a.to || '9').localeCompare(b.to || '9'));   // 마감 안 지난 것 · 마감 가까운 순
-  const items = feedAll ? all : all.slice(0, 5), more = all.length - items.length;
+  const items = feedAll ? all : all.slice(0, 8), more = all.length - items.length;
   box.hidden = !items.length; if (!items.length) return;
-  box.innerHTML = `<h3>마감 전 서울 공고<small>${f.updated ? `<span class="d">${esc(f.updated.slice(0, 10))} 확인</span>` : ''}${f.source ? ` · ${esc(f.source)}` : ''}</small></h3><ul>${items.map(i => {
+  box.innerHTML = `<ul>${items.map(i => {
     const dd = i.to ? ddayOf({ from: i.from || i.to, to: i.to }, t) : null, isNew = i.posted && daysBetween(i.posted, t) <= 3;
-    return `<li><span class="org" title="${esc(i.org)}">${esc(i.org)}</span>${isNew ? '<span class="new">새 공고</span>' : ''}<span class="ttl">${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">${esc(i.title)} ↗</a>` : esc(i.title)}</span>
-      <span class="hint">${[i.region, i.kind, i.from && i.to ? `접수 ${md2(i.from)}~${md2(i.to)}` : i.to ? `청약신청일 ${md2(i.to)}` : i.posted ? `게시 ${md2(i.posted)} · 마감일은 공고문에서` : ''].filter(Boolean).map(esc).join(' · ')}</span>${i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : ''}</li>`; }).join('')}</ul>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}`;
+    const when = i.from && i.to ? `접수 ${md2(i.from)}~${md2(i.to)}` : i.to ? `청약신청일 ${md2(i.to)}` : i.posted ? `게시 ${md2(i.posted)} · 마감일은 공고문에서` : '';
+    const tag = i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : isNew ? '<span class="dd new">새 공고</span>' : '';
+    const body = `<span><span class="nm">${esc(shortTitle(i.title))}${i.url ? ' ↗' : ''}</span><span class="sub">${[i.kind.includes(i.org) ? '' : i.org, i.kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', when].filter(Boolean).map(esc).join(' · ')}</span></span>${tag}`;
+    return `<li>${i.url ? `<a class="frow" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer" title="${esc(i.title)}">${body}</a>` : `<div class="frow" title="${esc(i.title)}">${body}</div>`}</li>`; }).join('')}</ul>
+    <div class="foot"><span>${f.updated ? `${esc(md2(f.updated.slice(0, 10)))} 확인 · ` : ''}${esc(f.source || '')}</span>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}</div>`;
   const mb = box.querySelector('[data-feedmore]'); if (mb) mb.onclick = () => { feedAll = true; renderFeed(); };
 }
 const setFeed = x => { subFeed = normFeed(x); renderFeed(); };

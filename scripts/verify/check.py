@@ -77,7 +77,7 @@ old_seed = json.dumps({**SEED, "listings": []}, ensure_ascii=False)   # 가짜 S
 PC = r"""
 const q = s => d.querySelector(s), qa = s => [...d.querySelectorAll(s)];
 ok('기존 데이터 없으면 가져오기 숨김', q('#importBanner').hidden);
-ok('맨 위는 공고 바로가기 (원문 사이트 4곳)', q('h1').textContent.includes('공고 바로가기') && qa('#linksSec .src-grid a[target="_blank"]').length === 4 && q('#linksSec').getBoundingClientRect().top < q('#subsSec').getBoundingClientRect().top);
+ok('맨 위는 서울 진행중 공고 (원문 사이트 4곳)', q('h1').textContent.includes('진행중 공고') && qa('#linksSec .src-grid a[target="_blank"]').length === 4 && q('#linksSec').getBoundingClientRect().top < q('#subsSec').getBoundingClientRect().top);
 ok('PC 한 줄 기둥 (880px)', getComputedStyle(q('#subsSec')).maxWidth === '880px' && getComputedStyle(q('#linksSec')).maxWidth === '880px');
 ok('자체검사 함수가 실행됨(판정 코드 옮김)', typeof fw.eval('elig') === 'function' && typeof fw.eval('pickOption') === 'function');
 ok('진단 제목 바로 밑에 PDF 올리기 + 질문 (안내 카드 없음)', q('#h-diag').textContent.includes('순위·점수') && !q('#subAdd').hidden && !!q('#subAdd #subPdf') && !q('.init-steps') && q('#subAdd').getBoundingClientRect().top < q('#subWiz').getBoundingClientRect().top);
@@ -103,11 +103,11 @@ const sv = JSON.parse(fw.localStorage.getItem('cheongyak-check-v1'));
 ok('이 사이트 키에 저장', sv.subs.notices.length === 1 && sv.settings.myCash === 3000 && sv.subs.wizard.done);
 ok('기존 사이트 키는 만들지 않음', fw.localStorage.getItem('newlywed-home-v1') === null);
 const fi = (id, to) => ({ id, org: 'LH', title: '피드 ' + id, region: '서울', kind: '행복주택', posted: '2026-11-01', from: '', to, url: 'https://apply.lh.or.kr' });
-fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포털·LH 공식 API', items: [1,2,3,4,5,6,7].map(i => fi('f' + i, '2099-01-0' + i)) }); await W(50);
+fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포털·LH 공식 API', items: [1,2,3,4,5,6,7,8,9,10].map(i => fi('f' + i, '2099-01-' + String(i).padStart(2, '0'))) }); await W(50);
 fw.eval('setFeed')({ updated: '', source: '', items: [fi('s1', '2099-01-01'), { ...fi('g1', '2099-01-01'), region: '경기 성남시' }] }); await W(50);
 ok('피드는 서울 공고만', qa('#subFeed li').length === 1 && !q('#subFeed').textContent.includes('경기'));
-fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포털·LH 공식 API', items: [1,2,3,4,5,6,7].map(i => fi('f' + i, '2099-01-0' + i)) }); await W(50);
-ok('피드 5개 + 더 보기', qa('#subFeed li').length === 5 && /2개 더 보기/.test(q('#subFeed [data-feedmore]')?.textContent || ''), qa('#subFeed li').length);
+fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포털·LH 공식 API', items: [1,2,3,4,5,6,7,8,9,10].map(i => fi('f' + i, '2099-01-' + String(i).padStart(2, '0'))) }); await W(50);
+ok('피드 8개 + 더 보기 · 줄 전체가 링크', qa('#subFeed li').length === 8 && qa('#subFeed li a.frow[target="_blank"]').length === 8 && /2개 더 보기/.test(q('#subFeed [data-feedmore]')?.textContent || ''), qa('#subFeed li').length);
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];
 const pdf = await (await fetch('samples/notice_example.pdf')).blob(), dt = new fw.DataTransfer(); dt.items.add(new fw.File([pdf], 'notice_example.pdf', { type: 'application/pdf' }));
