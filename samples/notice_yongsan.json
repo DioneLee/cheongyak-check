@@ -1,0 +1,57 @@
+{
+  "app": "suitable-home-notice",
+  "version": 1,
+  "notice": {
+    "id": "yongsan-2026-11",
+    "kind": "임대",
+    "name": "용산 원효로 역세권 청년안심주택 (시연용 예시 공고)",
+    "short": "원효로 청년안심주택",
+    "addr": "서울특별시 용산구 효창원로 80",
+    "city": "서울",
+    "region": "용산구",
+    "station": "효창공원앞역",
+    "noticeDate": "2026-11-03",
+    "url": "https://soco.seoul.go.kr/youth/main/main.do",
+    "summary": "서울시 청년안심주택 공공지원민간임대 · 635세대(특별 128 · 일반 507) · 2년 단위 갱신 최대 10년 · 분양전환 없음",
+    "cite": { "date": "p4 1.개요", "types": "p7 3.공급현황", "rules": "p10 4.신청자격", "schedule": "p6 2.공급일정", "fee": "p24 8.유의사항 관리비", "deposit": "p23 7.계약안내" },
+    "schedule": [
+      { "key": "apply", "label": "청약 접수 (특별·일반, PC 인터넷만)", "from": "2026-11-12", "to": "2026-11-15" },
+      { "key": "result", "label": "당첨자·동호수 발표 (17시)", "from": "2026-11-17", "to": "2026-11-17" },
+      { "key": "docs", "label": "서류 사본 이메일 제출", "from": "2026-11-18", "to": "2026-11-19" },
+      { "key": "check", "label": "당첨자 세대 확인", "from": "2026-11-20", "to": "2026-11-22" },
+      { "key": "contract", "label": "계약 · 원본 서류 제출", "from": "2026-11-23", "to": "2026-11-29" },
+      { "key": "movein", "label": "입주지정기간", "from": "2026-12-07", "to": "2027-01-15" }
+    ],
+    "ratios": [30, 40, 50],
+    "contractPct": 10,
+    "parking": 12,
+    "incomeBase": [381.3363, 586.627, 816.8429, 880.2202, 932.6985],
+    "incomeExtra": 57.9278,
+    "rules": {
+      "newlywed": {
+        "special": { "age": [19, 39], "marriageDays": 2555, "preMarried": true, "homeless": "세대", "incomeMax": 120, "incomeRanks": [100, 110, 120], "asset": 34500, "car": 4542 },
+        "general": { "age": [19, 39], "marriageDays": 2555, "preMarried": true, "homeless": "세대", "car": 4542 }
+      },
+      "youth": {
+        "special": { "age": [19, 39], "single": true, "homeless": "본인", "incomeMax": 120, "incomeRanks": [100, 110, 120], "asset": 25100, "car": 4542 },
+        "general": { "age": [19, 39], "single": true, "homeless": "본인", "car": 4542 }
+      }
+    },
+    "types": [
+      { "id": "25", "tier": "youth", "area": 22.53, "rooms": 1, "fee": 7.176, "units": { "special": 6, "general": 24 },
+        "prices": { "special": [[6200, 58], [8300, 50], [10400, 41]], "general": [[7400, 69], [9900, 59], [12400, 49]] } },
+      { "id": "35", "tier": "youth", "area": 29.51, "rooms": 1, "fee": 9.246, "units": { "special": 15, "general": 58 },
+        "prices": { "special": [[8000, 75], [10700, 64], [13400, 53]], "general": [[9500, 89], [12700, 76], [15900, 63]] } },
+      { "id": "56", "tier": "newlywed", "area": 47.37, "rooms": 2, "fee": 14.784, "units": { "special": 69, "general": 273 },
+        "prices": { "special": [[12000, 102], [16000, 88], [20000, 73]], "general": [[14300, 121], [19000, 104], [23800, 86]] } },
+      { "id": "61", "tier": "newlywed", "area": 45.51, "rooms": 2, "fee": 14.303, "units": { "special": 38, "general": 152 },
+        "prices": { "special": [[12000, 102], [16000, 88], [20000, 73]], "general": [[14300, 121], [19000, 104], [23800, 86]] } }
+    ],
+    "notes": [
+      "1인 1건만 신청할 수 있어요. 특별·일반을 통틀어 한 건이고, 부부가 각자 내면 둘 다 무효예요.",
+      "근저당·신탁등기 때문에 일반 전세자금 대출이 안 되거나 제한될 수 있어요. 계약 전에 은행에 확인하세요.",
+      "소득 기준표는 '전년도 도시근로자 가구원수별 월평균소득'이라고만 적혀 있어 몇 년도 통계인지는 공고에 없어요.",
+      "방 개수(신혼 2 · 청년 1)는 공고에 없어 앱이 가정한 값이에요."
+    ]
+  }
+}

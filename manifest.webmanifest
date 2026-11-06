@@ -1,0 +1,16 @@
+{
+  "name": "청약 체크 — 서울 청약 예비 진단",
+  "short_name": "청약 체크",
+  "description": "서울 공고를 고르고 내 상황을 답하면 신청 자격과 실제 한 달 부담을 보여 주는 청약 예비 진단",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F5F2",
+  "theme_color": "#F6F5F2",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

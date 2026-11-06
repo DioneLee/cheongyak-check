@@ -1,0 +1,17 @@
+{
+ "updated": "2026-11-06T00:16:56+09:00",
+ "source": "마이홈포털·LH 공식 API",
+ "items": [
+  {
+   "id": "myhome-21471",
+   "org": "캠코",
+   "title": "나라키움영등포복합청사 예비입주자 모집공고(21형)",
+   "region": "서울 영등포구",
+   "kind": "행복주택",
+   "posted": "2026-10-28",
+   "from": "2026-11-09",
+   "to": "2026-11-13",
+   "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21471&houseSn=1"
+  }
+ ]
+}

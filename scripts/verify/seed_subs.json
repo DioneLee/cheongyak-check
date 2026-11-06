@@ -1,0 +1,568 @@
+{
+ "settings": {
+  "myCash": 5000,
+  "rate": 3,
+  "work": "여의도",
+  "budget": 95,
+  "budgetFail": false,
+  "commuteMax": null,
+  "commuteWarn": true,
+  "commuteFail": false,
+  "mortRate": 4,
+  "depMax": 25000,
+  "priceMax": null
+ },
+ "people": [
+  {
+   "id": "p1",
+   "name": "남편",
+   "w": {
+    "price": 5,
+    "area": 5,
+    "commute": 5,
+    "station": 5
+   }
+  },
+  {
+   "id": "p2",
+   "name": "아내",
+   "w": {
+    "price": 5,
+    "area": 5,
+    "commute": 5,
+    "station": 5
+   }
+  }
+ ],
+ "listings": [
+  {
+   "id": "cur",
+   "name": "지금 집 (예시 오피스텔 801호)",
+   "region": "마포구 공덕동",
+   "addr": "마포대로 100",
+   "deal": "월세",
+   "deposit": 3000,
+   "rent": 95,
+   "fee": 15,
+   "area": 38.5,
+   "rooms": 1,
+   "basement": false,
+   "loanOk": true,
+   "usage": "주거용",
+   "station": "공덕역",
+   "walk": 5,
+   "commute": 45,
+   "current": true,
+   "moveIn": "가능",
+   "floorNo": "8/15",
+   "route": "공덕역 → 5호선 → 여의도역, 도보 5분",
+   "url": "",
+   "urlSaved": null
+  },
+  {
+   "id": "m1",
+   "name": "상도동 투룸",
+   "region": "동작구 상도동",
+   "addr": "상도로 200",
+   "deal": "월세",
+   "deposit": 13000,
+   "rent": 50,
+   "fee": 5,
+   "area": 45,
+   "rooms": 2,
+   "basement": false,
+   "loanOk": true,
+   "usage": "주거용",
+   "station": "상도역",
+   "walk": 8,
+   "commute": 40,
+   "moveIn": "가능",
+   "floorNo": "3/5",
+   "route": "상도역 → 7호선 → 대림 환승 → 2호선 → 영등포구청, 도보 10분",
+   "url": "https://new.land.naver.com/rooms?articleId=0000000001",
+   "urlSaved": "2026-11-01"
+  },
+  {
+   "id": "m2",
+   "name": "망원동 원룸",
+   "region": "마포구 망원동",
+   "addr": "",
+   "deal": "월세",
+   "deposit": 8000,
+   "rent": 60,
+   "fee": null,
+   "area": 42,
+   "rooms": 1,
+   "basement": false,
+   "loanOk": true,
+   "usage": "주거용",
+   "station": "망원역",
+   "walk": null,
+   "commute": 35,
+   "moveIn": null,
+   "floorNo": "",
+   "route": "",
+   "url": "",
+   "urlSaved": null
+  },
+  {
+   "id": "m3",
+   "name": "사당동 빌라",
+   "region": "동작구 사당동",
+   "addr": "사당로 30",
+   "deal": "월세",
+   "deposit": 10000,
+   "rent": 55,
+   "fee": 8,
+   "area": 48,
+   "rooms": 2,
+   "basement": false,
+   "loanOk": true,
+   "usage": "주거용",
+   "station": "사당역",
+   "walk": 6,
+   "commute": 50,
+   "moveIn": "불가",
+   "floorNo": "2/4",
+   "route": "사당역 → 4호선 → 동작역 환승 → 9호선 → 여의도역, 도보 5분",
+   "url": "https://www.zigbang.com/home/villa/items/00000002",
+   "urlSaved": "2026-11-02"
+  },
+  {
+   "id": "j1",
+   "name": "구로동 전세",
+   "region": "구로구 구로동",
+   "addr": "디지털로 300",
+   "deal": "전세",
+   "deposit": 20000,
+   "rent": 0,
+   "fee": 10,
+   "area": 50,
+   "rooms": 2,
+   "basement": false,
+   "loanOk": true,
+   "usage": "주거용",
+   "station": "구로디지털단지역",
+   "walk": 4,
+   "commute": 30,
+   "moveIn": "가능",
+   "floorNo": "5/12",
+   "route": "",
+   "url": "https://new.land.naver.com/rooms?articleId=0000000003",
+   "urlSaved": "2026-11-03"
+  },
+  {
+   "id": "b1",
+   "name": "신길동 매매",
+   "region": "영등포구 신길동",
+   "addr": "신길로 50",
+   "deal": "매매",
+   "deposit": 32500,
+   "rent": 0,
+   "fee": 15,
+   "area": 59,
+   "rooms": 3,
+   "basement": false,
+   "loanOk": true,
+   "usage": "주거용",
+   "station": "신길역",
+   "walk": 7,
+   "commute": 25,
+   "moveIn": "가능",
+   "floorNo": "10/20",
+   "route": "신길역 → 5호선 → 여의도역",
+   "url": "",
+   "urlSaved": null,
+   "loanYears": 30,
+   "repay": "amort"
+  },
+  {
+   "id": "sub56",
+   "name": "원효로 청년안심주택 56형",
+   "region": "용산구",
+   "addr": "효창원로 80",
+   "station": "효창공원앞역",
+   "deal": "월세",
+   "deposit": 20000,
+   "rent": 73,
+   "fee": 14.8,
+   "area": 47.37,
+   "rooms": 2,
+   "basement": false,
+   "loanOk": true,
+   "usage": "주거용",
+   "walk": null,
+   "commute": 40,
+   "current": false,
+   "facing": null,
+   "moveIn": "가능",
+   "floorNo": "",
+   "route": "",
+   "url": "https://soco.seoul.go.kr/youth/main/main.do",
+   "urlSaved": "2026-11-04",
+   "loanYears": 30,
+   "repay": "amort",
+   "sub": {
+    "notice": "yongsan-2026-11",
+    "type": "56",
+    "supply": "special",
+    "i": 2,
+    "auto": true
+   }
+  }
+ ],
+ "selectedId": "m1",
+ "furniture": [],
+ "geo": {},
+ "routes": {},
+ "subs": {
+  "tab": "newlywed",
+  "notices": [
+   {
+    "id": "yongsan-2026-11",
+    "kind": "임대",
+    "name": "용산 원효로 역세권 청년안심주택 (시연용 예시 공고)",
+    "short": "원효로 청년안심주택",
+    "addr": "서울특별시 용산구 효창원로 80",
+    "city": "서울",
+    "region": "용산구",
+    "station": "효창공원앞역",
+    "noticeDate": "2026-11-03",
+    "url": "https://soco.seoul.go.kr/youth/main/main.do",
+    "summary": "서울시 청년안심주택 공공지원민간임대 · 635세대(특별 128 · 일반 507) · 2년 단위 갱신 최대 10년 · 분양전환 없음",
+    "cite": {
+     "date": "p4 1.개요",
+     "types": "p7 3.공급현황",
+     "rules": "p10 4.신청자격",
+     "schedule": "p6 2.공급일정",
+     "fee": "p24 8.유의사항 관리비",
+     "deposit": "p23 7.계약안내"
+    },
+    "schedule": [
+     {
+      "key": "apply",
+      "label": "청약 접수 (특별·일반, PC 인터넷만)",
+      "from": "2026-11-12",
+      "to": "2026-11-15"
+     },
+     {
+      "key": "result",
+      "label": "당첨자·동호수 발표 (17시)",
+      "from": "2026-11-17",
+      "to": "2026-11-17"
+     },
+     {
+      "key": "docs",
+      "label": "서류 사본 이메일 제출",
+      "from": "2026-11-18",
+      "to": "2026-11-19"
+     },
+     {
+      "key": "check",
+      "label": "당첨자 세대 확인",
+      "from": "2026-11-20",
+      "to": "2026-11-22"
+     },
+     {
+      "key": "contract",
+      "label": "계약 · 원본 서류 제출",
+      "from": "2026-11-23",
+      "to": "2026-11-29"
+     },
+     {
+      "key": "movein",
+      "label": "입주지정기간",
+      "from": "2026-12-07",
+      "to": "2027-01-15"
+     }
+    ],
+    "ratios": [
+     30,
+     40,
+     50
+    ],
+    "contractPct": 10,
+    "parking": 12,
+    "incomeBase": [
+     381.3363,
+     586.627,
+     816.8429,
+     880.2202,
+     932.6985
+    ],
+    "incomeExtra": 57.9278,
+    "rules": {
+     "newlywed": {
+      "special": {
+       "age": [
+        19,
+        39
+       ],
+       "marriageDays": 2555,
+       "preMarried": true,
+       "homeless": "세대",
+       "incomeMax": 120,
+       "incomeRanks": [
+        100,
+        110,
+        120
+       ],
+       "asset": 34500,
+       "car": 4542
+      },
+      "general": {
+       "age": [
+        19,
+        39
+       ],
+       "marriageDays": 2555,
+       "preMarried": true,
+       "homeless": "세대",
+       "car": 4542
+      }
+     },
+     "youth": {
+      "special": {
+       "age": [
+        19,
+        39
+       ],
+       "single": true,
+       "homeless": "본인",
+       "incomeMax": 120,
+       "incomeRanks": [
+        100,
+        110,
+        120
+       ],
+       "asset": 25100,
+       "car": 4542
+      },
+      "general": {
+       "age": [
+        19,
+        39
+       ],
+       "single": true,
+       "homeless": "본인",
+       "car": 4542
+      }
+     }
+    },
+    "types": [
+     {
+      "id": "25",
+      "tier": "youth",
+      "area": 22.53,
+      "rooms": 1,
+      "fee": 7.176,
+      "units": {
+       "special": 6,
+       "general": 24
+      },
+      "prices": {
+       "special": [
+        [
+         6200,
+         58
+        ],
+        [
+         8300,
+         50
+        ],
+        [
+         10400,
+         41
+        ]
+       ],
+       "general": [
+        [
+         7400,
+         69
+        ],
+        [
+         9900,
+         59
+        ],
+        [
+         12400,
+         49
+        ]
+       ]
+      }
+     },
+     {
+      "id": "35",
+      "tier": "youth",
+      "area": 29.51,
+      "rooms": 1,
+      "fee": 9.246,
+      "units": {
+       "special": 15,
+       "general": 58
+      },
+      "prices": {
+       "special": [
+        [
+         8000,
+         75
+        ],
+        [
+         10700,
+         64
+        ],
+        [
+         13400,
+         53
+        ]
+       ],
+       "general": [
+        [
+         9500,
+         89
+        ],
+        [
+         12700,
+         76
+        ],
+        [
+         15900,
+         63
+        ]
+       ]
+      }
+     },
+     {
+      "id": "56",
+      "tier": "newlywed",
+      "area": 47.37,
+      "rooms": 2,
+      "fee": 14.784,
+      "units": {
+       "special": 69,
+       "general": 273
+      },
+      "prices": {
+       "special": [
+        [
+         12000,
+         102
+        ],
+        [
+         16000,
+         88
+        ],
+        [
+         20000,
+         73
+        ]
+       ],
+       "general": [
+        [
+         14300,
+         121
+        ],
+        [
+         19000,
+         104
+        ],
+        [
+         23800,
+         86
+        ]
+       ]
+      }
+     },
+     {
+      "id": "61",
+      "tier": "newlywed",
+      "area": 45.51,
+      "rooms": 2,
+      "fee": 14.303,
+      "units": {
+       "special": 38,
+       "general": 152
+      },
+      "prices": {
+       "special": [
+        [
+         12000,
+         102
+        ],
+        [
+         16000,
+         88
+        ],
+        [
+         20000,
+         73
+        ]
+       ],
+       "general": [
+        [
+         14300,
+         121
+        ],
+        [
+         19000,
+         104
+        ],
+        [
+         23800,
+         86
+        ]
+       ]
+      }
+     }
+    ],
+    "notes": [
+     "1인 1건만 신청할 수 있어요. 특별·일반을 통틀어 한 건이고, 부부가 각자 내면 둘 다 무효예요.",
+     "근저당·신탁등기 때문에 일반 전세자금 대출이 안 되거나 제한될 수 있어요. 계약 전에 은행에 확인하세요.",
+     "소득 기준표는 '전년도 도시근로자 가구원수별 월평균소득'이라고만 적혀 있어 몇 년도 통계인지는 공고에 없어요.",
+     "방 개수(신혼 2 · 청년 1)는 공고에 없어 앱이 가정한 값이에요."
+    ],
+    "commute": 40
+   }
+  ],
+  "me": {
+   "a": {
+    "birth": "1992-05-01",
+    "income": 350
+   },
+   "b": {
+    "birth": "1993-02-01",
+    "income": 300
+   },
+   "hasCar": false,
+   "car": null,
+   "live": {
+    "city": "서울",
+    "gu": "동작구"
+   },
+   "work": {
+    "city": "서울",
+    "gu": "영등포구"
+   },
+   "nw": {
+    "appl": "a",
+    "married": "2024-06-01",
+    "pre": false,
+    "homeless": true,
+    "others": 0,
+    "kids": 0,
+    "fetus": false,
+    "asset": 20000
+   },
+   "yt": {
+    "appl": "a",
+    "single": null,
+    "homeless": null,
+    "house": "alone",
+    "hh": 2,
+    "hhIncome": null,
+    "parents": null,
+    "asset": null
+   }
+  }
+ }
+}
