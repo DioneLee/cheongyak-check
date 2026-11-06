@@ -1,18 +1,7 @@
 {
- "updated": "2026-11-06T21:42:51+09:00",
+ "updated": "2026-11-07T04:25:45+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판",
  "items": [
-  {
-   "id": "youth-6724",
-   "org": "청년안심",
-   "title": "[민간임대] 화랑대역 에이트플레이스 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-11-05",
-   "from": "",
-   "to": "2026-11-06",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6724&menuNo=400008"
-  },
   {
    "id": "youth-6722",
    "org": "청년안심",
@@ -166,17 +155,6 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311908"
-  },
-  {
-   "id": "sh-312005",
-   "org": "SH",
-   "title": "[정정] 고덕강일지구 3단지 토지임대부 분양주택 입주자모집공고",
-   "region": "서울",
-   "kind": "토지임대부",
-   "posted": "2026-10-16",
-   "from": "",
-   "to": "",
-   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C1617/www/brd/m_244/view.do?multi_itm_seq=1&seq=312005"
   }
  ]
 }
