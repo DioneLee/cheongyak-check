@@ -108,8 +108,12 @@ export const geminiUse = () => JSON.parse(JSON.stringify(used));
 export const primaryLeft = () => Math.max(0, PRIMARY_BUDGET - (quota.used[MODELS[0]] || 0));
 const blocked = m => spent.has(m) || (m === MODELS[0] && primaryLeft() <= 0);
 async function pace(m) { const w = (lastAt[m] || 0) + (GAP[m] ?? 0) - Date.now(); if (w > 0) await new Promise(s => setTimeout(s, w)); lastAt[m] = Date.now(); }
+// 로컬(이 Mac 등) 실행은 실제 Gemini 를 부르지 않는다: GitHub Actions(GITHUB_ACTIONS=true)나 검사(DETAIL_TEST=1, 가짜 fetch)만 부름.
+// 꼭 실제로 불러야 하면 DETAIL_ALLOW_REAL=1 — 그 호출도 addDetails 가 _quota.json 에 더하니, 끝나면 _quota.json 을 커밋·push 해서 Actions 와 맞춘다
+export const realCallAllowed = () => process.env.GITHUB_ACTIONS === 'true' || process.env.DETAIL_TEST === '1' || process.env.DETAIL_ALLOW_REAL === '1';
 export async function askGemini(pdf, text = '', { models = MODELS } = {}) {
   const key = geminiKey(); if (!key) throw Object.assign(new Error('GEMINI_API_KEY 없음'), { stop: true });
+  if (!realCallAllowed()) throw Object.assign(new Error('로컬 실행: 실제 Gemini 를 부르지 않음 (Actions 에서만 · 꼭 필요하면 DETAIL_ALLOW_REAL=1 · _quota.json 커밋)'), { stop: true });
   const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: DETAIL_PROMPT }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }, ...(text ? [{ text: `게시판 본문:\n${text}` }] : [])] }],
     generationConfig: { responseMimeType: 'application/json', responseSchema: DETAIL_SCHEMA } });
   const end = [];   // 모델마다 끝난 까닭: 'spent'(429·오늘 예산) · 'busy'(503 두 번·연결) · 'err'
@@ -151,6 +155,15 @@ export function cleanDetail(x) {
   const d = { target: s(x?.target), eligibility: arr(x?.eligibility, 8), income: s(x?.income), asset: s(x?.asset), car: s(x?.car),
     supply: objs(x?.supply, ['type', 'area', 'units', 'price', 'movein'], 10).map(unit), schedule: objs(x?.schedule, ['label', 'date'], 8), apply: s(x?.apply, 200), costs: arr(x?.costs, 6), special: arr(x?.special, 8), contact: s(x?.contact) };
   return d.target || d.eligibility.length ? d : null;
+}
+// lite 가 읽은 상세를 첫 모델로 다시 읽을 때 칸별 비교 (합치기 전 첫 모델 결과 그대로) → 로그 한 줄 + _compare.jsonl (며칠 모아 lite 로 충분한 칸을 본다)
+const KO = { eligibility: '자격', special: '특이', supply: '주택형', schedule: '일정', costs: '비용', target: '대상', income: '소득', asset: '자산', car: '자동차', apply: '신청', contact: '문의' };
+export function compareDetail(lite, first) {
+  const lists = Object.fromEntries(LIST_KEYS.map(k => [k, [lite?.[k]?.length || 0, first?.[k]?.length || 0]]));
+  const lines = Object.fromEntries(LINE_KEYS.map(k => { const a = lite?.[k] || null, b = first?.[k] || null; return [k, a === b ? '같음' : !a ? '채움' : !b ? '비움' : '바뀜']; }));
+  const changed = Object.fromEntries(LINE_KEYS.filter(k => lines[k] === '바뀜').map(k => [k, [String(lite[k]).slice(0, 80), String(first[k]).slice(0, 80)]]));
+  const text = [...LIST_KEYS.map(k => `${KO[k]} ${lists[k][0]}${lists[k][0] === lists[k][1] ? '=' : '→'}${lists[k][1]}`), ...LINE_KEYS.filter(k => lines[k] !== '같음').map(k => `${KO[k]} ${lines[k]}`)].join(' · ');
+  return { lists, lines, changed, text };
 }
 // 퇴보 막기: 다시 읽은 결과와 예전 결과를 칸마다 합친다 — 목록은 항목이 더 많은 쪽, 한 줄 칸은 새 값이 비었으면 예전 값
 export const LIST_KEYS = ['eligibility', 'special', 'supply', 'schedule', 'costs'], LINE_KEYS = ['target', 'income', 'asset', 'car', 'apply', 'contact'];
@@ -209,6 +222,9 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
       // 원문(PDF + 본문) 해시가 같을 때만 칸별 합치기 · 다르면(정정공고 등) 새 결과로 교체 · 예전 파일에 해시가 없으면(src 기록 전) 같은 원문으로 보고 합침 (단, 첨부가 바뀌었으면 다른 원문)
       const same = !!old && (old.src ? old.src === src : !attChanged.has(it.id));
       if (old && !same && model !== MODELS[0]) { defer(it, `원문이 바뀌었지만 ${model} 결과라 교체 안 함 · 다음 갱신에 ${MODELS[0]}`); continue; }   // 교체는 첫 모델로만
+      if (old && old.model === MODELS[1] && model === MODELS[0]) {   // lite → 첫 모델 비교 기록
+        const c = compareDetail(old, neu); log(`상세 · ${it.id}: lite↔첫 모델 비교 · ${c.text}`);
+        await appendFile(`${dir}_compare.jsonl`, JSON.stringify({ at: nowKst(), id: it.id, same, lite: old.readAt || old.read || '', ...c, text: undefined }) + '\n', 'utf8'); }
       const { d, kept } = mergeDetail(same ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
       await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, att: p.att, ...d }, null, 1) + '\n', 'utf8');
       have.add(it.id); delete fail[it.id]; made++; re ? madeRe++ : madeNew++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${old && !same ? ' · 원문이 바뀌어 새로 교체' : ''}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);

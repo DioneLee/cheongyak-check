@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, readdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only'; process.env.DETAIL_RETRY_MS = '20';   // 503 뒤 기다림 (실제 30초)
+process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only'; process.env.DETAIL_TEST = '1'; delete process.env.GITHUB_ACTIONS; delete process.env.DETAIL_ALLOW_REAL; process.env.DETAIL_RETRY_MS = '20';   // 503 뒤 기다림 (실제 30초)
 process.env.DETAIL_GAP_PRIMARY_MS = '40'; process.env.DETAIL_GAP_LITE_MS = '15';   // 호출 간격 (실제 13초 · 5초)
 process.env.DETAIL_DEFER_LOG = join(tmpdir(), `detail-check-${process.pid}-미룸.md`);   // 저장소의 docs/work/미룸.md 는 건드리지 않음
 const D = await import('../detail.mjs');
@@ -116,6 +116,25 @@ gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ te
 const bad = [yi(99)]; for (let k = 0; k < 4; k++) await D.addDetails(bad, { dir, log: () => {} });
 await t('3번 실패한 공고는 그만 읽음', async () => { const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8')); assert.equal(f['youth-99'].n, 3); });
 
+// 로컬 실행은 실제 Gemini 를 부르지 않음 (Actions·검사만) · DETAIL_ALLOW_REAL=1 이면 부르고 _quota.json 에 더함
+{ const ld = await mkdtemp(join(tmpdir(), 'local-')) + '/', ll = [];
+  delete process.env.DETAIL_TEST; gem = () => J(FULL); calls.length = 0;
+  await t('로컬(GITHUB_ACTIONS 없음)에서는 askGemini 가 부르지 않고 멈춤', async () => { await assert.rejects(D.askGemini(PDF, ''), /로컬 실행: 실제 Gemini 를 부르지 않음/); assert.equal(gcalls().length, 0); });
+  r = await D.addDetails([yi(81)], { dir: ld, log: m => ll.push(m) });
+  await t('로컬 addDetails: 상세 읽기 멈춤 · 호출 0 · 예산 그대로', async () => { assert.match(r.stopped, /로컬 실행/); assert.equal(gcalls().length, 0); assert.equal(JSON.parse(await readFile(ld + '_quota.json', 'utf8')).used['gemini-3.5-flash-lite'] ?? 0, 0); });
+  process.env.DETAIL_ALLOW_REAL = '1'; r = await D.addDetails([yi(81)], { dir: ld, log: () => {} }); delete process.env.DETAIL_ALLOW_REAL;
+  await t('DETAIL_ALLOW_REAL=1 이면 부르고 그 횟수를 _quota.json 에 더함', async () => { assert.equal(r.madeNew, 1); assert.equal(JSON.parse(await readFile(ld + '_quota.json', 'utf8')).used['gemini-3.5-flash-lite'], 1); });
+  process.env.DETAIL_TEST = '1';
+  // lite → 첫 모델 다시 읽기 비교
+  await writeFile(ld + 'youth-81.json', JSON.stringify({ ...JSON.parse(await readFile(ld + 'youth-81.json', 'utf8')), target: 'lite 대상', eligibility: ['무주택'], special: [], costs: ['x'], income: null, contact: '02-1' }));
+  gem = () => J({ ...FULL, target: '첫 모델 대상', special: ['한부모 가점', '다자녀'], costs: [], income: '120% 이하', contact: '02-1' }); ll.length = 0;
+  await D.addDetails([yi(81)], { dir: ld, log: m => ll.push(m) });
+  await t('lite↔첫 모델 칸별 비교: 로그 한 줄 (항목 수·바뀐 칸)', async () => { const m = ll.find(x => x.includes('lite↔첫 모델 비교')); assert.ok(m, ll.join(' | '));
+    assert.match(m, /자격 1→2 · 특이 0→2 · 주택형 1=1 · 일정 0=0 · 비용 1→0/); assert.match(m, /대상 바뀜 · 소득 채움/); assert.ok(!m.includes('문의')); });
+  await t('비교는 _compare.jsonl 에도 한 줄씩 (며칠 모아 보기)', async () => { const rows = (await readFile(ld + '_compare.jsonl', 'utf8')).trim().split('\n').map(JSON.parse);
+    assert.equal(rows.length, 1); assert.equal(rows[0].id, 'youth-81'); assert.deepEqual(rows[0].lists.special, [0, 2]); assert.equal(rows[0].lines.income, '채움');
+    assert.deepEqual(rows[0].changed.target, ['lite 대상', '첫 모델 대상']); assert.equal(rows[0].text, undefined); });
+  await rm(ld, { recursive: true }); gem = () => J(FULL); }
 // 마이홈포털: API 기본 정보로 상세 (AI·PDF 안 씀)
 calls.length = 0; const mh = [{ id: 'myhome-21471', url: 'https://www.myhome.go.kr/x' }];
 r = await D.addDetails(mh, { dir, log: () => {}, basics: new Map([['myhome-21471', { target: null, eligibility: [], supply: [{ type: '나라키움', price: '보증금 4,650만원 · 월 22.5만원' }], schedule: [], contact: '02-6265-0620', addr: '서울 영등포구' }]]) });

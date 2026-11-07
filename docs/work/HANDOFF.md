@@ -33,6 +33,8 @@
   - 첫 모델 하루 예산 18번(여유 2) · `feed/detail/_quota.json` 에 태평양 날짜별로 셈(429·503 시도도 셈) · 예산이 차면 그날은 안 부름 · 로그 "첫 모델 오늘 사용 N/18"
   - 호출 간격 첫 모델 13초 · lite 5초 · 429 는 그 실행에서 그 모델 즉시 그만(재시도 없음) · 503 만 30초 뒤 1번
   - 첫 모델은 다시 읽기에만: 마감 3일 이내 → 원문(첨부)이 바뀐 공고 → 나머지 · 새 공고 첫 읽기는 lite · 한 번에 첫 모델 다시 읽기 5건 + lite 새 공고 5건
+- **로컬 시험 규칙(2026-11-07)**: 이 Mac 등 로컬에서는 실제 Gemini 를 부르지 않는다. `scripts/detail.mjs` 는 GitHub Actions(`GITHUB_ACTIONS=true`)나 검사(`DETAIL_TEST=1`, 가짜 응답)에서만 부르고, 그 밖에는 "로컬 실행: 실제 Gemini 를 부르지 않음"으로 멈춤. 시험은 `node scripts/verify/detail_check.mjs`(가짜 응답). 꼭 실제로 불러야 하면 `DETAIL_ALLOW_REAL=1` — 그 호출도 `feed/detail/_quota.json` 에 더해지니 **끝나면 _quota.json 을 커밋·push** (Actions 하루 예산과 맞추기)
+- [x] lite↔첫 모델 비교(2026-11-07): lite 가 읽은 상세를 첫 모델로 다시 읽을 때 칸별 차이(목록 칸 항목 수 · 한 줄 칸 같음/채움/비움/바뀜, 바뀐 값 앞 80자)를 로그 한 줄 + `feed/detail/_compare.jsonl` 에 남김 → 며칠 모아 lite 로 충분한 칸이 있는지 판단
 - [x] Gemini 호출 수 로그: 갱신마다 `Gemini 호출 · 모델: n번 (429 n번 · 503 n번)` (AI Studio 하루 한도와 맞춰 보기)
 - [x] 정기 실행 겹침 방지: workflow 가 schedule 이면 '최근 100분 안에 성공한 실행이 있으면 건너뜀' (concurrency 로 줄 세움)
 - [x] 정기 실행 보강(2026-11-07): GitHub schedule 1시간마다(:17) + Cloudflare Worker `cheongyak-feed-cron`(worker-cron/, 매시 :47 → workflow_dispatch from_cron) · 둘 다 '최근 100분 안에 성공했으면 건너뜀'
