@@ -118,6 +118,8 @@ ok('상세 없는 공고는 [공고 원문 보기] 링크', qa('#subFeed a.dlink
 fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('youth-d2', '2026-11-10'), org: '청년안심', from: '2026-11-09', time: '23:00' }, { ...fi('youth-d3', '2026-11-12'), org: '청년안심', startOnly: true }] }); await W(50);
 const r2 = qa('#subFeed li').map(li => li.textContent.replace(/\s+/g, ' '));
 ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3) · 마감일 모르면 시작일 표시', r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감') && r2[1].includes('청약신청일 11.12(목) · 마감일은 공고문에서'), r2.join(' / '));
+fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('sh-f1', '2099-01-01'), org: 'SH', title: '[정정] 고덕강일 3단지 입주자모집공고' }] }); await W(50);
+ok('정정공고는 배지', q('#subFeed .dd.fix')?.textContent === '정정공고' && q('#subFeed .nm').textContent.startsWith('고덕강일 3단지'));
 delete fw.__today;
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];

@@ -125,6 +125,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .sub-feed .org { padding: 3px 8px; border-radius: var(--pill); font: 700 12px/1.2 var(--sans); color: var(--accent); background: var(--accent-soft); }
 @media (hover: hover) { .sub-feed a.nm:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; } }
 .sub-feed .dd { padding: 3px 8px; border-radius: var(--pill); font: 700 12px/1.2 var(--sans); color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, var(--paper)); }
+.sub-feed .dd.fix { color: var(--fail); background: color-mix(in srgb, var(--fail) 10%, var(--paper)); }
 .sub-feed .dd.new { color: var(--pass); background: color-mix(in srgb, var(--pass) 10%, var(--paper)); }
 .sub-feed .dbtn { margin-left: auto; min-height: 32px; padding: 0 12px; border-radius: var(--pill); font: 600 13px/1 var(--sans); }
 .sub-feed a.dlink { display: inline-flex; align-items: center; border: 1px solid var(--line); background: var(--paper); color: var(--ink); text-decoration: none; }
@@ -899,7 +900,8 @@ function renderFeed() {
     const org = ORG_KO[i.org] || i.org, kind = i.kind.startsWith(org) ? i.kind.slice(org.length).replace(/^\((.*)\)$/, '$1') : i.kind;   // 청년안심주택(민간) → 민간
     const nm = i.url ? `<a class="nm" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer" title="${esc(i.title)}">${esc(shortTitle(i.title))} ↗</a>` : `<span class="nm" title="${esc(i.title)}">${esc(shortTitle(i.title))}</span>`;
     const open = detOpen.has(i.id), btn = i.detail ? `<button type="button" class="dbtn" data-detail="${esc(i.id)}" aria-expanded="${open}">상세보기</button>` : i.url ? `<a class="dbtn dlink" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">공고 원문 보기 ↗</a>` : '';
-    return `<li><div class="frow">${nm}<span class="sub"><span class="org">${esc(org)}</span>${tag}<span>${[kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', when].filter(Boolean).map(esc).join(' · ')}</span>${btn}</span></div>${i.detail ? `<div class="fdet" data-det="${esc(i.id)}"${open ? '' : ' hidden'}>${open ? detBody(i) : ''}</div>` : ''}</li>`; }).join('')}</ul>
+    const fix = /정정|변경|재공고/.test(i.title) ? '<span class="dd fix">정정공고</span>' : '';   // 예전 공고는 피드 만들 때 숨김 (scripts/feed.mjs buildFeed)
+    return `<li><div class="frow">${nm}<span class="sub"><span class="org">${esc(org)}</span>${fix}${tag}<span>${[kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', when].filter(Boolean).map(esc).join(' · ')}</span>${btn}</span></div>${i.detail ? `<div class="fdet" data-det="${esc(i.id)}"${open ? '' : ' hidden'}>${open ? detBody(i) : ''}</div>` : ''}</li>`; }).join('')}</ul>
     <div class="foot"><span>${f.updated ? `${esc(md2(f.updated.slice(0, 10)))} 확인 · ` : ''}${esc(f.source || '')}</span>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}</div>`;
   const mb = box.querySelector('[data-feedmore]'); if (mb) mb.onclick = () => { feedAll = true; renderFeed(); };
 }

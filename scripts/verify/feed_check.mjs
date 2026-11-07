@@ -58,6 +58,13 @@ t('마이홈: API 기본 정보 → 상세 (주택·가격·일정·문의·주�
   assert.deepEqual(b.supply[0], { type: '마포 행복주택', area: '아파트', units: '총 63세대', price: '보증금 4,650만원 · 계약금 465만원 · 월 22.5만원', movein: null });
   assert.deepEqual(b.schedule, [{ label: '접수', date: `${T(3).replaceAll('-', '.')} ~ ${T(5).replaceAll('-', '.')}` }, { label: '당첨자 발표', date: '2027.03.05' }]);
   assert.equal(b.contact, '02-6265-0620'); assert.equal(b.apply, '공급기관 공고: https://www.kohom.or.kr/x'); assert.equal(b.addr, '서울특별시 마포구 1'); assert.deepEqual(b.eligibility, []); });
+t('정정공고: 같은 기관·같은 단지의 예전 공고는 숨김 · 다른 단지·다른 기관은 그대로', () => {
+  const mk = (id, org, title, posted, to = '') => ({ feedId: id, org, title, region: '서울', kind: '', posted, from: '', to, url: '' });
+  const g = F.buildFeed([mk('sh-1', 'SH', '고덕강일지구 3단지 토지임대부 분양주택 입주자모집공고', T(-9), T(9)), mk('sh-2', 'SH', '[정정] 고덕강일지구 3단지 토지임대부 분양주택 입주자모집공고', T(-3), T(12)),
+    mk('sh-3', 'SH', '고덕강일지구 5단지 입주자모집공고', T(-9), T(9)), mk('lh-4', 'LH', '고덕강일지구 3단지 토지임대부 분양주택 입주자모집공고', T(-9), T(10)),
+    mk('youth-5', '청년안심', '[민간임대] 화랑대역 에이트플레이스 추가모집공고', T(-2), T(3)), mk('youth-6', '청년안심', '[민간임대] 화랑대역 에이트플레이스 추가모집 변경공고', T(-1), T(4))]);
+  assert.deepEqual(g.items.map(i => i.id).sort(), ['lh-4', 'sh-2', 'sh-3', 'youth-6']); });
+t('정정공고 열쇠: 정정 글자·괄호를 빼면 같은 이름', () => { assert.equal(F.fixKey('[정정공고]평택시 10년 공공임대 모집공고'), F.fixKey('평택시 10년 공공임대 모집공고')); assert.notEqual(F.fixKey('A단지 모집'), F.fixKey('B단지 모집')); });
 let shErr = ''; { const f0 = globalThis.fetch; globalThis.fetch = async () => new Response('<html>점검 중</html>'); try { await F.fetchSH({ pages: 1 }); } catch (e) { shErr = e.message; } globalThis.fetch = f0; }
 t('SH 목록 모양이 바뀌면 SH 만 실패로', () => assert.equal(shErr, 'SH 게시판: 목록 모양이 바뀜'));
 const feed = F.buildFeed([...my, ...lh]);

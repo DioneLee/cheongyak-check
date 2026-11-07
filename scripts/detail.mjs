@@ -46,8 +46,8 @@ const pick = list => list.find(f => /\.pdf$/i.test(f.name) && /공고/.test(f.na
 
 // 공고문 PDF 찾기 (출처마다 다르다) → { url, method, body } 또는 null
 export function pdfFromYouthView(html, base) {   // 청년안심주택 상세: /coHouse/cmmn/file/fileDown.do 링크
-  const list = [...String(html).matchAll(/href="(\/coHouse\/cmmn\/file\/fileDown\.do\?[^"]+)"[^>]*>\s*([^<]+?)\s*<\/a>/g)].map(m => ({ url: abs(base, m[1]), name: m[2].trim() }));
-  const f = pick(list); return f ? { url: f.url } : null;
+  const list = [...String(html).matchAll(/href="(\/coHouse\/cmmn\/file\/fileDown\.do\?[^"]+)"[^>]*>\s*([^<]+?)\s*<\/a>/g)].map(m => ({ url: abs(base, m[1]), path: m[1].replace(/&amp;/g, '&'), name: m[2].trim() }));
+  const f = pick(list); return f ? { url: f.url, att: `${f.path}|${f.name}` } : null;   // att: 첨부 식별자(atchFileId·fileSn) + 파일명
 }
 export function shFiles(html) {   // SH 상세: initParam.downList = [{brdId, seq, fileSeq, oriFileNm}]
   const m = String(html).match(/initParam\.downList\s*=\s*(\[[\s\S]*?\]);/); if (!m) return [];
@@ -70,17 +70,20 @@ export function pageText(html, title = '') {
   const j = t.search(/\n(다음글|이전글|목록)(\s|$)/); if (j > 0) t = t.slice(0, j);
   return t.slice(0, MAX_TEXT);
 }
-export async function findPdf(item) {
-  const src = item.id.split('-')[0]; if (!['youth', 'myhome', 'sh'].includes(src)) return null;   // LH 등: 아직 PDF 찾는 법을 모른다 → 상세 없음
-  // myhome: addDetails 가 API 기본 정보(basics)로 상세를 만들고 여기는 부르지 않는다 (해외 서버에서 마이홈 상세 페이지가 시간 초과)
+// 첨부 확인: 게시판 상세 페이지만 받아 첨부 식별자(att)·본문을 얻는다. PDF 주소는 pdf() 를 불러야 만든다 (SH 는 미리보기 주소를 한 번 더 받아야 해서)
+// myhome: addDetails 가 API 기본 정보(basics)로 상세를 만들고 여기는 부르지 않는다 (해외 서버에서 마이홈 상세 페이지가 시간 초과) · LH 등: 아직 모름 → null
+export async function findAttach(item) {
+  const src = item.id.split('-')[0]; if (!['youth', 'sh'].includes(src)) return null;
   const html = await (await get(item.url)).text(), text = pageText(html, item.title);
-  let p = null;
-  if (src === 'youth') p = pdfFromYouthView(html, item.url);
-  else if (src === 'myhome') p = pdfFromMyHomeView(html);
-  else { const f = pick(shFiles(html)); if (f) {
+  if (src === 'youth') { const f = pdfFromYouthView(html, item.url); return f ? { att: f.att, text, pdf: async () => ({ url: f.url }) } : null; }
+  const f = pick(shFiles(html)); if (!f) return null;
+  return { att: `brd=${f.brdId}&seq=${f.seq}&file=${f.fileSeq}|${f.name}`, text, pdf: async () => {
     const r = await get(`https://www.i-sh.co.kr/app/com/util/htmlConverter.do?brd_id=${encodeURIComponent(f.brdId)}&seq=${encodeURIComponent(f.seq)}&data_tp=A&file_seq=${encodeURIComponent(f.fileSeq)}`);
-    const url = shPdfFromViewer(r.url); if (url) p = { url }; } }
-  return p ? { ...p, text } : null;
+    const url = shPdfFromViewer(r.url); return url ? { url } : null; } };
+}
+export async function findPdf(item) {
+  const a = await findAttach(item); if (!a) return null; const p = await a.pdf();
+  return p ? { ...p, text: a.text, att: a.att } : null;
 }
 async function downloadPdf(p) {
   const r = await get(p.url, p.method ? { method: p.method, body: p.body } : {}), buf = Buffer.from(await r.arrayBuffer());
@@ -162,8 +165,14 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
   for (const it of items) { const b = basics.get(it.id); if (!b || !safeId(it.id)) continue;   // API 기본 정보 → 매번 새로 씀 (AI 안 씀)
     await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, source: 'api', read: nowKst().slice(0, 10), readAt: nowKst(), model: null, ...b }, null, 1) + '\n', 'utf8');
     have.add(it.id); prev.set(it.id, { source: 'api' }); delete fail[it.id]; }
+  // 첨부 확인: 이미 읽은 공고는 게시판 페이지만 받아 첨부 식별자를 비교 → 바뀐 것만 PDF 를 다시 받아 원문 해시를 본다 (처음이면 기록만)
+  const attChanged = new Set();
+  for (const it of items) { const o = prev.get(it.id); if (!o || o.source === 'api' || !safeId(it.id) || needs(it.id)) continue;
+    let a; try { a = await findAttach(it); } catch { continue; } if (!a) continue;
+    if (!o.att) { o.att = a.att; await writeFile(`${dir}${it.id}.json`, JSON.stringify(o, null, 1) + '\n', 'utf8'); }
+    else if (o.att !== a.att) { attChanged.add(it.id); log(`상세 · ${it.id}: 첨부가 바뀜 → 원문 확인`); } }
   const today = nowKst().slice(0, 10), due = i => i.to ? Math.round((Date.parse(i.to) - Date.parse(today)) / 864e5) : 9999, byDue = (a, b) => due(a) - due(b);
-  const again = items.filter(i => have.has(i.id) && needs(i.id)).sort(byDue), fresh = items.filter(i => !have.has(i.id)).sort(byDue);
+  const again = items.filter(i => have.has(i.id) && (needs(i.id) || attChanged.has(i.id))).sort(byDue), fresh = items.filter(i => !have.has(i.id)).sort(byDue);
   const todo = [...again.filter(i => due(i) <= 3), ...fresh, ...again.filter(i => due(i) > 3)];   // 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 다시 읽기 (각각 마감 가까운 순)
   let made = 0, stopped = '', skipped = 0;
   for (const it of todo) {
@@ -172,13 +181,16 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
     if (re && spent.has(MODELS[0])) { skipped++; continue; }
     try {
       const p = await findPdf(it); if (!p) { fail[it.id] = { n: MAX_TRY, why: '공고문 PDF 를 찾지 못함' }; log(`상세 · ${it.id}: PDF 없음`); continue; }
-      const pdf = await downloadPdf(p), src = sourceHash(pdf, p.text);
+      const pdf = await downloadPdf(p), src = sourceHash(pdf, p.text), old = prev.get(it.id);
+      if (attChanged.has(it.id) && old?.src === src) {   // 첨부 이름·식별자만 바뀌고 원문은 같음 → AI 없이 첨부 정보만 고침
+        await writeFile(`${dir}${it.id}.json`, JSON.stringify({ ...old, att: p.att }, null, 1) + '\n', 'utf8'); log(`상세 · ${it.id}: 첨부 정보만 바뀜 (원문 같음)`); continue; }
       const { data, model } = await askGemini(pdf, p.text, { primaryOnly: re });
       const neu = fillFromText(cleanDetail(data), p.text); if (!neu) throw new Error('AI 가 조건을 못 읽음');
-      // 원문(PDF + 본문) 해시가 같을 때만 칸별 합치기 · 다르면(정정공고 등) 새 결과로 교체 · 예전 파일에 해시가 없으면(src 기록 전) 같은 원문으로 보고 합침
-      const old = prev.get(it.id), same = old && (!old.src || old.src === src);
+      // 원문(PDF + 본문) 해시가 같을 때만 칸별 합치기 · 다르면(정정공고 등) 새 결과로 교체 · 예전 파일에 해시가 없으면(src 기록 전) 같은 원문으로 보고 합침 (단, 첨부가 바뀌었으면 다른 원문)
+      const same = !!old && (old.src ? old.src === src : !attChanged.has(it.id));
+      if (old && !same && model !== MODELS[0]) { skipped++; log(`상세 · ${it.id}: 원문이 바뀌었지만 ${model} 결과라 교체 안 함 (다음 갱신에 ${MODELS[0]})`); continue; }   // 교체는 첫 모델로만
       const { d, kept } = mergeDetail(same ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
-      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, ...d }, null, 1) + '\n', 'utf8');
+      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, att: p.att, ...d }, null, 1) + '\n', 'utf8');
       have.add(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${old && !same ? ' · 원문이 바뀌어 새로 교체' : ''}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
     } catch (e) {
       const why = scrubKey(e.message); if (e.skip) { skipped++; log(`상세 · ${it.id}: 미룸 (${why})`); continue; } if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }
@@ -193,9 +205,15 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
   for (const it of items) { it.detail = have.has(it.id); it.dv = it.detail ? await detailStamp(`${dir}${it.id}.json`) : ''; }
   return { made, stopped, skipped, have: have.size };
 }
-// 원문 해시(src): PDF 내용 + 게시판 본문 (볼 때마다 바뀌는 '조회수' 줄은 뺀다) → 같으면 다시 읽은 결과와 합치고, 다르면 교체
+// 원문 해시(src): PDF 내용 + 게시판 본문의 '글 내용' 줄만 (다음글/이전글 뒤는 버리고, 조회수·등록일·목록·인쇄·공유·첨부 같은 주변 줄은 뺀다)
+// → 같으면 다시 읽은 결과와 합치고, 다르면 교체
+const AROUND = /^(조회\s*수|조회\s*[:：]|등록일|작성일|수정일|목록|인쇄|공유|페이스북|네이버\s*블로그|카카오톡|트위터|첨부|미리보기|바로\s*(보기|듣기)|다운로드|-->|\.\w{2,4}$|\d[\d,]*$)/;
+export function contentText(text = '') {
+  const ls = String(text).split('\n').map(l => l.trim()), cut = ls.findIndex(l => /^(다음글|이전글)(\s|$)/.test(l));
+  return (cut >= 0 ? ls.slice(0, cut) : ls).filter(l => l && !AROUND.test(l)).join('\n');
+}
 export function sourceHash(pdf, text = '') {
-  const t = String(text).split('\n').filter(l => !/조회\s*수|조회\s*:/.test(l)).join('\n');
+  const t = contentText(text);
   return createHash('sha1').update(pdf).update('\n--본문--\n').update(t).digest('hex').slice(0, 16);
 }
 // 상세 도장(dv): 파일 내용 해시 앞 10자리 → notices.json 에 넣고 사이트가 ?v= 로 붙여 받는다 (캐시가 예전 상세를 보여 주지 않게)

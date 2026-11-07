@@ -7,20 +7,22 @@ process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only'; process.env.DETAIL_RETRY_MS =
 const D = await import('../detail.mjs');
 let ok = 0; const t = async (name, fn) => { await fn(); ok++; console.log('OK', name); };
 const PDF = Buffer.from('%PDF-1.4 가짜'), calls = [];
+let ATT = 'aa', ATTNAME = '청년안심주택 모집공고문.pdf', PDFNOW = PDF;   // 청년안심주택 상세의 첨부 (검사에서 바꿔 봄)
 let gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify({ target: '  만 19~39세   청년 ', eligibility: ['무주택', '', '서울 거주'], income: '120% 이하', supply: [{ type: '16A', price: '3000/45' }, {}], schedule: [], special: ['한부모 가점'], contact: null }) }] } }] }));
 globalThis.fetch = async (url, o = {}) => {
   const u = new URL(url); calls.push({ u, o });
   if (u.hostname === 'generativelanguage.googleapis.com') return gem(u, o);
-  if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do')) return new Response(`<a href="/coHouse/cmmn/file/fileDown.do?atchFileId=aa&amp;fileSn=2">배치도.jpg</a><a href="/coHouse/cmmn/file/fileDown.do?atchFileId=aa&amp;fileSn=1" >청년안심주택 모집공고문.pdf</a>`);
+  if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do')) return new Response(`<a href="/coHouse/cmmn/file/fileDown.do?atchFileId=${ATT}&amp;fileSn=2">배치도.jpg</a><a href="/coHouse/cmmn/file/fileDown.do?atchFileId=${ATT}&amp;fileSn=1" >${ATTNAME}</a>`);
   if (u.hostname === 'www.i-sh.co.kr' && u.pathname.endsWith('view.do')) return new Response(`initParam.downList = [{"brdId":"GS0401","seq":"9","fileSeq":"1","oriFileNm":"신청서.hwp"},{"brdId":"GS0401","seq":"9","fileSeq":"2","oriFileNm":"입주자 모집 공고문.pdf"}];`);
   if (u.pathname.endsWith('htmlConverter.do')) { const r = new Response('<html>'); Object.defineProperty(r, 'url', { value: 'https://www.i-sh.co.kr/app/skin/doc.html?fn=2026_abc&rs=/app/upload/bbs/GS0401/2026/10/html/' }); return r; }
   if (u.hostname === 'www.myhome.go.kr' && u.pathname.includes('DetailView')) return new Response(`<a href="javascript:fnDownFile('1a18', '1')" >\n (영등포)행복주택 모집 공고문.pdf</a>`);
-  return new Response(PDF);
+  return new Response(PDFNOW);
 };
 await t('PDF 찾기: 청년안심주택 · 공고문 PDF 를 고름', async () => assert.equal((await D.findPdf({ id: 'youth-1', title: 'x', url: 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=1' })).url, 'https://soco.seoul.go.kr/coHouse/cmmn/file/fileDown.do?atchFileId=aa&fileSn=1'));
 await t('PDF 찾기: SH 미리보기 주소 → 원본 PDF', async () => { assert.equal((await D.findPdf({ id: 'sh-9', title: 'x', url: 'https://www.i-sh.co.kr/app/x/view.do?seq=9' })).url, 'https://www.i-sh.co.kr/app/upload/bbs/GS0401/2026/10/2026_abc.pdf');
   assert.ok(calls.some(c => c.u.pathname.endsWith('htmlConverter.do') && c.u.searchParams.get('file_seq') === '2')); });
-await t('PDF 찾기: 마이홈 공고문 → POST 다운로드', async () => { const p = await D.findPdf({ id: 'myhome-1', url: 'https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=1' });
+await t('PDF 찾기: 마이홈은 상세 페이지를 받지 않음 (API 기본 정보) · 공고문 링크 읽기 함수는 그대로', async () => { assert.equal(await D.findPdf({ id: 'myhome-1', url: 'https://www.myhome.go.kr/x' }), null);
+  const p = D.pdfFromMyHomeView(`<a href="javascript:fnDownFile('1a18', '1')" >\n (영등포)행복주택 모집 공고문.pdf</a>`);
   assert.equal(p.method, 'POST'); assert.equal(String(p.body), 'atchFileId=1a18&fileSn=1'); });
 await t('PDF 찾기: LH 는 아직 없음', async () => assert.equal(await D.findPdf({ id: 'lh-1', url: 'https://apply.lh.or.kr' }), null));
 await t('게시판 본문: 제목부터 다음글 앞까지 · 태그 뺌', async () => { const x = D.pageText('<div>메뉴</div><h3>[민간임대] 개봉역 세이지움 공고</h3><p>청약신청 : 11. 9. ~ 11. 10.</p><p>문의 02-1234-5678</p><div>다음글 [민간임대] 다른 공고</div>', '[민간임대] 개봉역 세이지움 공고');
@@ -108,6 +110,37 @@ await t('원문 해시: 조회수 줄은 빼고 · PDF 나 본문이 바뀌면 �
   await t('원문 해시가 다르면(정정공고) 합치지 않고 새 결과로 교체 — 옛 일정·특이사항이 남지 않음', async () => { const d = JSON.parse(await readFile(sd + 'youth-31.json', 'utf8'));
     assert.deepEqual(d.schedule, [{ label: '청약', date: '11.9' }]); assert.deepEqual(d.special, ['한부모 가점']); assert.equal(d.src, first.src); assert.ok(lg.some(m => m.includes('원문이 바뀌어 새로 교체'))); });
   await rm(sd, { recursive: true }); }
+await t('해시는 글 내용만: 다음글 제목·조회수·목록·공유 줄만 다른 두 본문은 같은 해시', async () => {
+  const a = '건대입구역 더포디엄830 추가모집공고\n등록일 : 2026-11-05\n조회수 : 120\n[공급일정]\n■청약신청 : ‘26. 11. 09.\n목록\n인쇄하기\n공유하기\n다음글 [민간임대] 숭곡초교역 성북펠릭스\n2026-11-03\n이전글 [민간임대] 송정역';
+  const b = a.replace('조회수 : 120', '조회수 : 9,999').replace('숭곡초교역 성북펠릭스', '다른 공고 제목').replace('송정역', '효창공원앞역');
+  assert.equal(D.sourceHash(PDF, a), D.sourceHash(PDF, b)); assert.notEqual(D.sourceHash(PDF, a), D.sourceHash(PDF, a.replace('11. 09.', '11. 12.')));
+  assert.equal(D.contentText(a), '건대입구역 더포디엄830 추가모집공고\n[공급일정]\n■청약신청 : ‘26. 11. 09.'); });
+{ const sd = await mkdtemp(join(tmpdir(), 'lite-')) + '/', it = [yi(41)], OLDV = { id: 'youth-41', v: D.DETAIL_V, model: 'gemini-3.5-flash-lite', src: 'ffffffffffffffff', target: '기존', eligibility: ['기존 자격'], schedule: [{ label: '기존 일정', date: '11.1' }], special: ['기존 특이'] };
+  await writeFile(sd + 'youth-41.json', JSON.stringify(OLDV));
+  gem = u => u.pathname.includes('3.6-flash') ? new Response('{}', { status: 429 }) : J({ ...FULL, target: 'lite 새 결과' }); calls.length = 0; r = await D.addDetails(it, { dir: sd, log: () => {} });
+  await t('원문 해시가 다르고 lite 만 쓸 수 있으면 교체 안 함 · 기존 값 유지 · 실패로 안 셈', async () => { const d = JSON.parse(await readFile(sd + 'youth-41.json', 'utf8'));
+    assert.equal(d.target, '기존'); assert.deepEqual(d.schedule, OLDV.schedule); assert.equal(r.skipped, 1); assert.ok(!gcalls().some(c => mdl(c) === 'lite')); assert.ok(!JSON.parse(await readFile(sd + '_fail.json', 'utf8'))['youth-41']); });
+  gem = () => J({ ...FULL, target: '첫 모델 새 결과', schedule: [{ label: '새 일정', date: '11.9' }] }); r = await D.addDetails(it, { dir: sd, log: () => {} });
+  await t('다음 갱신에 첫 모델이 되면 원문이 바뀐 공고를 새 결과로 교체', async () => { const d = JSON.parse(await readFile(sd + 'youth-41.json', 'utf8'));
+    assert.equal(d.target, '첫 모델 새 결과'); assert.deepEqual(d.schedule, [{ label: '새 일정', date: '11.9' }]); assert.equal(d.model, 'gemini-3.6-flash'); });
+  await rm(sd, { recursive: true }); }
+// 첨부 정보(att): 이미 읽은 공고는 게시판 페이지만 받아 첨부 식별자를 비교 → 바뀐 것만 PDF 를 다시 받아 원문 해시 비교
+{ const ad = await mkdtemp(join(tmpdir(), 'att-')) + '/', it = [yi(51)], aRd = async () => JSON.parse(await readFile(ad + 'youth-51.json', 'utf8')), pdfGets = () => calls.filter(c => c.u.pathname.endsWith('fileDown.do')).length;
+  ATT = 'aa'; ATTNAME = '청년안심주택 모집공고문.pdf'; PDFNOW = PDF; gem = () => J({ ...FULL, target: '처음' }); await D.addDetails(it, { dir: ad, log: () => {} });
+  const first = await aRd();
+  await t('읽으면 첨부 정보(식별자·파일명) 저장', async () => assert.equal(first.att, '/coHouse/cmmn/file/fileDown.do?atchFileId=aa&fileSn=1|청년안심주택 모집공고문.pdf'));
+  calls.length = 0; await D.addDetails(it, { dir: ad, log: () => {} });
+  await t('첨부가 그대로면 게시판 페이지만 받고 PDF·AI 는 안 부름', async () => { assert.equal(pdfGets(), 0); assert.equal(gcalls().length, 0); assert.ok(calls.some(c => c.u.pathname.endsWith('view.do'))); });
+  ATT = 'bb'; calls.length = 0; let lg = []; await D.addDetails(it, { dir: ad, log: m => lg.push(m) });
+  await t('atchFileId 만 바뀌면 다시 읽기 대상 → PDF 다시 받아 원문 해시가 같으면 AI 없이 첨부 정보만 고침', async () => { assert.ok(lg.some(m => m.includes('첨부가 바뀜')));
+    assert.equal(pdfGets(), 1); assert.equal(gcalls().length, 0); const d = await aRd(); assert.match(d.att, /atchFileId=bb/); assert.equal(d.target, '처음'); assert.ok(lg.some(m => m.includes('첨부 정보만 바뀜'))); });
+  ATTNAME = '[정정] 청년안심주택 모집공고문.pdf'; PDFNOW = Buffer.from('%PDF-1.4 정정본'); gem = () => J({ ...FULL, target: '정정본', schedule: [{ label: '새 일정', date: '11.20' }] }); calls.length = 0; lg = [];
+  await D.addDetails(it, { dir: ad, log: m => lg.push(m) });
+  await t('파일명이 바뀌고 원문도 바뀌면 첫 모델로 다시 읽어 교체', async () => { assert.ok(lg.some(m => m.includes('첨부가 바뀜'))); const d = await aRd();
+    assert.equal(d.target, '정정본'); assert.deepEqual(d.schedule, [{ label: '새 일정', date: '11.20' }]); assert.match(d.att, /\[정정\]/); assert.notEqual(d.src, first.src); assert.ok(gcalls().every(c => mdl(c) === 'flash')); });
+  await writeFile(ad + 'youth-51.json', JSON.stringify({ ...(await aRd()), att: undefined })); calls.length = 0; await D.addDetails(it, { dir: ad, log: () => {} });
+  await t('첨부 정보가 없는 예전 파일은 기록만 (다시 읽지 않음)', async () => { assert.equal(gcalls().length, 0); assert.equal(pdfGets(), 0); assert.match((await aRd()).att, /atchFileId=bb/); });
+  ATT = 'aa'; ATTNAME = '청년안심주택 모집공고문.pdf'; PDFNOW = PDF; await rm(ad, { recursive: true }); }
 // 읽는 순서: 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 다시 읽기 (각각 마감 가까운 순)
 const od = await mkdtemp(join(tmpdir(), 'ord-')) + '/', T = n => new Date(Date.now() + 9 * 3600e3 + n * 864e5).toISOString().slice(0, 10);
 for (const [n] of [[21], [22], [23]]) await writeFile(od + `youth-${n}.json`, JSON.stringify({ id: `youth-${n}`, v: D.DETAIL_V, model: 'gemini-3.5-flash-lite', target: 'lite', eligibility: ['x'] }));
