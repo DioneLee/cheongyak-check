@@ -25,6 +25,10 @@ await t('PDF 찾기: 마이홈 공고문 → POST 다운로드', async () => { c
 await t('PDF 찾기: LH 는 아직 없음', async () => assert.equal(await D.findPdf({ id: 'lh-1', url: 'https://apply.lh.or.kr' }), null));
 await t('게시판 본문: 제목부터 다음글 앞까지 · 태그 뺌', async () => { const x = D.pageText('<div>메뉴</div><h3>[민간임대] 개봉역 세이지움 공고</h3><p>청약신청 : 11. 9. ~ 11. 10.</p><p>문의 02-1234-5678</p><div>다음글 [민간임대] 다른 공고</div>', '[민간임대] 개봉역 세이지움 공고');
   assert.equal(x, '개봉역 세이지움 공고\n청약신청 : 11. 9. ~ 11. 10.\n문의 02-1234-5678'); });
+await t('AI 가 비운 문의·신청 페이지는 본문 줄에서 채움 (AI 값이 있으면 그대로)', async () => {
+  const txt = '[청약신청]\n■ 청약신청 페이지 : https://naver.me/GUTJuhOO\n■ 문의전화 : 02-6239-0330\n■ 운영시간 : 월~금 10:00~17:00';
+  assert.deepEqual(D.fillFromText({ contact: null, apply: null }, txt), { contact: '02-6239-0330', apply: '인터넷 신청: https://naver.me/GUTJuhOO' });
+  assert.deepEqual(D.fillFromText({ contact: 'AI 값', apply: null }, '문의 없음'), { contact: 'AI 값', apply: null }); });
 await t('결과 다듬기: 빈 값 빼고 공백 정리', async () => { const d = D.cleanDetail({ target: ' a  b ', eligibility: ['x', '', 3], supply: [{}, { type: 'A' }] });
   assert.equal(d.target, 'a b'); assert.deepEqual(d.eligibility, ['x']); assert.deepEqual(d.supply, [{ type: 'A', area: null, units: null, price: null, movein: null }]); assert.equal(d.apply, null); assert.deepEqual(d.costs, []); assert.equal(D.cleanDetail({ eligibility: [] }), null); });
 

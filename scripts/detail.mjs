@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 export const DETAIL_DIR = fileURLToPath(new URL('../feed/detail/', import.meta.url));
 const MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash-lite'];   // 사이트 AI_MODELS 와 같은 순서
 const MAX_NEW = 5, MAX_TRY = 3, MAX_PDF = 15 * 1048576, MAX_TEXT = 6000;
-export const DETAIL_V = 3;   // 읽는 방법을 바꾸면 올린다 → 예전 상세는 다시 읽음 (v2: 게시판 본문도 함께 보냄 · v3: 신청 방법·입주 기간·부담 비용·호수)
+export const DETAIL_V = 4;   // 읽는 방법을 바꾸면 올린다 → 예전 상세는 다시 읽음 (v2: 게시판 본문도 함께 보냄 · v3: 신청 방법·입주 기간·부담 비용·호수 · v4: 문의·신청 페이지를 본문에서 채움)
 const UA = { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' };
 
 export const DETAIL_PROMPT = `첨부한 주택 입주자 모집공고문을 읽고, 신청하려는 사람이 알아야 할 조건만 아래 형식의 JSON 하나로 정리해줘. 설명 문장 없이 JSON만.
@@ -104,6 +104,13 @@ export async function askGemini(pdf, text = '') {
   throw new Error(last || 'Gemini 실패');
 }
 
+// AI 가 비워 둔 문의처·신청 페이지를 게시판 본문의 '■ 문의전화 : …' · '■ 청약신청 페이지 : https://…' 줄에서 채운다 (모양이 정해진 줄만)
+export function fillFromText(d, text = '') {
+  const t = String(text), line = re => t.split('\n').map(l => l.match(re)?.[1]?.trim()).find(Boolean);
+  if (d && !d.contact) d.contact = line(/문의\s*(?:전화|처)\s*[:：]\s*(.{4,80})/) || null;
+  if (d && !d.apply) { const u = line(/(?:청약\s*)?신청\s*(?:페이지|사이트|링크|주소)\s*[:：]\s*(https?:\/\/\S+)/); d.apply = u ? `인터넷 신청: ${u}` : null; }
+  return d;
+}
 // AI 결과 다듬기: 글자 수·개수 자르기 · 빈 값 빼기 (사이트는 이 모양만 믿는다)
 export function cleanDetail(x) {
   const s = (v, n = 160) => typeof v === 'string' && v.trim() ? v.replace(/\s+/g, ' ').trim().slice(0, n) : null;
@@ -127,7 +134,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
     if (!safeId(it.id) || (have.has(it.id) && !old.has(it.id)) || stopped || made >= max || (fail[it.id]?.n || 0) >= MAX_TRY) continue;
     try {
       const p = await findPdf(it); if (!p) { fail[it.id] = { n: MAX_TRY, why: '공고문 PDF 를 찾지 못함' }; log(`상세 · ${it.id}: PDF 없음`); continue; }
-      const d = cleanDetail(await askGemini(await downloadPdf(p), p.text)); if (!d) throw new Error('AI 가 조건을 못 읽음');
+      const d = fillFromText(cleanDetail(await askGemini(await downloadPdf(p), p.text)), p.text); if (!d) throw new Error('AI 가 조건을 못 읽음');
       await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10), ...d }, null, 1) + '\n', 'utf8');
       have.add(it.id); old.delete(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: 읽음`);
     } catch (e) {
