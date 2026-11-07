@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-07T18:40:53+09:00",
+ "updated": "2026-11-07T19:12:06+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판",
  "items": [
   {
@@ -75,7 +75,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "882b0443cd"
+   "dv": "517ce4c97f"
   },
   {
    "id": "youth-6719",
@@ -105,7 +105,7 @@
    "time": "24:00",
    "startOnly": false,
    "detail": true,
-   "dv": "5e70514d81"
+   "dv": "e247710499"
   },
   {
    "id": "sh-312351",
@@ -120,7 +120,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "2278770683"
+   "dv": "2233c836f8"
   },
   {
    "id": "sh-312053",
