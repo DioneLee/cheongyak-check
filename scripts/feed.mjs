@@ -62,12 +62,24 @@ export async function fetchMyHome({ brtcCode = '11', months = 3 } = {}) {
     if (!list.length || rows.length >= Number(body.totalCount ?? 0)) break;
   }
   const by = new Map();
-  for (const r of rows) { if (!r.pblancId) continue; const g = by.get(r.pblancId) ?? { r, gu: new Set() }; if (r.signguNm) g.gu.add(r.signguNm); by.set(r.pblancId, g); }
+  for (const r of rows) { if (!r.pblancId) continue; const g = by.get(r.pblancId) ?? { r, gu: new Set(), all: [] }; if (r.signguNm) g.gu.add(r.signguNm); g.all.push(r); by.set(r.pblancId, g); }
   const today = todayKst();
-  return [...by].map(([id, { r, gu }]) => { const gus = [...gu], city = cityOf(r.brtcNm);
+  return [...by].map(([id, { r, gu, all }]) => { const gus = [...gu], city = cityOf(r.brtcNm);
     return { feedId: `myhome-${id}`, org: orgOf(r.suplyInsttNm), title: String(r.pblancNm || '').trim(), region: gus.length ? `${city} ${gus[0]}${gus.length > 1 ? ` 외 ${gus.length - 1}곳` : ''}` : city,
-      kind: r.suplyTyNm || r.houseTyNm || '', posted: ymd(r.rcritPblancDe), from: ymd(r.beginDe), to: ymd(r.endDe), url: r.pcUrl || r.url || '' }; })
+      kind: r.suplyTyNm || r.houseTyNm || '', posted: ymd(r.rcritPblancDe), from: ymd(r.beginDe), to: ymd(r.endDe), url: r.pcUrl || r.url || '', basic: myhomeBasic(all) }; })
     .filter(i => i.title && (!i.to || i.to >= today));
+}
+
+// 마이홈 API 한 줄(단지)마다 들어 있는 기본 정보 → 상세보기용 (자격 조건은 API 에 없다 · 공고문 PDF 는 해외 서버에서 못 받음)
+const won = v => { const n = Number(v); return n > 0 ? (n >= 1e4 ? `${(n / 1e4).toLocaleString('ko-KR', { maximumFractionDigits: 1 })}만원` : `${n.toLocaleString('ko-KR')}원`) : ''; };
+const dot = v => { const d = ymd(v); return d ? d.replaceAll('-', '.') : ''; };
+export function myhomeBasic(rows) {
+  const r = rows[0] || {}, txt = v => String(v ?? '').trim();
+  return { target: null, eligibility: [], income: null, asset: null, car: null,
+    supply: rows.slice(0, 10).map(x => ({ type: txt(x.hsmpNm) || null, area: txt(x.houseTyNm) || null, units: Number(x.totHshldCo) > 0 ? `총 ${x.totHshldCo}세대` : null,
+      price: [won(x.rentGtn) && `보증금 ${won(x.rentGtn)}`, won(x.enty) && `계약금 ${won(x.enty)}`, won(x.mtRntchrg) && `월 ${won(x.mtRntchrg)}`].filter(Boolean).join(' · ') || null, movein: null })),
+    schedule: [r.beginDe && { label: '접수', date: `${dot(r.beginDe)}${r.endDe && r.endDe !== r.beginDe ? ` ~ ${dot(r.endDe)}` : ''}` }, r.przwnerPresnatnDe && { label: '당첨자 발표', date: dot(r.przwnerPresnatnDe) }].filter(Boolean),
+    apply: /^https?:\/\//.test(txt(r.url)) ? `공급기관 공고: ${txt(r.url)}` : null, costs: [], special: [], contact: txt(r.refrnc) || null, addr: txt(r.fullAdres) || null };
 }
 
 // LH 분양임대공고문 (data.go.kr 15058530): 응답 [ {dsSch}, {dsList, resHeader} ] · 목록에는 접수 시작일이 없어 to(마감일)만
@@ -189,6 +201,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH', '청년안심주택'][i]}: ${scrub(r.reason?.message)}`));
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
-  const feed = buildFeed(raw), det = await addDetails(feed.items), wrote = await writeFeed(feed);
-  console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · 상세 ${det.have}건 (이번에 ${det.made}건 읽음${det.stopped ? ` · 멈춤: ${det.stopped}` : ''}) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);
+  const feed = buildFeed(raw), det = await addDetails(feed.items, { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) }), wrote = await writeFeed(feed);
+  console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · 상세 ${det.have}건 (이번에 ${det.made}건 읽음${det.skipped ? ` · 다시 읽기 ${det.skipped}건 미룸` : ''}${det.stopped ? ` · 멈춤: ${det.stopped}` : ''}) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);
 }

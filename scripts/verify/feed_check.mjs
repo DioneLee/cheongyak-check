@@ -19,7 +19,8 @@ globalThis.fetch = async (url, o) => {
     return new Response(JSON.stringify([{ dsSch: [] }, { dsList: list, resHeader: [] }]));
   }
   if (u.pathname.includes('rsdtRcritNtcList')) return new Response(JSON.stringify({ header: { resultCode: '00' }, body: { totalCount: 3, item: [
-    { pblancId: 'A1', pblancNm: '서울 행복주택 입주자 모집 공고', suplyInsttNm: '한국토지주택공사', brtcNm: '서울특별시', signguNm: '마포구', suplyTyNm: '행복주택', rcritPblancDe: d(-2), beginDe: d(3), endDe: d(5), pcUrl: 'https://www.myhome.go.kr/a1' },
+    { pblancId: 'A1', pblancNm: '서울 행복주택 입주자 모집 공고', suplyInsttNm: '한국토지주택공사', brtcNm: '서울특별시', signguNm: '마포구', suplyTyNm: '행복주택', rcritPblancDe: d(-2), beginDe: d(3), endDe: d(5), pcUrl: 'https://www.myhome.go.kr/a1',
+      hsmpNm: '마포 행복주택', houseTyNm: '아파트', totHshldCo: '63', rentGtn: '46500000', enty: '4650000', mtRntchrg: '225000', przwnerPresnatnDe: '20270305', refrnc: '02-6265-0620', url: 'https://www.kohom.or.kr/x', fullAdres: '서울특별시 마포구 1' },
     { pblancId: 'A1', pblancNm: '서울 행복주택 입주자 모집 공고', signguNm: '용산구', brtcNm: '서울특별시' },
     { pblancId: 'B2', pblancNm: '장기전세 모집', suplyInsttNm: 'SH서울주택도시공사', brtcNm: '서울특별시', signguNm: '강서구', rcritPblancDe: d(-1), beginDe: d(10), endDe: d(12), pcUrl: 'javascript:alert(1)' }] } }));
   if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do')) return new Response(u.searchParams.get('boardId') !== '7001' ? '<p>본문 없음</p>'
@@ -53,6 +54,10 @@ t('마감일 읽기: 시작 시각 있음 · 하루짜리 · 24:00 · 해 넘김
   assert.equal(F.parseDue('■청약신청 : ‘26. 11. 12. (목) 00:00 ~ 11. 15. (일) 24:00').time, '24:00');
   assert.equal(F.parseDue('■청약신청 : ‘26. 12. 30. (수) ~ 01. 02. (토) 18:00').to, '2027-01-02');
   assert.equal(F.parseDue('■ 청약신청 페이지 : https://naver.me/x'), null); assert.equal(F.parseDue('청약신청 : 추후 안내'), null); });
+t('마이홈: API 기본 정보 → 상세 (주택·가격·일정·문의·주소)', () => { const b = my[0].basic;
+  assert.deepEqual(b.supply[0], { type: '마포 행복주택', area: '아파트', units: '총 63세대', price: '보증금 4,650만원 · 계약금 465만원 · 월 22.5만원', movein: null });
+  assert.deepEqual(b.schedule, [{ label: '접수', date: `${T(3).replaceAll('-', '.')} ~ ${T(5).replaceAll('-', '.')}` }, { label: '당첨자 발표', date: '2027.03.05' }]);
+  assert.equal(b.contact, '02-6265-0620'); assert.equal(b.apply, '공급기관 공고: https://www.kohom.or.kr/x'); assert.equal(b.addr, '서울특별시 마포구 1'); assert.deepEqual(b.eligibility, []); });
 let shErr = ''; { const f0 = globalThis.fetch; globalThis.fetch = async () => new Response('<html>점검 중</html>'); try { await F.fetchSH({ pages: 1 }); } catch (e) { shErr = e.message; } globalThis.fetch = f0; }
 t('SH 목록 모양이 바뀌면 SH 만 실패로', () => assert.equal(shErr, 'SH 게시판: 목록 모양이 바뀜'));
 const feed = F.buildFeed([...my, ...lh]);

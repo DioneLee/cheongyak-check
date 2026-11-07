@@ -111,9 +111,10 @@ ok('피드 8개 + 더 보기 · 줄 전체가 링크', qa('#subFeed li').length 
 const rf = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/lh-d1.json') ? new fw.Response(JSON.stringify({ id: 'lh-d1', read: '2026-11-07', target: '<b>청년</b>', eligibility: ['무주택'], special: ['한부모 가점'] })) : rf(u, o);
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('lh-d1', '2099-01-01'), detail: true }, fi('f2', '2099-01-02'), { ...fi('f3', '2099-01-03'), id: '../x', detail: true }] }); await W(50);
 q('#subFeed [data-detail="lh-d1"]').click(); await W(300); fw.fetch = rf; const dt1 = q('#subFeed [data-det="lh-d1"]');
-ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 · 글자 그대로)', qa('#subFeed .dbtn').length === 1 && !dt1.hidden && dt1.textContent.includes('<b>청년</b>') && dt1.textContent.includes('한부모 가점') && dt1.textContent.includes('AI가 공고문에서'), dt1?.textContent.slice(0, 80));
+ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 · 글자 그대로)', qa('#subFeed button.dbtn').length === 1 && !dt1.hidden && dt1.textContent.includes('<b>청년</b>') && dt1.textContent.includes('한부모 가점') && dt1.textContent.includes('AI가 공고문에서'), dt1?.textContent.slice(0, 80));
 q('#subFeed [data-detail="lh-d1"]').click(); await W(50);
 ok('상세보기 다시 누르면 접힘', dt1.hidden && q('#subFeed [data-detail="lh-d1"]').getAttribute('aria-expanded') === 'false');
+ok('상세 없는 공고는 [공고 원문 보기] 링크', qa('#subFeed a.dlink[target="_blank"]').length === 2 && qa('#subFeed a.dlink').every(a => a.textContent.includes('공고 원문 보기')));
 fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('youth-d2', '2026-11-10'), org: '청년안심', from: '2026-11-09', time: '23:00' }, { ...fi('youth-d3', '2026-11-12'), org: '청년안심', startOnly: true }] }); await W(50);
 const r2 = qa('#subFeed li').map(li => li.textContent.replace(/\s+/g, ' '));
 ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3) · 마감일 모르면 시작일 표시', r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감') && r2[1].includes('청약신청일 11.12(목) · 마감일은 공고문에서'), r2.join(' / '));
