@@ -47,11 +47,16 @@ await t('이미 읽은 공고는 다시 안 읽음 · LH 는 PDF 없음으로 �
   const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8')); assert.equal(f['lh-1'].n, 3); });
 const more = [8, 9, 10].map(n => ({ id: `youth-${n}`, url: `https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=${n}` }));
 gem = () => new Response('{}', { status: 429 }); calls.length = 0; r = await D.addDetails([...items, ...more], { dir, log: () => {} });
-await t('429(사용량 다 참) → 이번 실행 멈춤 · 실패로 세지 않음', async () => { assert.match(r.stopped, /429/); assert.equal(calls.filter(c => c.u.hostname === 'generativelanguage.googleapis.com').length, 1);
+await t('429(사용량 다 참) → 다음 모델도 429 면 이번 실행 멈춤 · 실패로 세지 않음', async () => { assert.match(r.stopped, /429/); const g = calls.filter(c => c.u.hostname === 'generativelanguage.googleapis.com');
+  assert.equal(g.length, 2); assert.ok(g[0].u.pathname.includes('3.6-flash') && g[1].u.pathname.includes('flash-lite'));
   const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8')); assert.ok(!f['youth-8']); });
+gem = u => u.pathname.includes('3.6-flash') ? new Response('{}', { status: 429 }) : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"target":"lite","eligibility":[]}' }] } }] }));
+calls.length = 0; r = await D.addDetails([...items, ...more], { dir, max: 2, log: () => {} });
+await t('첫 모델이 429 면 다음 모델로 읽음 · 429 모델은 그 실행에서 다시 안 부름', async () => { assert.equal(r.made, 2); assert.equal(r.stopped, '');
+  const g = calls.filter(c => c.u.hostname === 'generativelanguage.googleapis.com'); assert.equal(g.filter(c => c.u.pathname.includes('3.6-flash')).length, 1); });
 let n503 = 0; gem = () => (++n503 === 1 ? new Response('{}', { status: 503 }) : new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"target":"청년","eligibility":[]}' }] } }] })));
 r = await D.addDetails([...items, ...more], { dir, log: () => {} });
-await t('503(붐빔) → 2초 뒤 한 번 더', async () => { assert.equal(n503, 4); assert.equal(r.made, 3); });
+await t('503(붐빔) → 2초 뒤 한 번 더', async () => { assert.equal(n503, 2); assert.equal(r.made, 1); });
 gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '조건을 못 찾았어요' }] } }] }));
 const bad = [{ id: 'youth-99', url: 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=99' }];
 for (let k = 0; k < 4; k++) await D.addDetails(bad, { dir, log: () => {} });

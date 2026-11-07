@@ -86,21 +86,23 @@ async function downloadPdf(p) {
   return buf;
 }
 
-// Gemini 로 읽기: 붐비면(503) 2초 뒤 한 번 더 · 모델 순서대로 · 429 는 그대로 위로 (이번 실행 멈춤)
+// Gemini 로 읽기: 붐비면(503) 2초 뒤 한 번 더 · 모델 순서대로 · 429 면 그 모델은 이번 실행에서 빼고 다음 모델 (모델마다 무료 사용량이 따로) · 모두 429 면 멈춤
+const spent = new Set();
 export async function askGemini(pdf, text = '') {
   const key = geminiKey(); if (!key) throw Object.assign(new Error('GEMINI_API_KEY 없음'), { stop: true });
   const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: DETAIL_PROMPT }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }, ...(text ? [{ text: `게시판 본문:\n${text}` }] : [])] }],
     generationConfig: { responseMimeType: 'application/json', responseSchema: DETAIL_SCHEMA } });
   let last = '';
-  for (const m of MODELS) for (let n = 0; n < 2; n++) {
+  for (const m of MODELS.filter(x => !spent.has(x))) for (let n = 0; n < 2; n++) {
     let r; try { r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body, signal: AbortSignal.timeout(120000) }); }
     catch (e) { last = `${m}: 연결 실패`; break; }
-    if (r.status === 429) throw Object.assign(new Error(`${m}: 429 사용량 다 참`), { stop: true });
+    if (r.status === 429) { spent.add(m); last = `${m}: 429 사용량 다 참`; break; }
     if (r.status === 503 && n === 0) { await new Promise(s => setTimeout(s, 2000)); continue; }
     if (!r.ok) { last = `${m}: HTTP ${r.status}`; if (r.status === 400 || r.status === 403) { const t = await r.text(); if (/API_KEY|PERMISSION/.test(t)) throw Object.assign(new Error(`${m}: 키 오류`), { stop: true }); } break; }
     const t = (await r.json())?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
     try { return JSON.parse(t); } catch { last = `${m}: JSON 아님`; break; }
   }
+  if (MODELS.every(x => spent.has(x))) throw Object.assign(new Error(`모든 모델 429 사용량 다 참`), { stop: true });
   throw new Error(last || 'Gemini 실패');
 }
 
@@ -126,6 +128,7 @@ const safeId = id => /^[a-z]+-[\w-]{1,60}$/.test(id);
 
 // items 마다 상세가 있으면 detail: true. 새 공고는 MAX_NEW 개까지 읽는다. 피드에서 빠진 공고의 상세는 지운다
 export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log = console.log } = {}) {
+  spent.clear();
   await mkdir(dir, { recursive: true });
   const failFile = `${dir}_fail.json`, fail = await readJson(failFile, {}), have = new Set((await readdir(dir)).filter(f => /\.json$/.test(f) && !f.startsWith('_')).map(f => f.slice(0, -5)));
   const old = new Set(); for (const id of have) if (((await readJson(`${dir}${id}.json`, {})).v || 1) < DETAIL_V) old.add(id);   // 예전 방법으로 읽은 것 (다시 읽을 때까지 그대로 보여 줌)
