@@ -1,6 +1,6 @@
 {
- "sh-312325": {
+ "youth-6720": {
   "n": 1,
-  "why": "gemini-3.5-flash-lite: HTTP 503"
+  "why": "gemini-3.6-flash: 연결 실패"
  }
 }

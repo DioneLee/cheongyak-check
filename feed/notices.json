@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-07T16:18:43+09:00",
+ "updated": "2026-11-07T18:32:33+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판",
  "items": [
   {
@@ -15,7 +15,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "6ebffe6789"
+   "dv": "65f0b4b378"
   },
   {
    "id": "youth-6722",
@@ -45,7 +45,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "12d9a0fd68"
+   "dv": "8bb3e9a4a5"
   },
   {
    "id": "youth-6720",
@@ -74,7 +74,8 @@
    "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21471&houseSn=1",
    "time": "",
    "startOnly": false,
-   "detail": true
+   "detail": true,
+   "dv": "8a701c4f75"
   },
   {
    "id": "youth-6719",
@@ -89,7 +90,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "0167479946"
+   "dv": "81e497441f"
   },
   {
    "id": "youth-6718",
@@ -118,7 +119,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312351",
    "time": "",
    "startOnly": false,
-   "detail": true
+   "detail": true,
+   "dv": "2278770683"
   },
   {
    "id": "sh-312053",
@@ -132,7 +134,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312053",
    "time": "",
    "startOnly": false,
-   "detail": true
+   "detail": true,
+   "dv": "f2f0ee56ef"
   },
   {
    "id": "sh-312339",
@@ -146,7 +149,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312339",
    "time": "",
    "startOnly": false,
-   "detail": true
+   "detail": true,
+   "dv": "ba0d031b2d"
   },
   {
    "id": "sh-311962",
@@ -160,7 +164,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311962",
    "time": "",
    "startOnly": false,
-   "detail": true
+   "detail": true,
+   "dv": "526f77fabd"
   },
   {
    "id": "sh-312325",
@@ -174,7 +179,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312325",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true,
+   "dv": "8e0d609213"
   },
   {
    "id": "sh-311965",
@@ -188,7 +194,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311965",
    "time": "",
    "startOnly": false,
-   "detail": true
+   "detail": true,
+   "dv": "14ca1b1b7e"
   },
   {
    "id": "sh-311987",
@@ -202,7 +209,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311987",
    "time": "",
    "startOnly": false,
-   "detail": true
+   "detail": true,
+   "dv": "5b205cecd1"
   },
   {
    "id": "sh-311908",
@@ -216,7 +224,8 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311908",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true,
+   "dv": "e64c840271"
   }
  ]
 }
