@@ -209,5 +209,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
   const feed = buildFeed(raw), det = await addDetails(feed.items, { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) }), wrote = await writeFeed(feed);
+  for (const [m, u] of Object.entries(det.use)) console.log(`Gemini 호출 · ${m}: ${u.calls}번 (429 ${u.s429}번 · 503 ${u.s503}번)`);   // 하루 한도 가늠용
   console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · 상세 ${det.have}건 (이번에 ${det.made}건 읽음${det.skipped ? ` · 다시 읽기 ${det.skipped}건 미룸` : ''}${det.stopped ? ` · 멈춤: ${det.stopped}` : ''}) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);
 }

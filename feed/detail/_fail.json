@@ -1,6 +1,8 @@
 {
  "sh-312053": {
-  "n": 1,
-  "why": "gemini-3.6-flash: 연결 실패"
+  "n": 0,
+  "defer": 1,
+  "deferWhy": "gemini-3.6-flash: 연결 실패",
+  "deferAt": "2026-11-07 19:11"
  }
 }

@@ -4,14 +4,18 @@ import { mkdtemp, readFile, readdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only'; process.env.DETAIL_RETRY_MS = '20';   // 503 뒤 기다림 (실제 30초)
+process.env.DETAIL_DEFER_LOG = join(tmpdir(), `detail-check-${process.pid}-미룸.md`);   // 저장소의 docs/work/미룸.md 는 건드리지 않음
 const D = await import('../detail.mjs');
 let ok = 0; const t = async (name, fn) => { await fn(); ok++; console.log('OK', name); };
 const PDF = Buffer.from('%PDF-1.4 가짜'), calls = [];
+let VIEW = 'ok';   // 청년안심주택 상세 페이지: 'ok' | 'throw'(연결 실패) | '404'
 let ATT = 'aa', ATTNAME = '청년안심주택 모집공고문.pdf', PDFNOW = PDF;   // 청년안심주택 상세의 첨부 (검사에서 바꿔 봄)
 let gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify({ target: '  만 19~39세   청년 ', eligibility: ['무주택', '', '서울 거주'], income: '120% 이하', supply: [{ type: '16A', price: '3000/45' }, {}], schedule: [], special: ['한부모 가점'], contact: null }) }] } }] }));
 globalThis.fetch = async (url, o = {}) => {
   const u = new URL(url); calls.push({ u, o });
   if (u.hostname === 'generativelanguage.googleapis.com') return gem(u, o);
+  if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do') && VIEW === 'throw') throw new TypeError('fetch failed');
+  if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do') && VIEW === '404') return new Response('없음', { status: 404 });
   if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do')) return new Response(`<a href="/coHouse/cmmn/file/fileDown.do?atchFileId=${ATT}&amp;fileSn=2">배치도.jpg</a><a href="/coHouse/cmmn/file/fileDown.do?atchFileId=${ATT}&amp;fileSn=1" >${ATTNAME}</a>`);
   if (u.hostname === 'www.i-sh.co.kr' && u.pathname.endsWith('view.do')) return new Response(`initParam.downList = [{"brdId":"GS0401","seq":"9","fileSeq":"1","oriFileNm":"신청서.hwp"},{"brdId":"GS0401","seq":"9","fileSeq":"2","oriFileNm":"입주자 모집 공고문.pdf"}];`);
   if (u.pathname.endsWith('htmlConverter.do')) { const r = new Response('<html>'); Object.defineProperty(r, 'url', { value: 'https://www.i-sh.co.kr/app/skin/doc.html?fn=2026_abc&rs=/app/upload/bbs/GS0401/2026/10/html/' }); return r; }
@@ -65,7 +69,7 @@ gem = u => u.pathname.includes('3.6-flash') ? new Response('{}', { status: 429 }
 r = await D.addDetails([...items, ...more], { dir, log: () => {} });
 await t('첫 모델 429 → 새 공고만 lite 로 읽음 · 다시 읽기는 미룸(실패로 안 셈) · 429 모델은 다시 안 부름', async () => {
   assert.equal(r.made, 3); assert.equal(r.skipped, 1); assert.equal((await rd('youth-8')).model, 'gemini-3.5-flash-lite'); assert.equal((await rd('youth-1')).target, '예전 v4');
-  assert.equal(gcalls().filter(c => mdl(c) === 'flash').length, 1); assert.ok(!JSON.parse(await readFile(dir + '_fail.json', 'utf8'))['youth-1']); });
+  assert.equal(gcalls().filter(c => mdl(c) === 'flash').length, 1); { const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8'))['youth-1']; assert.ok(f && f.n === 0 && f.defer >= 1, JSON.stringify(f)); } });
 // 다음 실행: 첫 모델 사용량 있음 → lite 가 읽은 것·예전 방법은 첫 모델로 다시 읽음 · 특이사항 0개가 와도 예전 7개 유지
 gem = () => J({ ...FULL, target: '다시 읽음', special: [] }); calls.length = 0;
 r = await D.addDetails([...items, ...more], { dir, log: () => {} });
@@ -84,7 +88,7 @@ r = await D.addDetails([...items, ...more, yi(11)], { dir, log: () => {} });
 await t('503(붐빔) → 잠시 뒤 한 번 더 → 읽음', async () => { assert.ok(n503 >= 2); assert.equal((await rd('youth-11')).target, '청년'); });
 gem = () => new Response('{}', { status: 503 }); calls.length = 0; r = await D.addDetails([yi(12)], { dir, log: () => {} });
 await t('모델 둘 다 503 두 번 → 미룸 (실패로 안 셈 · 다음 모델까지 시도)', async () => { const g = gcalls(); assert.equal(g.length, 4); assert.deepEqual(g.map(mdl), ['flash', 'flash', 'lite', 'lite']);
-  assert.equal(r.skipped, 1); assert.ok(!JSON.parse(await readFile(dir + '_fail.json', 'utf8'))['youth-12']); });
+  assert.equal(r.skipped, 1); { const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8'))['youth-12']; assert.ok(f && f.n === 0 && f.defer >= 1, JSON.stringify(f)); } });
 gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '조건을 못 찾았어요' }] } }] }));
 const bad = [yi(99)]; for (let k = 0; k < 4; k++) await D.addDetails(bad, { dir, log: () => {} });
 await t('3번 실패한 공고는 그만 읽음', async () => { const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8')); assert.equal(f['youth-99'].n, 3); });
@@ -119,7 +123,7 @@ await t('해시는 글 내용만: 다음글 제목·조회수·목록·공유 �
   await writeFile(sd + 'youth-41.json', JSON.stringify(OLDV));
   gem = u => u.pathname.includes('3.6-flash') ? new Response('{}', { status: 429 }) : J({ ...FULL, target: 'lite 새 결과' }); calls.length = 0; r = await D.addDetails(it, { dir: sd, log: () => {} });
   await t('원문 해시가 다르고 lite 만 쓸 수 있으면 교체 안 함 · 기존 값 유지 · 실패로 안 셈', async () => { const d = JSON.parse(await readFile(sd + 'youth-41.json', 'utf8'));
-    assert.equal(d.target, '기존'); assert.deepEqual(d.schedule, OLDV.schedule); assert.equal(r.skipped, 1); assert.ok(!gcalls().some(c => mdl(c) === 'lite')); assert.ok(!JSON.parse(await readFile(sd + '_fail.json', 'utf8'))['youth-41']); });
+    assert.equal(d.target, '기존'); assert.deepEqual(d.schedule, OLDV.schedule); assert.equal(r.skipped, 1); assert.ok(!gcalls().some(c => mdl(c) === 'lite')); { const f = JSON.parse(await readFile(sd + '_fail.json', 'utf8'))['youth-41']; assert.ok(f && f.n === 0 && f.defer >= 1, JSON.stringify(f)); } });
   gem = () => J({ ...FULL, target: '첫 모델 새 결과', schedule: [{ label: '새 일정', date: '11.9' }] }); r = await D.addDetails(it, { dir: sd, log: () => {} });
   await t('다음 갱신에 첫 모델이 되면 원문이 바뀐 공고를 새 결과로 교체', async () => { const d = JSON.parse(await readFile(sd + 'youth-41.json', 'utf8'));
     assert.equal(d.target, '첫 모델 새 결과'); assert.deepEqual(d.schedule, [{ label: '새 일정', date: '11.9' }]); assert.equal(d.model, 'gemini-3.6-flash'); });
@@ -141,6 +145,32 @@ await t('해시는 글 내용만: 다음글 제목·조회수·목록·공유 �
   await writeFile(ad + 'youth-51.json', JSON.stringify({ ...(await aRd()), att: undefined })); calls.length = 0; await D.addDetails(it, { dir: ad, log: () => {} });
   await t('첨부 정보가 없는 예전 파일은 기록만 (다시 읽지 않음)', async () => { assert.equal(gcalls().length, 0); assert.equal(pdfGets(), 0); assert.match((await aRd()).att, /atchFileId=bb/); });
   ATT = 'aa'; ATTNAME = '청년안심주택 모집공고문.pdf'; PDFNOW = PDF; await rm(ad, { recursive: true }); }
+// 실패 분류: 연결 실패·시간 초과·503·429 = 미룸 (실패로 안 셈, 횟수 기록) · 404·403·PDF 아님 = 실패
+{ const fd = await mkdtemp(join(tmpdir(), 'cls-')) + '/', lp = fd + 'docs/미룸.md', st = async id => JSON.parse(await readFile(fd + '_fail.json', 'utf8'))[id], lg = [];
+  const A = { ...yi(61), title: '[민간임대] 가나역 공고', to: '2026-11-10' };
+  VIEW = 'throw'; await D.addDetails([A], { dir: fd, log: m => lg.push(m), deferLog: lp });
+  await t('게시판 연결 실패 → 미룸 (실패 0 · 미룸 1 · 제목·마감 기록 · 로그)', async () => { const f = await st('youth-61'); assert.equal(f.n, 0); assert.equal(f.defer, 1); assert.equal(f.title, '[민간임대] 가나역 공고'); assert.equal(f.to, '2026-11-10');
+    assert.ok(lg.some(m => m.includes('미룸 1회째') && m.includes('연결 실패'))); });
+  VIEW = 'ok'; gem = () => { throw Object.assign(new Error('timeout'), { name: 'TimeoutError' }); }; calls.length = 0; let r2 = await D.addDetails([A], { dir: fd, log: () => {}, deferLog: lp });
+  await t('Gemini 시간 초과(두 모델 다) → 미룸 2회째 · 호출 수는 모델마다 기록', async () => { const f = await st('youth-61'); assert.equal(f.n, 0); assert.equal(f.defer, 2); assert.match(f.deferWhy, /시간 초과/);
+    assert.deepEqual(r2.use, { 'gemini-3.6-flash': { calls: 1, s429: 0, s503: 0 }, 'gemini-3.5-flash-lite': { calls: 1, s429: 0, s503: 0 } }); });
+  gem = u => u.pathname.includes('3.6-flash') ? new Response('{}', { status: 429 }) : new Response('{}', { status: 503 }); r2 = await D.addDetails([A], { dir: fd, log: () => {}, deferLog: lp });
+  await t('429 + 503 → 미룸 3회째 · 429·503 횟수 기록', async () => { assert.equal((await st('youth-61')).defer, 3); assert.equal(r2.use['gemini-3.6-flash'].s429, 1); assert.equal(r2.use['gemini-3.5-flash-lite'].s503, 2); });
+  VIEW = '404'; await D.addDetails([{ ...yi(62), title: 'x' }], { dir: fd, log: () => {}, deferLog: lp });
+  await t('게시판 404 → 실패로 셈', async () => { const f = await st('youth-62'); assert.equal(f.n, 1); assert.ok(!f.defer); });
+  VIEW = 'ok'; PDFNOW = Buffer.from('<html>점검 중</html>'); await D.addDetails([{ ...yi(63), title: 'x' }], { dir: fd, log: () => {}, deferLog: lp }); PDFNOW = PDF;
+  await t('PDF 가 아님(파싱 불가) → 실패로 셈', async () => { const f = await st('youth-63'); assert.equal(f.n, 1); assert.match(f.why, /PDF 가 아님/); });
+  gem = () => J(FULL); await D.addDetails([A], { dir: fd, log: () => {}, deferLog: lp });
+  await t('미룬 공고를 읽는 데 성공하면 미룸 기록 지움', async () => { assert.equal(await st('youth-61'), undefined); assert.equal(JSON.parse(await readFile(fd + 'youth-61.json', 'utf8')).defer, undefined); });
+  // 이미 읽은 공고의 다시 읽기가 미뤄지면 상세 파일에도 미룸 횟수
+  await writeFile(fd + 'youth-61.json', JSON.stringify({ ...JSON.parse(await readFile(fd + 'youth-61.json', 'utf8')), model: 'gemini-3.5-flash-lite' }));
+  gem = () => new Response('{}', { status: 503 }); await D.addDetails([A], { dir: fd, log: () => {}, deferLog: lp });
+  await t('다시 읽기가 미뤄지면 상세 파일에 defer {n, why, at}', async () => { const d = JSON.parse(await readFile(fd + 'youth-61.json', 'utf8')); assert.equal(d.defer.n, 1); assert.match(d.defer.why, /503/); assert.match(d.defer.at, /^\d{4}-/); });
+  // 미룬 채로 목록에서 빠지면(마감 지남) 인수인계용 기록
+  await D.addDetails([], { dir: fd, log: () => {}, deferLog: lp });
+  await t('미룬 채 마감으로 빠진 공고는 미룸.md 에 적음 (제목·마감·횟수·마지막 까닭)', async () => { const md = await readFile(lp, 'utf8');
+    assert.match(md, /^# 마감까지 상세를 못 읽은 공고/); assert.match(md, /`youth-61` \[민간임대\] 가나역 공고 · 마감 2026-11-10 · 미룸 1회 · 마지막: .*503/); assert.ok(!md.includes('youth-62')); });
+  await rm(fd, { recursive: true }); gem = () => J(FULL); }
 // 읽는 순서: 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 다시 읽기 (각각 마감 가까운 순)
 const od = await mkdtemp(join(tmpdir(), 'ord-')) + '/', T = n => new Date(Date.now() + 9 * 3600e3 + n * 864e5).toISOString().slice(0, 10);
 for (const [n] of [[21], [22], [23]]) await writeFile(od + `youth-${n}.json`, JSON.stringify({ id: `youth-${n}`, v: D.DETAIL_V, model: 'gemini-3.5-flash-lite', target: 'lite', eligibility: ['x'] }));

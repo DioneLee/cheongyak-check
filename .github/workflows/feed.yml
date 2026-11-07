@@ -1,9 +1,11 @@
 # 공고 피드: 마이홈포털·LH 공식 API · SH·청년안심주택 게시판 → feed/notices.json + 공고 상세 feed/detail/ (바뀌었을 때만 커밋)
-# 필요: 저장소 Settings → Secrets and variables → Actions → DATA_GO_KR_KEY (공공데이터포털 인증키)
+# 필요: 저장소 Settings → Secrets and variables → Actions → DATA_GO_KR_KEY (공공데이터포털 인증키) · GEMINI_API_KEY (상세 읽기)
+# 정기 실행: GitHub schedule 이 자주 늦거나 건너뛰어서(2026-11-07 4번 중 1번) 1시간마다 부르고, '최근 100분 안에 성공한 실행이 있으면 건너뜀'
+#            → 실제로는 2~3시간마다 한 번. 겹치면 concurrency 로 줄 세우고 나중 것은 건너뜀. (Cloudflare Cron 은 무료 계정 한도 5개가 다 차서 안 씀)
 name: 공고 피드
 on:
   schedule:
-    - cron: '17 */3 * * *'   # 3시간마다 (UTC 기준 :17분)
+    - cron: '17 * * * *'   # 1시간마다 (UTC :17분) · 최근 100분 안에 성공했으면 건너뜀
   workflow_dispatch:
     inputs:
       probe:
@@ -16,6 +18,7 @@ on:
         default: false
 permissions:
   contents: write
+  actions: read   # 최근 실행 확인 (겹치면 건너뜀)
 concurrency:
   group: feed
   cancel-in-progress: false
@@ -24,8 +27,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20   # 공고 상세 읽기(Gemini) 포함
     steps:
+      - name: 정기 실행이 겹치면 건너뜀
+        id: guard
+        if: ${{ github.event_name == 'schedule' }}   # 손으로 돌린 실행(workflow_dispatch)은 항상 돈다
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          last=$(gh run list -R "$GITHUB_REPOSITORY" -w feed.yml -s success -L 10 --json databaseId,createdAt \
+            --jq "[.[] | select(.databaseId != ${GITHUB_RUN_ID})][0].createdAt // empty")
+          if [ -n "$last" ] && [ $(( $(date +%s) - $(date -d "$last" +%s) )) -lt 6000 ]; then
+            echo "최근(${last})에 성공한 실행이 있어 건너뜀"; echo "skip=true" >> "$GITHUB_OUTPUT"
+          else echo "마지막 성공: ${last:-없음} → 실행"; fi
       - uses: actions/checkout@v7
+        if: ${{ steps.guard.outputs.skip != 'true' }}
       - uses: actions/setup-node@v7
+        if: ${{ steps.guard.outputs.skip != 'true' }}
         with:
           node-version: 22
       - name: LH API 진단
@@ -39,18 +55,18 @@ jobs:
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
       - name: 공고 받기
-        if: ${{ !inputs.probe && !inputs.probe_myhome }}
+        if: ${{ !inputs.probe && !inputs.probe_myhome && steps.guard.outputs.skip != 'true' }}
         run: node scripts/feed.mjs
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}   # 공고 상세(조건 요약) 읽기 전용 키
       - name: 바뀌었으면 커밋
-        if: ${{ !inputs.probe && !inputs.probe_myhome }}
+        if: ${{ !inputs.probe && !inputs.probe_myhome && steps.guard.outputs.skip != 'true' }}
         run: |
-          [ -z "$(git status --porcelain -- feed)" ] && { echo "바뀐 것 없음"; exit 0; }
+          [ -z "$(git status --porcelain -- feed docs/work/미룸.md)" ] && { echo "바뀐 것 없음"; exit 0; }
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A feed
+          git add -A feed docs/work/미룸.md   # 미룸.md: 마감까지 상세를 못 읽은 공고 기록
           git commit -m "chore: 공고 피드 갱신 $(TZ=Asia/Seoul date +%F)"
           git pull --rebase origin main   # 그사이 사람이 push 했어도 거절되지 않게
           git push
