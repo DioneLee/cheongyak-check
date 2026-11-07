@@ -884,7 +884,7 @@ let subFeed = null, feedAll = false;   // feedAll: '더 보기'를 눌렀으면 
 function normFeed(x) {
   if (!x || !Array.isArray(x.items)) return null; const str = (v, n = 120) => String(v ?? '').slice(0, n);
   return { updated: str(x.updated, 40), source: str(x.source), items: x.items.map(i => ({ id: str(i.id, 60), org: str(i.org, 40), title: str(i.title, 160), region: str(i.region, 40), kind: str(i.kind, 30),
-    posted: isYmd(i.posted) ? i.posted : '', from: isYmd(i.from) ? i.from : '', to: isYmd(i.to) ? i.to : '', url: safeUrl(i.url) ? i.url : '', time: /^\d{2}:\d{2}$/.test(i.time) ? i.time : '', startOnly: i.startOnly === true, detail: i.detail === true && /^[a-z]+-[\w-]{1,60}$/.test(String(i.id)) })).filter(i => i.title) };
+    posted: isYmd(i.posted) ? i.posted : '', from: isYmd(i.from) ? i.from : '', to: isYmd(i.to) ? i.to : '', url: safeUrl(i.url) ? i.url : '', time: /^\d{2}:\d{2}$/.test(i.time) ? i.time : '', startOnly: i.startOnly === true, dv: /^[0-9a-f]{6,16}$/.test(i.dv) ? i.dv : '', detail: i.detail === true && /^[a-z]+-[\w-]{1,60}$/.test(String(i.id)) })).filter(i => i.title) };
 }
 function renderFeed() {
   const box = $('#subFeed'), t = todayYmd(), f = subFeed;
@@ -914,7 +914,7 @@ function normDet(x) {
 // 글 속 http(s) 주소만 링크로 (나머지는 글자 그대로)
 const linkify = v => String(v || '').split(/(https?:\/\/[^\s<>"'),]+)/).map((p, k) => k % 2 && safeUrl(p) ? `<a href="${esc(p)}" target="_blank" rel="noopener noreferrer">${esc(p)} ↗</a>` : esc(p)).join('');
 function detBody(i) {
-  const d = detCache.get(i.id); if (d === undefined) return '<p class="hint">불러오는 중…</p>'; if (!d) return '<p class="hint">상세를 불러오지 못했어요. 공고 원문에서 확인해 주세요.</p>';
+  const d = detCache.get(i.id + '@' + i.dv); if (d === undefined) return '<p class="hint">불러오는 중…</p>'; if (!d) return '<p class="hint">상세를 불러오지 못했어요. 공고 원문에서 확인해 주세요.</p>';
   const ul = a => a.length ? `<ul>${a.map(x => `<li>${x}</li>`).join('')}</ul>` : '', row = (k, v) => v ? `<div><dt>${k}</dt><dd>${v}</dd></div>` : '';
   return `${d.target ? `<p class="dtgt">${esc(d.target)}</p>` : ''}<dl>${row('신청 자격', ul(d.eligibility.map(esc)))}${row('소득', esc(d.income))}${row('자산', esc(d.asset))}${row('자동차', esc(d.car))}
     ${row('주택형·가격', ul(d.supply.map(r => `${r.type ? `<b>${esc(r.type)}</b> ` : ''}${[r.area, r.units, r.price, r.movein && `입주 ${r.movein}`].filter(Boolean).map(esc).join(' · ')}`)))}
@@ -925,8 +925,9 @@ $('#subFeed').addEventListener('click', async e => {
   const b = e.target.closest('[data-detail]'); if (!b) return; const id = b.dataset.detail, i = subFeed?.items.find(x => x.id === id), box = $(`#subFeed [data-det="${CSS.escape(id)}"]`); if (!i || !box) return;
   if (detOpen.delete(id)) { box.hidden = true; b.setAttribute('aria-expanded', 'false'); return; }
   detOpen.add(id); b.setAttribute('aria-expanded', 'true'); box.hidden = false; box.innerHTML = detBody(i);
-  if (!detCache.has(id)) { let d = null; try { const r = await fetch(`feed/detail/${encodeURIComponent(id)}.json`); if (r.ok) d = normDet(await r.json()); } catch (err) {}
-    detCache.set(id, d); if (detOpen.has(id)) { const bx = $(`#subFeed [data-det="${CSS.escape(id)}"]`); if (bx) bx.innerHTML = detBody(i); } }
+  const ck = id + '@' + i.dv;   // 상세가 바뀌면 dv(내용 해시)가 바뀌어 주소가 달라진다 → 브라우저·서비스 워커에 남은 예전 상세를 쓰지 않음
+  if (!detCache.has(ck)) { let d = null; try { const r = await fetch(`feed/detail/${encodeURIComponent(id)}.json${i.dv ? `?v=${i.dv}` : ''}`, { cache: 'no-cache' }); if (r.ok) d = normDet(await r.json()); } catch (err) {}
+    detCache.set(ck, d); if (detOpen.has(id)) { const bx = $(`#subFeed [data-det="${CSS.escape(id)}"]`); if (bx) bx.innerHTML = detBody(i); } }
 });
 const setFeed = x => { subFeed = normFeed(x); renderFeed(); };
 fetch('feed/notices.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(setFeed).catch(() => {});

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, readdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only';
+process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only'; process.env.DETAIL_RETRY_MS = '20';   // 503 뒤 기다림 (실제 30초)
 const D = await import('../detail.mjs');
 let ok = 0; const t = async (name, fn) => { await fn(); ok++; console.log('OK', name); };
 const PDF = Buffer.from('%PDF-1.4 가짜'), calls = [];
@@ -79,7 +79,10 @@ await t('다시 읽기는 첫 모델로만 (429 면 lite 로 다시 읽지 않�
 
 let n503 = 0; gem = () => (++n503 === 1 ? new Response('{}', { status: 503 }) : J({ target: '청년', eligibility: [] }));
 r = await D.addDetails([...items, ...more, yi(11)], { dir, log: () => {} });
-await t('503(붐빔) → 2초 뒤 한 번 더', async () => { assert.ok(n503 >= 2); assert.equal((await rd('youth-11')).target, '청년'); });
+await t('503(붐빔) → 잠시 뒤 한 번 더 → 읽음', async () => { assert.ok(n503 >= 2); assert.equal((await rd('youth-11')).target, '청년'); });
+gem = () => new Response('{}', { status: 503 }); calls.length = 0; r = await D.addDetails([yi(12)], { dir, log: () => {} });
+await t('모델 둘 다 503 두 번 → 미룸 (실패로 안 셈 · 다음 모델까지 시도)', async () => { const g = gcalls(); assert.equal(g.length, 4); assert.deepEqual(g.map(mdl), ['flash', 'flash', 'lite', 'lite']);
+  assert.equal(r.skipped, 1); assert.ok(!JSON.parse(await readFile(dir + '_fail.json', 'utf8'))['youth-12']); });
 gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '조건을 못 찾았어요' }] } }] }));
 const bad = [yi(99)]; for (let k = 0; k < 4; k++) await D.addDetails(bad, { dir, log: () => {} });
 await t('3번 실패한 공고는 그만 읽음', async () => { const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8')); assert.equal(f['youth-99'].n, 3); });
@@ -89,5 +92,14 @@ calls.length = 0; const mh = [{ id: 'myhome-21471', url: 'https://www.myhome.go.
 r = await D.addDetails(mh, { dir, log: () => {}, basics: new Map([['myhome-21471', { target: null, eligibility: [], supply: [{ type: '나라키움', price: '보증금 4,650만원 · 월 22.5만원' }], schedule: [], contact: '02-6265-0620', addr: '서울 영등포구' }]]) });
 await t('마이홈포털: API 기본 정보로 상세 (source api · AI·상세 페이지 안 부름)', async () => { const d = await rd('myhome-21471');
   assert.equal(d.source, 'api'); assert.equal(d.model, null); assert.equal(d.contact, '02-6265-0620'); assert.equal(mh[0].detail, true); assert.equal(calls.length, 0); });
+// 읽는 순서: 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 다시 읽기 (각각 마감 가까운 순)
+const od = await mkdtemp(join(tmpdir(), 'ord-')) + '/', T = n => new Date(Date.now() + 9 * 3600e3 + n * 864e5).toISOString().slice(0, 10);
+for (const [n] of [[21], [22], [23]]) await writeFile(od + `youth-${n}.json`, JSON.stringify({ id: `youth-${n}`, v: D.DETAIL_V, model: 'gemini-3.5-flash-lite', target: 'lite', eligibility: ['x'] }));
+const oi = [{ ...yi(21), to: T(10) }, { ...yi(22), to: T(2) }, { ...yi(23), to: T(1) }, { ...yi(24), to: T(5) }, { ...yi(25), to: T(0) }, { ...yi(26), to: '' }];
+gem = () => J(FULL); calls.length = 0; const seenIds = []; r = await D.addDetails(oi, { dir: od, max: 4, log: m => { const x = m.match(/youth-\d+/); if (x && /읽음/.test(m)) seenIds.push(x[0]); } });
+await t('읽는 순서: 마감 3일 이내 다시 읽기(23·22) → 새 공고(25·24) · 한 번에 4개면 나머지(21 다시 읽기·26)는 다음에', async () => assert.deepEqual(seenIds, ['youth-23', 'youth-22', 'youth-25', 'youth-24']));
+await t('상세 도장(dv): 상세가 있으면 내용 해시 · 내용이 바뀌면 도장도 바뀜', async () => { const a = oi.find(i => i.id === 'youth-23'); assert.match(a.dv, /^[0-9a-f]{10}$/); assert.equal(oi.find(i => i.id === 'youth-26').dv, '');
+  await writeFile(od + 'youth-23.json', '{"id":"youth-23","target":"바뀜"}'); assert.notEqual(await D.detailStamp(od + 'youth-23.json'), a.dv); });
+await rm(od, { recursive: true });
 await rm(dir, { recursive: true });
 console.log(`${ok}개 모두 OK`);

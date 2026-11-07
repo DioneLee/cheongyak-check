@@ -3,12 +3,14 @@
 // 한 번 읽은 공고는 다시 읽지 않는다 · 한 번에 MAX_NEW 개까지 · 3번 실패한 공고는 그만 · 429(사용량 다 참)면 이번 실행은 멈춘다
 import { readFile, writeFile, mkdir, readdir, unlink } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 export const DETAIL_DIR = fileURLToPath(new URL('../feed/detail/', import.meta.url));
 const MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash-lite'];   // 사이트 AI_MODELS 와 같은 순서
 const MAX_NEW = 5, MAX_TRY = 3, MAX_PDF = 15 * 1048576, MAX_TEXT = 6000;
 export const DETAIL_V = 5;   // 읽는 방법을 바꾸면 올린다 → 예전 상세는 다시 읽음 (v2: 게시판 본문도 함께 보냄 · v3: 신청 방법·입주 기간·부담 비용·호수 · v4: 문의·신청 페이지를 본문에서 채움 · v5: 비용 예시 · 모델 기록)
 const UA = { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' };
+const RETRY_MS = Number(process.env.DETAIL_RETRY_MS ?? 30000);   // 503(붐빔) 뒤 한 번 더 기다리는 시간 (검사는 짧게)
 
 export const DETAIL_PROMPT = `첨부한 주택 입주자 모집공고문을 읽고, 신청하려는 사람이 알아야 할 조건만 아래 형식의 JSON 하나로 정리해줘. 설명 문장 없이 JSON만.
 - 공고문에 적힌 내용만 쓴다. 없으면 null 이나 빈 배열. 짐작하거나 지어내지 마.
@@ -89,23 +91,31 @@ async function downloadPdf(p) {
 
 // Gemini 로 읽기: 붐비면(503) 2초 뒤 한 번 더 · 모델 순서대로 · 429 면 그 모델은 이번 실행에서 빼고 다음 모델 (모델마다 무료 사용량이 따로) · 모두 429 면 멈춤
 // primaryOnly: 다시 읽기는 첫 모델로만 (lite 로 다시 읽으면 오히려 나빠질 수 있다) → 첫 모델을 못 쓰면 { skip }
+// 503(붐빔): RETRY_MS 뒤 한 번 더 → 그래도 붐비면 다음 모델 → 쓸 모델이 모두 붐비면 { skip } (실패로 안 셈 · 다음 갱신에)
 const spent = new Set();
 export async function askGemini(pdf, text = '', { primaryOnly = false } = {}) {
   const key = geminiKey(); if (!key) throw Object.assign(new Error('GEMINI_API_KEY 없음'), { stop: true });
-  const models = primaryOnly ? MODELS.slice(0, 1) : MODELS; if (models.every(x => spent.has(x))) throw Object.assign(new Error(`${models[0]} 사용량 다 참`), primaryOnly ? { skip: true } : { stop: true });
+  const models = primaryOnly ? MODELS.slice(0, 1) : MODELS;
   const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: DETAIL_PROMPT }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }, ...(text ? [{ text: `게시판 본문:\n${text}` }] : [])] }],
     generationConfig: { responseMimeType: 'application/json', responseSchema: DETAIL_SCHEMA } });
+  const end = [];   // 모델마다 끝난 까닭: 'spent'(429) · 'busy'(503 두 번) · 'err'
   let last = '';
-  for (const m of models.filter(x => !spent.has(x))) for (let n = 0; n < 2; n++) {
-    let r; try { r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body, signal: AbortSignal.timeout(120000) }); }
-    catch (e) { last = `${m}: 연결 실패`; break; }
-    if (r.status === 429) { spent.add(m); last = `${m}: 429 사용량 다 참`; break; }
-    if (r.status === 503 && n === 0) { await new Promise(s => setTimeout(s, 2000)); continue; }
-    if (!r.ok) { last = `${m}: HTTP ${r.status}`; if (r.status === 400 || r.status === 403) { const t = await r.text(); if (/API_KEY|PERMISSION/.test(t)) throw Object.assign(new Error(`${m}: 키 오류`), { stop: true }); } break; }
-    const t = (await r.json())?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
-    try { return { data: JSON.parse(t), model: m }; } catch { last = `${m}: JSON 아님`; break; }
+  for (const m of models) {
+    if (spent.has(m)) { end.push('spent'); continue; }
+    let why = 'err';
+    for (let n = 0; n < 2; n++) {
+      let r; try { r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body, signal: AbortSignal.timeout(120000) }); }
+      catch (e) { last = `${m}: 연결 실패`; break; }
+      if (r.status === 429) { spent.add(m); why = 'spent'; last = `${m}: 429 사용량 다 참`; break; }
+      if (r.status === 503) { if (n === 0) { await new Promise(s => setTimeout(s, RETRY_MS)); continue; } why = 'busy'; last = `${m}: 503 붐빔`; break; }
+      if (!r.ok) { last = `${m}: HTTP ${r.status}`; if (r.status === 400 || r.status === 403) { const t = await r.text(); if (/API_KEY|PERMISSION/.test(t)) throw Object.assign(new Error(`${m}: 키 오류`), { stop: true }); } break; }
+      const t = (await r.json())?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
+      try { return { data: JSON.parse(t), model: m }; } catch { last = `${m}: JSON 아님`; break; }
+    }
+    end.push(why);
   }
-  if (models.every(x => spent.has(x))) throw Object.assign(new Error(primaryOnly ? `${models[0]} 사용량 다 참` : '모든 모델 429 사용량 다 참'), primaryOnly ? { skip: true } : { stop: true });
+  if (end.every(x => x === 'spent')) throw Object.assign(new Error(primaryOnly ? `${models[0]} 사용량 다 참` : '모든 모델 429 사용량 다 참'), primaryOnly ? { skip: true } : { stop: true });
+  if (end.every(x => x === 'spent' || x === 'busy')) throw Object.assign(new Error(`${last} · 다음 갱신에`), { skip: true });
   throw new Error(last || 'Gemini 실패');
 }
 
@@ -151,31 +161,35 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
   for (const it of items) { const b = basics.get(it.id); if (!b || !safeId(it.id)) continue;   // API 기본 정보 → 매번 새로 씀 (AI 안 씀)
     await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, source: 'api', read: nowKst().slice(0, 10), readAt: nowKst(), model: null, ...b }, null, 1) + '\n', 'utf8');
     have.add(it.id); prev.set(it.id, { source: 'api' }); delete fail[it.id]; }
-  const todo = [...items.filter(i => !have.has(i.id)), ...items.filter(i => have.has(i.id) && needs(i.id))];
+  const today = nowKst().slice(0, 10), due = i => i.to ? Math.round((Date.parse(i.to) - Date.parse(today)) / 864e5) : 9999, byDue = (a, b) => due(a) - due(b);
+  const again = items.filter(i => have.has(i.id) && needs(i.id)).sort(byDue), fresh = items.filter(i => !have.has(i.id)).sort(byDue);
+  const todo = [...again.filter(i => due(i) <= 3), ...fresh, ...again.filter(i => due(i) > 3)];   // 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 다시 읽기 (각각 마감 가까운 순)
   let made = 0, stopped = '', skipped = 0;
   for (const it of todo) {
     if (!safeId(it.id) || stopped || made >= max || (fail[it.id]?.n || 0) >= MAX_TRY || basics.has(it.id)) continue;
-    const again = have.has(it.id);
-    if (again && spent.has(MODELS[0])) { skipped++; continue; }
+    const re = have.has(it.id);
+    if (re && spent.has(MODELS[0])) { skipped++; continue; }
     try {
       const p = await findPdf(it); if (!p) { fail[it.id] = { n: MAX_TRY, why: '공고문 PDF 를 찾지 못함' }; log(`상세 · ${it.id}: PDF 없음`); continue; }
-      const { data, model } = await askGemini(await downloadPdf(p), p.text, { primaryOnly: again });
+      const { data, model } = await askGemini(await downloadPdf(p), p.text, { primaryOnly: re });
       const neu = fillFromText(cleanDetail(data), p.text); if (!neu) throw new Error('AI 가 조건을 못 읽음');
       const old = prev.get(it.id), { d, kept } = mergeDetail(old ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
       await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, ...d }, null, 1) + '\n', 'utf8');
-      have.add(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: ${again ? '다시 ' : ''}읽음 (${model}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
+      have.add(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
     } catch (e) {
-      const why = scrubKey(e.message); if (e.skip) { skipped++; continue; } if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }
+      const why = scrubKey(e.message); if (e.skip) { skipped++; log(`상세 · ${it.id}: 미룸 (${why})`); continue; } if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }
       fail[it.id] = { n: (fail[it.id]?.n || 0) + 1, why }; log(`상세 · ${it.id}: 실패 (${why})`);
     }
   }
-  if (skipped) log(`상세 · 다시 읽기 ${skipped}건은 ${MODELS[0]} 사용량이 없어 다음에`);
+  if (skipped) log(`상세 · ${skipped}건은 다음 갱신에 (사용량·붐빔)`);
   const ids = new Set(items.map(i => i.id));
   for (const id of have) if (!ids.has(id)) { await unlink(`${dir}${id}.json`).catch(() => {}); have.delete(id); }
   for (const id of Object.keys(fail)) if (!ids.has(id)) delete fail[id];
   await writeFile(failFile, JSON.stringify(fail, null, 1) + '\n', 'utf8');
-  for (const it of items) it.detail = have.has(it.id);
+  for (const it of items) { it.detail = have.has(it.id); it.dv = it.detail ? await detailStamp(`${dir}${it.id}.json`) : ''; }
   return { made, stopped, skipped, have: have.size };
 }
+// 상세 도장(dv): 파일 내용 해시 앞 10자리 → notices.json 에 넣고 사이트가 ?v= 로 붙여 받는다 (캐시가 예전 상세를 보여 주지 않게)
+export async function detailStamp(file) { try { return createHash('sha1').update(await readFile(file)).digest('hex').slice(0, 10); } catch { return ''; } }
 // 예전 파일의 목록 칸을 cleanDetail 모양 그대로 (주택형 movein 등 새 칸이 없어도 그대로 둔다)
 const pickLists = o => Object.fromEntries(LIST_KEYS.map(k => [k, Array.isArray(o?.[k]) ? o[k] : []]));

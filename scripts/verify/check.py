@@ -201,6 +201,11 @@ const hits = async () => (await (await fetch('/__hits?' + Math.random(), { cache
 await fw.navigator.serviceWorker.ready; await W(500); await open(''); await W(500);
 ok('서비스 워커가 화면을 맡음', !!fw.navigator.serviceWorker.controller);
 const ks = await caches.keys(); ok('저장소 이름에 버전', ks.length === 1 && /^cheongyak-check-/.test(ks[0]), ks.join(','));
+{ const DET = 'feed/detail/zz-swtest.json', c0 = await caches.open(ks[0]), old = () => new Response(JSON.stringify({ id: 'zz-swtest', target: '예전 상세', eligibility: ['예전'] }), { headers: { 'Content-Type': 'application/json' } });
+  for (const u of [DET, DET + '?v=aaaaaaaaaa', DET + '?v=bbbbbbbbbb']) await c0.put(new Request(new URL(u, location.href)), old());   // 예전 상세가 저장돼 있는 브라우저 흉내
+  fw.eval('setFeed')({ updated: '', source: '', items: [{ id: 'zz-swtest', org: 'LH', title: '캐시 검사', region: '서울', kind: '', posted: '', from: '', to: '2099-01-01', url: 'https://apply.lh.or.kr', detail: true, dv: 'bbbbbbbbbb' }] }); await W(50);
+  d.querySelector('#subFeed [data-detail="zz-swtest"]').click(); await W(800); const bx = d.querySelector('#subFeed [data-det="zz-swtest"]');
+  ok('예전 상세가 저장돼 있어도 새 상세로 바뀜 (dv · 상세는 인터넷 먼저)', bx.textContent.includes('새 상세') && !bx.textContent.includes('예전 상세'), bx.textContent.slice(0, 60)); }
 const h1 = await hits(); await open(''); await W(300); const h2 = await hits();
 ok('index.html 은 늘 인터넷 먼저', (h2['/index.html'] || 0) > (h1['/index.html'] || 0), JSON.stringify([h1['/index.html'], h2['/index.html']]));
 ok('피드는 늘 인터넷 먼저', (h2['/feed/notices.json'] || 0) > (h1['/feed/notices.json'] || 0), JSON.stringify([h1, h2]));
@@ -213,6 +218,7 @@ await fetch('/__offline/off?' + Date.now(), { cache: 'no-store' });
 """
 
 def main():
+    swt = REPO / "feed/detail/zz-swtest.json"; swt.parent.mkdir(exist_ok=True); swt.write_text('{"id":"zz-swtest","target":"새 상세","eligibility":["새로"]}', encoding="utf-8")   # 서비스 워커 상세 캐시 검사용 (끝나면 지움)
     procs = [serve(NEW_PORT, REPO)]
     have_old = (OLD_REPO / "index.html").exists()
     if have_old: procs.append(serve(OLD_PORT, OLD_REPO))
@@ -238,6 +244,7 @@ def main():
             ok("판정 동등성 (../sjcu 없음 → 건너뜀)", True)
     finally:
         for p in procs: p.terminate()
+        swt.unlink(missing_ok=True)
     ok("콘솔 자체검사 실패·오류 0건", not logs_all, " | ".join(l[-200:] for l in logs_all[:5]))
     for st, n, g in rows: print(st, n, ("→ " + g) if g and st == "NG" else "")
     bad = [r for r in rows if r[0] == "NG"]
