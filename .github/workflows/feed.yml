@@ -10,6 +10,10 @@ on:
         description: 'LH API 진단만 (피드는 안 바꿈)'
         type: boolean
         default: false
+      probe_myhome:
+        description: '마이홈포털 API 진단만 (피드는 안 바꿈)'
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -29,14 +33,19 @@ jobs:
         run: node scripts/verify/lh_probe.mjs
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+      - name: 마이홈포털 API 진단
+        if: ${{ inputs.probe_myhome }}
+        run: node scripts/verify/myhome_probe.mjs
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
       - name: 공고 받기
-        if: ${{ !inputs.probe }}
+        if: ${{ !inputs.probe && !inputs.probe_myhome }}
         run: node scripts/feed.mjs
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}   # 공고 상세(조건 요약) 읽기 전용 키
       - name: 바뀌었으면 커밋
-        if: ${{ !inputs.probe }}
+        if: ${{ !inputs.probe && !inputs.probe_myhome }}
         run: |
           [ -z "$(git status --porcelain -- feed)" ] && { echo "바뀐 것 없음"; exit 0; }
           git config user.name 'github-actions[bot]'
