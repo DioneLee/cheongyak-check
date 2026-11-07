@@ -92,6 +92,22 @@ calls.length = 0; const mh = [{ id: 'myhome-21471', url: 'https://www.myhome.go.
 r = await D.addDetails(mh, { dir, log: () => {}, basics: new Map([['myhome-21471', { target: null, eligibility: [], supply: [{ type: '나라키움', price: '보증금 4,650만원 · 월 22.5만원' }], schedule: [], contact: '02-6265-0620', addr: '서울 영등포구' }]]) });
 await t('마이홈포털: API 기본 정보로 상세 (source api · AI·상세 페이지 안 부름)', async () => { const d = await rd('myhome-21471');
   assert.equal(d.source, 'api'); assert.equal(d.model, null); assert.equal(d.contact, '02-6265-0620'); assert.equal(mh[0].detail, true); assert.equal(calls.length, 0); });
+// 원문 해시(src): 같으면 합치고, 다르면(정정공고) 교체
+await t('원문 해시: 조회수 줄은 빼고 · PDF 나 본문이 바뀌면 달라짐', async () => {
+  assert.equal(D.sourceHash(PDF, '제목\n조회수 : 5,269\n본문'), D.sourceHash(PDF, '제목\n조회수 : 9,999\n본문'));
+  assert.notEqual(D.sourceHash(PDF, '본문'), D.sourceHash(Buffer.from('%PDF-1.4 정정'), '본문')); assert.notEqual(D.sourceHash(PDF, '본문'), D.sourceHash(PDF, '본문 정정')); });
+{ const sd = await mkdtemp(join(tmpdir(), 'src-')) + '/', it = [yi(31)];
+  gem = () => J({ ...FULL, schedule: [{ label: '청약', date: '11.9' }] }); await D.addDetails(it, { dir: sd, log: () => {} });
+  const first = JSON.parse(await readFile(sd + 'youth-31.json', 'utf8'));
+  await t('읽으면 원문 해시(src) 저장 · 세대 수 숫자만 오면 n세대', async () => { assert.match(first.src, /^[0-9a-f]{16}$/);
+    assert.deepEqual(D.cleanDetail({ target: 'a', supply: [{ type: 'A', units: '1' }, { type: 'B', units: '총 3세대' }] }).supply.map(x => x.units), ['1세대', '총 3세대']); });
+  const OLD = { ...first, model: 'gemini-3.5-flash-lite', schedule: [{ label: '옛 일정1', date: '10.1' }, { label: '옛 일정2', date: '10.2' }, { label: '옛 일정3', date: '10.3' }], special: ['옛 특이1', '옛 특이2', '옛 특이3'] };
+  await writeFile(sd + 'youth-31.json', JSON.stringify(OLD)); await D.addDetails(it, { dir: sd, log: () => {} });
+  await t('원문 해시가 같으면 칸별 합치기 (옛 일정 3개 유지)', async () => { const d = JSON.parse(await readFile(sd + 'youth-31.json', 'utf8')); assert.equal(d.schedule[0].label, '옛 일정1'); assert.equal(d.special.length, 3); });
+  await writeFile(sd + 'youth-31.json', JSON.stringify({ ...OLD, src: '0000000000000000' })); const lg = []; await D.addDetails(it, { dir: sd, log: m => lg.push(m) });
+  await t('원문 해시가 다르면(정정공고) 합치지 않고 새 결과로 교체 — 옛 일정·특이사항이 남지 않음', async () => { const d = JSON.parse(await readFile(sd + 'youth-31.json', 'utf8'));
+    assert.deepEqual(d.schedule, [{ label: '청약', date: '11.9' }]); assert.deepEqual(d.special, ['한부모 가점']); assert.equal(d.src, first.src); assert.ok(lg.some(m => m.includes('원문이 바뀌어 새로 교체'))); });
+  await rm(sd, { recursive: true }); }
 // 읽는 순서: 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 다시 읽기 (각각 마감 가까운 순)
 const od = await mkdtemp(join(tmpdir(), 'ord-')) + '/', T = n => new Date(Date.now() + 9 * 3600e3 + n * 864e5).toISOString().slice(0, 10);
 for (const [n] of [[21], [22], [23]]) await writeFile(od + `youth-${n}.json`, JSON.stringify({ id: `youth-${n}`, v: D.DETAIL_V, model: 'gemini-3.5-flash-lite', target: 'lite', eligibility: ['x'] }));

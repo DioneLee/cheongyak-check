@@ -108,10 +108,10 @@ fw.eval('setFeed')({ updated: '', source: '', items: [fi('s1', '2099-01-01'), { 
 ok('피드는 서울 공고만', qa('#subFeed li').length === 1 && !q('#subFeed').textContent.includes('경기'));
 fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포털·LH 공식 API', items: [1,2,3,4,5,6,7,8,9,10].map(i => fi('f' + i, '2099-01-' + String(i).padStart(2, '0'))) }); await W(50);
 ok('피드 8개 + 더 보기 · 줄 전체가 링크', qa('#subFeed li').length === 8 && qa('#subFeed li a.nm[target="_blank"]').length === 8 && /2개 더 보기/.test(q('#subFeed [data-feedmore]')?.textContent || ''), qa('#subFeed li').length);
-const rf = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/lh-d1.json') ? new fw.Response(JSON.stringify({ id: 'lh-d1', read: '2026-11-07', target: '<b>청년</b>', eligibility: ['무주택'], special: ['한부모 가점'] })) : rf(u, o);
+const rf = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/lh-d1.json') ? new fw.Response(JSON.stringify({ id: 'lh-d1', read: '2026-11-07', target: '<b>청년</b>', eligibility: ['무주택'], special: ['한부모 가점'], supply: [{ type: '25A 1510호', area: '20.17㎡', units: '1', price: '보증금 9,300만원' }] })) : rf(u, o);
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('lh-d1', '2099-01-01'), detail: true }, fi('f2', '2099-01-02'), { ...fi('f3', '2099-01-03'), id: '../x', detail: true }] }); await W(50);
 q('#subFeed [data-detail="lh-d1"]').click(); await W(300); fw.fetch = rf; const dt1 = q('#subFeed [data-det="lh-d1"]');
-ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 · 글자 그대로)', qa('#subFeed button.dbtn').length === 1 && !dt1.hidden && dt1.textContent.includes('<b>청년</b>') && dt1.textContent.includes('한부모 가점') && dt1.textContent.includes('AI가 공고문에서'), dt1?.textContent.slice(0, 80));
+ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 · 글자 그대로)', qa('#subFeed button.dbtn').length === 1 && !dt1.hidden && dt1.textContent.includes('<b>청년</b>') && dt1.textContent.includes('한부모 가점') && dt1.textContent.includes('AI가 공고문에서') && dt1.textContent.includes('20.17㎡ · 1세대 · 보증금'), dt1?.textContent.slice(0, 80));
 q('#subFeed [data-detail="lh-d1"]').click(); await W(50);
 ok('상세보기 다시 누르면 접힘', dt1.hidden && q('#subFeed [data-detail="lh-d1"]').getAttribute('aria-expanded') === 'false');
 ok('상세 없는 공고는 [공고 원문 보기] 링크', qa('#subFeed a.dlink[target="_blank"]').length === 2 && qa('#subFeed a.dlink').every(a => a.textContent.includes('공고 원문 보기')));

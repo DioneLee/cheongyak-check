@@ -917,7 +917,7 @@ function detBody(i) {
   const d = detCache.get(i.id + '@' + i.dv); if (d === undefined) return '<p class="hint">불러오는 중…</p>'; if (!d) return '<p class="hint">상세를 불러오지 못했어요. 공고 원문에서 확인해 주세요.</p>';
   const ul = a => a.length ? `<ul>${a.map(x => `<li>${x}</li>`).join('')}</ul>` : '', row = (k, v) => v ? `<div><dt>${k}</dt><dd>${v}</dd></div>` : '';
   return `${d.target ? `<p class="dtgt">${esc(d.target)}</p>` : ''}<dl>${row('신청 자격', ul(d.eligibility.map(esc)))}${row('소득', esc(d.income))}${row('자산', esc(d.asset))}${row('자동차', esc(d.car))}
-    ${row('주택형·가격', ul(d.supply.map(r => `${r.type ? `<b>${esc(r.type)}</b> ` : ''}${[r.area, r.units, r.price, r.movein && `입주 ${r.movein}`].filter(Boolean).map(esc).join(' · ')}`)))}
+    ${row('주택형·가격', ul(d.supply.map(r => `${r.type ? `<b>${esc(r.type)}</b> ` : ''}${[r.area, /^\d+$/.test(r.units) ? `${r.units}세대` : r.units, r.price, r.movein && `입주 ${r.movein}`].filter(Boolean).map(esc).join(' · ')}`)))}
     ${row('일정', ul(d.schedule.map(r => esc([r.label, r.date].filter(Boolean).join(' ')))))}${row('주소', esc(d.addr))}${row('신청 방법', linkify(d.apply))}${row('내가 낼 비용', ul(d.costs.map(esc)))}${row('특이사항', ul(d.special.map(esc)))}${row('문의', esc(d.contact))}</dl>
     <p class="hint dnote">${d.api ? '마이홈포털 공공데이터의 기본 정보예요. 신청 자격·소득 기준은' : `AI가 공고문에서 읽은 내용이에요${d.read ? ` (${esc(md2(d.read))} 읽음)` : ''}. 틀릴 수 있으니 신청 전에`} ${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">공고 원문 ↗</a>` : '공고 원문'}${d.api ? '에서 확인하세요.' : '을 꼭 확인하세요.'}</p>`;
 }

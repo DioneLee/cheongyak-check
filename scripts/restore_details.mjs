@@ -1,5 +1,6 @@
 // 상세 복구 (AI 안 씀): feed/detail/*.json 마다 git 기록에 남은 예전 버전들을 칸별 합치기(mergeDetail)로 지금 버전에 합친다
 // 목록 칸(자격·특이사항·주택형·일정·비용)은 항목이 더 많은 쪽, 한 줄 칸은 지금 값이 비었으면 예전 값. 읽은 모델·시각·버전(v)은 지금 것 그대로
+// 원문 해시(src)가 지금 버전과 같은 예전 버전끼리만 합친다 (해시가 없거나 다르면 건너뜀 → 정정공고 이전 내용이 섞이지 않게)
 // 사용: node scripts/restore_details.mjs [--dry]   → 바뀐 파일과 notices.json 의 dv 를 고친다 (커밋은 직접)
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
@@ -13,7 +14,7 @@ for (const f of (await readdir(DETAIL_DIR)).filter(f => /\.json$/.test(f) && !f.
   let acc = body(cur); const kept = new Set();
   for (const h of git('log', '--format=%H', '--', path).split('\n').filter(Boolean)) {
     let old; try { old = JSON.parse(git('show', `${h}:${path}`)); } catch { continue; }
-    if (old.source === 'api') continue;
+    if (old.source === 'api' || !cur.src || old.src !== cur.src) continue;
     const m = mergeDetail(body(old), acc); acc = m.d; m.kept.forEach(k => kept.add(`${k}←${h.slice(0, 7)}`));
   }
   if (JSON.stringify(acc) === JSON.stringify(body(cur))) continue;

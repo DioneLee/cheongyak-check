@@ -131,8 +131,9 @@ export function cleanDetail(x) {
   const s = (v, n = 160) => typeof v === 'string' && v.trim() ? v.replace(/\s+/g, ' ').trim().slice(0, n) : null;
   const arr = (v, n) => (Array.isArray(v) ? v : []).map(t => s(t)).filter(Boolean).slice(0, n);
   const objs = (v, keys, n) => (Array.isArray(v) ? v : []).map(o => Object.fromEntries(keys.map(k => [k, s(o?.[k], 80)]))).filter(o => keys.some(k => o[k])).slice(0, n);
+  const unit = o => (o.units && /^\d+$/.test(o.units) ? { ...o, units: `${o.units}세대` } : o);
   const d = { target: s(x?.target), eligibility: arr(x?.eligibility, 8), income: s(x?.income), asset: s(x?.asset), car: s(x?.car),
-    supply: objs(x?.supply, ['type', 'area', 'units', 'price', 'movein'], 10), schedule: objs(x?.schedule, ['label', 'date'], 8), apply: s(x?.apply, 200), costs: arr(x?.costs, 6), special: arr(x?.special, 8), contact: s(x?.contact) };
+    supply: objs(x?.supply, ['type', 'area', 'units', 'price', 'movein'], 10).map(unit), schedule: objs(x?.schedule, ['label', 'date'], 8), apply: s(x?.apply, 200), costs: arr(x?.costs, 6), special: arr(x?.special, 8), contact: s(x?.contact) };
   return d.target || d.eligibility.length ? d : null;
 }
 // 퇴보 막기: 다시 읽은 결과와 예전 결과를 칸마다 합친다 — 목록은 항목이 더 많은 쪽, 한 줄 칸은 새 값이 비었으면 예전 값
@@ -171,11 +172,14 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
     if (re && spent.has(MODELS[0])) { skipped++; continue; }
     try {
       const p = await findPdf(it); if (!p) { fail[it.id] = { n: MAX_TRY, why: '공고문 PDF 를 찾지 못함' }; log(`상세 · ${it.id}: PDF 없음`); continue; }
-      const { data, model } = await askGemini(await downloadPdf(p), p.text, { primaryOnly: re });
+      const pdf = await downloadPdf(p), src = sourceHash(pdf, p.text);
+      const { data, model } = await askGemini(pdf, p.text, { primaryOnly: re });
       const neu = fillFromText(cleanDetail(data), p.text); if (!neu) throw new Error('AI 가 조건을 못 읽음');
-      const old = prev.get(it.id), { d, kept } = mergeDetail(old ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
-      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, ...d }, null, 1) + '\n', 'utf8');
-      have.add(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
+      // 원문(PDF + 본문) 해시가 같을 때만 칸별 합치기 · 다르면(정정공고 등) 새 결과로 교체 · 예전 파일에 해시가 없으면(src 기록 전) 같은 원문으로 보고 합침
+      const old = prev.get(it.id), same = old && (!old.src || old.src === src);
+      const { d, kept } = mergeDetail(same ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
+      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, ...d }, null, 1) + '\n', 'utf8');
+      have.add(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${old && !same ? ' · 원문이 바뀌어 새로 교체' : ''}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
     } catch (e) {
       const why = scrubKey(e.message); if (e.skip) { skipped++; log(`상세 · ${it.id}: 미룸 (${why})`); continue; } if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }
       fail[it.id] = { n: (fail[it.id]?.n || 0) + 1, why }; log(`상세 · ${it.id}: 실패 (${why})`);
@@ -188,6 +192,11 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
   await writeFile(failFile, JSON.stringify(fail, null, 1) + '\n', 'utf8');
   for (const it of items) { it.detail = have.has(it.id); it.dv = it.detail ? await detailStamp(`${dir}${it.id}.json`) : ''; }
   return { made, stopped, skipped, have: have.size };
+}
+// 원문 해시(src): PDF 내용 + 게시판 본문 (볼 때마다 바뀌는 '조회수' 줄은 뺀다) → 같으면 다시 읽은 결과와 합치고, 다르면 교체
+export function sourceHash(pdf, text = '') {
+  const t = String(text).split('\n').filter(l => !/조회\s*수|조회\s*:/.test(l)).join('\n');
+  return createHash('sha1').update(pdf).update('\n--본문--\n').update(t).digest('hex').slice(0, 16);
 }
 // 상세 도장(dv): 파일 내용 해시 앞 10자리 → notices.json 에 넣고 사이트가 ?v= 로 붙여 받는다 (캐시가 예전 상세를 보여 주지 않게)
 export async function detailStamp(file) { try { return createHash('sha1').update(await readFile(file)).digest('hex').slice(0, 10); } catch { return ''; } }
