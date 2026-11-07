@@ -120,10 +120,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .sub-feed { padding: 0 var(--s2); }
 .sub-feed ul { list-style: none; padding: 0; margin: 0; }
 .sub-feed li + li { border-top: 1px solid var(--line); }
-.sub-feed .frow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 12px 0; color: var(--ink); text-decoration: none; }
-.sub-feed .nm { display: block; font: 700 16px/1.4 var(--sans); } .sub-feed .sub { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
+.sub-feed .frow { display: block; min-height: 60px; padding: 12px 0; color: var(--ink); text-decoration: none; }
+.sub-feed .nm { display: block; font: 700 16px/1.4 var(--sans); } .sub-feed .sub { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 4px; font-size: 13px; color: var(--muted); }
+.sub-feed .org { padding: 3px 8px; border-radius: var(--pill); font: 700 12px/1.2 var(--sans); color: var(--accent); background: var(--accent-soft); }
 @media (hover: hover) { .sub-feed a.frow:hover .nm { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; } }
-.sub-feed .dd { flex: none; padding: 4px 10px; border-radius: var(--pill); font: 700 13px/1.2 var(--sans); color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, var(--paper)); }
+.sub-feed .dd { padding: 3px 8px; border-radius: var(--pill); font: 700 12px/1.2 var(--sans); color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, var(--paper)); }
 .sub-feed .dd.new { color: var(--pass); background: color-mix(in srgb, var(--pass) 10%, var(--paper)); }
 .sub-feed .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
 
@@ -871,6 +872,7 @@ function addNotice(raw, msg) {
 // ---------- 새로 올라온 공고 (feed/notices.json · GitHub Actions 가 scripts/feed.mjs 로 만든다 · 마이홈포털·LH 공식 API 만) ----------
 // 목록에 보일 짧은 이름: [민간임대] 같은 머리말·'입주자 모집 공고' 꼬리·(공고일) 괄호를 뺀다 (전체 제목은 title 로)
 const shortTitle = s => s.replace(/^\s*(\[[^\]]*\]\s*)+/, '').replace(/\s*\((?:운영기관|모집공고일|공고일|\d{4}|'?\d{2}\.)[^)]*\)/g, '').replace(/\s*(입주자\s*)?(최초|추가|예비|잔여)?\s*(입주자\s*)?모집\s*공고문?.*$/, '').trim() || s;
+const ORG_KO = { 청년안심: '청년안심주택' };
 let subFeed = null, feedAll = false;   // feedAll: '더 보기'를 눌렀으면 전부
 function normFeed(x) {
   if (!x || !Array.isArray(x.items)) return null; const str = (v, n = 120) => String(v ?? '').slice(0, n);
@@ -886,7 +888,8 @@ function renderFeed() {
     const dd = i.to ? ddayOf({ from: i.from || i.to, to: i.to }, t) : null, isNew = i.posted && daysBetween(i.posted, t) <= 3;
     const when = i.from && i.to ? `접수 ${md2(i.from)}~${md2(i.to)}` : i.to ? `청약신청일 ${md2(i.to)}` : i.posted ? `게시 ${md2(i.posted)} · 마감일은 공고문에서` : '';
     const tag = i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : isNew ? '<span class="dd new">새 공고</span>' : '';
-    const body = `<span><span class="nm">${esc(shortTitle(i.title))}${i.url ? ' ↗' : ''}</span><span class="sub">${[i.kind.includes(i.org) ? '' : i.org, i.kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', when].filter(Boolean).map(esc).join(' · ')}</span></span>${tag}`;
+    const org = ORG_KO[i.org] || i.org, kind = i.kind.startsWith(org) ? i.kind.slice(org.length).replace(/^\((.*)\)$/, '$1') : i.kind;   // 청년안심주택(민간) → 민간
+    const body = `<span class="nm">${esc(shortTitle(i.title))}${i.url ? ' ↗' : ''}</span><span class="sub"><span class="org">${esc(org)}</span>${tag}<span>${[kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', when].filter(Boolean).map(esc).join(' · ')}</span></span>`;
     return `<li>${i.url ? `<a class="frow" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer" title="${esc(i.title)}">${body}</a>` : `<div class="frow" title="${esc(i.title)}">${body}</div>`}</li>`; }).join('')}</ul>
     <div class="foot"><span>${f.updated ? `${esc(md2(f.updated.slice(0, 10)))} 확인 · ` : ''}${esc(f.source || '')}</span>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}</div>`;
   const mb = box.querySelector('[data-feedmore]'); if (mb) mb.onclick = () => { feedAll = true; renderFeed(); };
