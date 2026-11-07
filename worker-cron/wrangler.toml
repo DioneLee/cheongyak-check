@@ -14,3 +14,12 @@ crons = ["47 * * * *"]   # UTC 매시 47분 · GitHub schedule(:17) 30분 뒤
 REPO = "DioneLee/cheongyak-check"
 WORKFLOW = "feed.yml"
 REF = "main"
+
+# 로그: Cron 실행·오류(토큰 만료/권한 오류 등)를 Cloudflare 대시보드 Workers → cheongyak-feed-cron → Observability → Logs 에서 본다
+[observability]
+enabled = true
+head_sampling_rate = 1   # 하루 24번뿐이라 전부 남김
+
+[observability.logs]
+enabled = true
+invocation_logs = true

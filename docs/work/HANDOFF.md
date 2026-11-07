@@ -34,7 +34,7 @@
 - [x] 정기 실행 보강(2026-11-07): GitHub schedule 1시간마다(:17) + Cloudflare Worker `cheongyak-feed-cron`(worker-cron/, 매시 :47 → workflow_dispatch from_cron) · 둘 다 '최근 100분 안에 성공했으면 건너뜀'
   - Cron 칸: 무료 계정 5개 한도 → som 저장소의 demo-lookbook·estate·brand 크론을 끔(같은 DB 는 demo-shop 크론이 깨움, som master `0466719` · rack-renewal `fe20674`). 지금 Cron: som · demo-shop · cheongyak-feed-cron
   - Worker 비밀값 `GH_TOKEN`: fine-grained 토큰 · 저장소 DioneLee/cheongyak-check · Actions: Read and write 만
-  - **GH_TOKEN 만료일: ____-__-__** (넣은 날: ____-__-__ · 만료 전에 새 토큰을 만들어 `cd worker-cron && npx wrangler secret put GH_TOKEN`) · 만료·권한 문제면 Worker 로그에 "토큰 만료/권한 오류"
+  - **GH_TOKEN 만료일: 2027-11-06 (넣은 날: 2026-11-07)** · Cloudflare 대시보드 Secret · 만료 전에 새 토큰을 만들어 `cd worker-cron && npx wrangler secret put GH_TOKEN` · 만료·권한 문제면 Worker 로그에 "토큰 만료/권한 오류"
   - 실행 간격 확인: `node scripts/verify/schedule_report.mjs` (예정 시각 대비 지연 · 건너뜀 · 안 돈 회차) · Worker 검사 `node scripts/verify/cron_check.mjs`
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 JSON 도 읽기) · LH 공고문 PDF 찾기
 - 참고: check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
