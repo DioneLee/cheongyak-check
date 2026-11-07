@@ -1,7 +1,8 @@
 # 공고 피드: 마이홈포털·LH 공식 API · SH·청년안심주택 게시판 → feed/notices.json + 공고 상세 feed/detail/ (바뀌었을 때만 커밋)
 # 필요: 저장소 Settings → Secrets and variables → Actions → DATA_GO_KR_KEY (공공데이터포털 인증키) · GEMINI_API_KEY (상세 읽기)
-# 정기 실행: GitHub schedule 이 자주 늦거나 건너뛰어서(2026-11-07 4번 중 1번) 1시간마다 부르고, '최근 100분 안에 성공한 실행이 있으면 건너뜀'
-#            → 실제로는 2~3시간마다 한 번. 겹치면 concurrency 로 줄 세우고 나중 것은 건너뜀. (Cloudflare Cron 은 무료 계정 한도 5개가 다 차서 안 씀)
+# 정기 실행: GitHub schedule 이 자주 늦거나 건너뛰어서(2026-11-07 4번 중 1번) 1시간마다(:17) 부르고, Cloudflare Worker(worker-cron/, cheongyak-feed-cron)가
+#            매시 :47 에 workflow_dispatch(from_cron)로 한 번 더 부른다. 둘 다 '최근 100분 안에 성공한 실행이 있으면 건너뜀' → 실제로는 2시간쯤마다 한 번.
+#            겹치면 concurrency 로 줄 세우고 나중 것은 건너뜀.
 name: 공고 피드
 on:
   schedule:
@@ -14,6 +15,10 @@ on:
         default: false
       probe_myhome:
         description: '마이홈포털 API 진단만 (피드는 안 바꿈)'
+        type: boolean
+        default: false
+      from_cron:
+        description: 'Cloudflare 정기 호출 (최근 100분 안에 성공했으면 건너뜀)'
         type: boolean
         default: false
 permissions:
@@ -29,7 +34,7 @@ jobs:
     steps:
       - name: 정기 실행이 겹치면 건너뜀
         id: guard
-        if: ${{ github.event_name == 'schedule' }}   # 손으로 돌린 실행(workflow_dispatch)은 항상 돈다
+        if: ${{ github.event_name == 'schedule' || inputs.from_cron }}   # 손으로 돌린 실행(from_cron 아님)은 항상 돈다
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

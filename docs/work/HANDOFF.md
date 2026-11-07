@@ -31,7 +31,11 @@
 - [x] 실패 분류(2026-11-07): 연결 실패·시간 초과·503·429·HTTP 5xx = **미룸**(실패로 안 셈 · `_fail.json` 의 defer·deferWhy·deferAt, 이미 읽은 공고는 상세 파일 `defer`) · 404·403·PDF 아님·AI 가 못 읽음 = 실패(3번이면 그만) · 미룬 채 마감으로 목록에서 빠진 공고 → **[미룸.md](미룸.md)** 에 자동 기록
 - [x] Gemini 호출 수 로그: 갱신마다 `Gemini 호출 · 모델: n번 (429 n번 · 503 n번)` (AI Studio 하루 한도와 맞춰 보기)
 - [x] 정기 실행 겹침 방지: workflow 가 schedule 이면 '최근 100분 안에 성공한 실행이 있으면 건너뜀' (concurrency 로 줄 세움)
-- [x] 정기 실행 보강(2026-11-07): GitHub schedule 을 1시간마다(:17)로 · 겹침 방지 덕에 실제 실행은 2~3시간마다 · Cloudflare Worker Cron 은 무료 계정 Cron 5개 한도가 다 차서 안 씀(올렸던 Worker 지움)
+- [x] 정기 실행 보강(2026-11-07): GitHub schedule 1시간마다(:17) + Cloudflare Worker `cheongyak-feed-cron`(worker-cron/, 매시 :47 → workflow_dispatch from_cron) · 둘 다 '최근 100분 안에 성공했으면 건너뜀'
+  - Cron 칸: 무료 계정 5개 한도 → som 저장소의 demo-lookbook·estate·brand 크론을 끔(같은 DB 는 demo-shop 크론이 깨움, som master `0466719` · rack-renewal `fe20674`). 지금 Cron: som · demo-shop · cheongyak-feed-cron
+  - Worker 비밀값 `GH_TOKEN`: fine-grained 토큰 · 저장소 DioneLee/cheongyak-check · Actions: Read and write 만
+  - **GH_TOKEN 만료일: ____-__-__** (넣은 날: ____-__-__ · 만료 전에 새 토큰을 만들어 `cd worker-cron && npx wrangler secret put GH_TOKEN`) · 만료·권한 문제면 Worker 로그에 "토큰 만료/권한 오류"
+  - 실행 간격 확인: `node scripts/verify/schedule_report.mjs` (예정 시각 대비 지연 · 건너뜀 · 안 돈 회차) · Worker 검사 `node scripts/verify/cron_check.mjs`
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 JSON 도 읽기) · LH 공고문 PDF 찾기
 - 참고: check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 - 왜 LH·행복주택이 적은가: 2026-11-06 확인 시 LH 청약플러스 진행 중 52건 중 서울 0건, 마이홈 서울 모집중은 캠코 1건뿐 (데이터 문제 아님)

@@ -3,3 +3,7 @@ _shot.html
 __pycache__/
 local-data/
 .env
+
+# Cloudflare Worker (worker-cron)
+worker-cron/.wrangler/
+worker-cron/.dev.vars

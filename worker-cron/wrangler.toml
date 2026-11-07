@@ -1,0 +1,16 @@
+# 청약 체크 공고 피드 정기 호출: GitHub schedule(매시 :17)이 자주 늦거나 건너뛰어서, 매시 :47 에 workflow_dispatch(from_cron=true) 를 한 번 더 부른다
+# 겹치면 workflow 가 '최근 100분 안에 성공한 실행이 있으면 건너뜀'으로 한 번만 돈다 (.github/workflows/feed.yml)
+# 비밀값: GH_TOKEN (fine-grained 토큰 · 저장소 DioneLee/cheongyak-check · Actions: Read and write 만) → npx wrangler secret put GH_TOKEN
+# 무료 계정 Cron 5개 한도: som 저장소의 demo-lookbook·estate·brand 크론을 끄고(2026-11-07) 생긴 칸을 쓴다
+name = "cheongyak-feed-cron"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = false   # 주소로 부를 일 없음 (Cron 으로만 돈다)
+
+[triggers]
+crons = ["47 * * * *"]   # UTC 매시 47분 · GitHub schedule(:17) 30분 뒤
+
+[vars]
+REPO = "DioneLee/cheongyak-check"
+WORKFLOW = "feed.yml"
+REF = "main"
