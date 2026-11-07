@@ -1,4 +1,4 @@
-# 공고 피드: 마이홈포털·LH 공식 API → feed/notices.json (바뀌었을 때만 커밋)
+# 공고 피드: 마이홈포털·LH 공식 API · SH·청년안심주택 게시판 → feed/notices.json + 공고 상세 feed/detail/ (바뀌었을 때만 커밋)
 # 필요: 저장소 Settings → Secrets and variables → Actions → DATA_GO_KR_KEY (공공데이터포털 인증키)
 name: 공고 피드
 on:
@@ -18,7 +18,7 @@ concurrency:
 jobs:
   feed:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20   # 공고 상세 읽기(Gemini) 포함
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -34,13 +34,14 @@ jobs:
         run: node scripts/feed.mjs
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}   # 공고 상세(조건 요약) 읽기 전용 키
       - name: 바뀌었으면 커밋
         if: ${{ !inputs.probe }}
         run: |
-          git diff --quiet -- feed/notices.json && { echo "바뀐 것 없음"; exit 0; }
+          [ -z "$(git status --porcelain -- feed)" ] && { echo "바뀐 것 없음"; exit 0; }
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add feed/notices.json
+          git add -A feed
           git commit -m "chore: 공고 피드 갱신 $(TZ=Asia/Seoul date +%F)"
           git pull --rebase origin main   # 그사이 사람이 push 했어도 거절되지 않게
           git push

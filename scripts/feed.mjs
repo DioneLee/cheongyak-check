@@ -5,6 +5,7 @@
 // 사용: DATA_GO_KR_KEY=... node scripts/feed.mjs      검사: node scripts/verify/feed_check.mjs
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { addDetails } from './detail.mjs';
 
 export const FEED_OUT = fileURLToPath(new URL('../feed/notices.json', import.meta.url));
 const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH·청년안심주택 게시판';
@@ -157,7 +158,7 @@ export function buildFeed(raw) {
   }
   const today = todayKst(), cutoff = todayKst(-NO_PERIOD_DAYS);
   const items = groups.map(g => g.item).filter(i => i.region.startsWith('서울') && (i.to ? i.to >= today : i.posted && i.posted >= cutoff))   // 서울 공고만
-    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '' }))
+    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', detail: false }))   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
     .sort((a, b) => (a.to || '9999').localeCompare(b.to || '9999') || b.posted.localeCompare(a.posted));
   return { updated: new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 19) + '+09:00', source: SOURCE_LABEL, items };
 }
@@ -173,6 +174,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH', '청년안심주택'][i]}: ${scrub(r.reason?.message)}`));
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
-  const feed = buildFeed(raw), wrote = await writeFeed(feed);
-  console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);
+  const feed = buildFeed(raw), det = await addDetails(feed.items), wrote = await writeFeed(feed);
+  console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · 상세 ${det.have}건 (이번에 ${det.made}건 읽음${det.stopped ? ` · 멈춤: ${det.stopped}` : ''}) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);
 }
