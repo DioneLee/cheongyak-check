@@ -1,7 +1,21 @@
 {
- "updated": "2026-11-07T15:13:47+09:00",
+ "updated": "2026-11-07T15:53:44+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판",
  "items": [
+  {
+   "id": "youth-6724",
+   "org": "청년안심",
+   "title": "[민간임대] 화랑대역 에이트플레이스 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-05",
+   "from": "2026-11-06",
+   "to": "2026-11-10",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6724&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
+   "detail": true
+  },
   {
    "id": "youth-6722",
    "org": "청년안심",
@@ -9,9 +23,11 @@
    "region": "서울",
    "kind": "청년안심주택(민간)",
    "posted": "2026-11-05",
-   "from": "",
-   "to": "2026-11-09",
+   "from": "2026-11-09",
+   "to": "2026-11-10",
    "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6722&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
    "detail": true
   },
   {
@@ -21,9 +37,11 @@
    "region": "서울",
    "kind": "청년안심주택(민간)",
    "posted": "2026-11-05",
-   "from": "",
-   "to": "2026-11-09",
+   "from": "2026-11-09",
+   "to": "2026-11-10",
    "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6721&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
    "detail": true
   },
   {
@@ -33,33 +51,11 @@
    "region": "서울",
    "kind": "청년안심주택(민간)",
    "posted": "2026-11-05",
-   "from": "",
-   "to": "2026-11-09",
+   "from": "2026-11-09",
+   "to": "2026-11-10",
    "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6720&menuNo=400008",
-   "detail": true
-  },
-  {
-   "id": "youth-6719",
-   "org": "청년안심",
-   "title": "[민간임대] 송정역 케이제이타워 최초모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-11-03",
-   "from": "",
-   "to": "2026-11-11",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6719&menuNo=400008",
-   "detail": true
-  },
-  {
-   "id": "youth-6718",
-   "org": "청년안심",
-   "title": "[민간임대] 효창공원앞역 해링턴 플레이스 용산 리버뷰 최초모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-11-03",
-   "from": "",
-   "to": "2026-11-12",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6718&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
    "detail": true
   },
   {
@@ -72,7 +68,37 @@
    "from": "2026-11-09",
    "to": "2026-11-13",
    "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21471&houseSn=1",
+   "time": "",
+   "startOnly": false,
    "detail": false
+  },
+  {
+   "id": "youth-6719",
+   "org": "청년안심",
+   "title": "[민간임대] 송정역 케이제이타워 최초모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-03",
+   "from": "2026-11-11",
+   "to": "2026-11-15",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6719&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
+   "detail": true
+  },
+  {
+   "id": "youth-6718",
+   "org": "청년안심",
+   "title": "[민간임대] 효창공원앞역 해링턴 플레이스 용산 리버뷰 최초모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-03",
+   "from": "2026-11-12",
+   "to": "2026-11-15",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6718&menuNo=400008",
+   "time": "24:00",
+   "startOnly": false,
+   "detail": true
   },
   {
    "id": "sh-312351",
@@ -84,6 +110,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312351",
+   "time": "",
+   "startOnly": false,
    "detail": false
   },
   {
@@ -96,6 +124,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312053",
+   "time": "",
+   "startOnly": false,
    "detail": false
   },
   {
@@ -108,6 +138,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312339",
+   "time": "",
+   "startOnly": false,
    "detail": false
   },
   {
@@ -120,6 +152,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311962",
+   "time": "",
+   "startOnly": false,
    "detail": false
   },
   {
@@ -132,6 +166,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312325",
+   "time": "",
+   "startOnly": false,
    "detail": false
   },
   {
@@ -144,6 +180,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311965",
+   "time": "",
+   "startOnly": false,
    "detail": false
   },
   {
@@ -156,6 +194,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311987",
+   "time": "",
+   "startOnly": false,
    "detail": false
   },
   {
@@ -168,6 +208,8 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311908",
+   "time": "",
+   "startOnly": false,
    "detail": false
   }
  ]
