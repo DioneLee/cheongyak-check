@@ -94,26 +94,36 @@ async function downloadPdf(p) {
   return buf;
 }
 
-// Gemini 로 읽기: 붐비면(503) 2초 뒤 한 번 더 · 모델 순서대로 · 429 면 그 모델은 이번 실행에서 빼고 다음 모델 (모델마다 무료 사용량이 따로) · 모두 429 면 멈춤
-// primaryOnly: 다시 읽기는 첫 모델로만 (lite 로 다시 읽으면 오히려 나빠질 수 있다) → 첫 모델을 못 쓰면 { skip }
-// 503(붐빔): RETRY_MS 뒤 한 번 더 → 그래도 붐비면 다음 모델 → 쓸 모델이 모두 붐비면 { skip } (실패로 안 셈 · 다음 갱신에)
-const spent = new Set(), used = {};   // used: 이번 실행에서 모델마다 부른 횟수 { 모델: { calls, s429, s503 } }
+// Gemini 로 읽기 (cheongyak-check 프로젝트 한도 2026-11-07 AI Studio: 3.6-flash RPM 5·RPD 20 · 3.5-flash-lite RPM 15·RPD 500 · 하루는 미국 태평양 시간 자정에 초기화)
+// · 첫 모델 하루 예산 PRIMARY_BUDGET(18, 여유 2) — 태평양 날짜 기준으로 _quota.json 에 센다(429·503 시도도 센다). 예산이 다 차면 그날은 부르지 않는다 (429 로 알아내지 않음)
+// · 호출 간격: 첫 모델 13초 · lite 5초 (RPM 5 · 15 아래로)
+// · 429: 그 모델은 그 실행에서 즉시 그만 (재시도 없음) · 503: RETRY_MS(30초) 뒤 1번만 다시 · 연결 실패·시간 초과는 붐빔처럼
+// · models: 다시 읽기는 [첫 모델], 새 공고 첫 읽기는 [lite] (addDetails 가 정함). 쓸 모델이 모두 막히면 { skip } (실패로 안 셈 · 다음 갱신에)
+export const PRIMARY_BUDGET = Number(process.env.DETAIL_PRIMARY_BUDGET ?? 18);
+const GAP = { [MODELS[0]]: Number(process.env.DETAIL_GAP_PRIMARY_MS ?? 13000), [MODELS[1]]: Number(process.env.DETAIL_GAP_LITE_MS ?? 5000) };
+export const ptDay = (t = Date.now()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' }).format(t);
+const spent = new Set(), used = {}, lastAt = {};   // used: 이번 실행에서 모델마다 부른 횟수 { 모델: { calls, s429, s503 } }
+let quota = { day: '', used: {} };   // 태평양 날짜별 모델 사용 횟수 (addDetails 가 _quota.json 에서 읽고 씀)
 export const geminiUse = () => JSON.parse(JSON.stringify(used));
-export async function askGemini(pdf, text = '', { primaryOnly = false } = {}) {
+export const primaryLeft = () => Math.max(0, PRIMARY_BUDGET - (quota.used[MODELS[0]] || 0));
+const blocked = m => spent.has(m) || (m === MODELS[0] && primaryLeft() <= 0);
+async function pace(m) { const w = (lastAt[m] || 0) + (GAP[m] ?? 0) - Date.now(); if (w > 0) await new Promise(s => setTimeout(s, w)); lastAt[m] = Date.now(); }
+export async function askGemini(pdf, text = '', { models = MODELS } = {}) {
   const key = geminiKey(); if (!key) throw Object.assign(new Error('GEMINI_API_KEY 없음'), { stop: true });
-  const models = primaryOnly ? MODELS.slice(0, 1) : MODELS;
   const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: DETAIL_PROMPT }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }, ...(text ? [{ text: `게시판 본문:\n${text}` }] : [])] }],
     generationConfig: { responseMimeType: 'application/json', responseSchema: DETAIL_SCHEMA } });
-  const end = [];   // 모델마다 끝난 까닭: 'spent'(429) · 'busy'(503 두 번) · 'err'
+  const end = [];   // 모델마다 끝난 까닭: 'spent'(429·오늘 예산) · 'busy'(503 두 번·연결) · 'err'
   let last = '';
   for (const m of models) {
-    if (spent.has(m)) { end.push('spent'); continue; }
+    if (blocked(m)) { end.push('spent'); last = spent.has(m) ? `${m}: 429 사용량 다 참` : `${m}: 오늘 예산 다 씀 (${PRIMARY_BUDGET}/${PRIMARY_BUDGET})`; continue; }
     let why = 'err';
     for (let n = 0; n < 2; n++) {
-      const u = used[m] ??= { calls: 0, s429: 0, s503: 0 }; u.calls++;
+      if (blocked(m)) { why = 'spent'; last = `${m}: 오늘 예산 다 씀 (${PRIMARY_BUDGET}/${PRIMARY_BUDGET})`; break; }   // 503 재시도 직전에 예산이 찼으면 그만
+      await pace(m);
+      const u = used[m] ??= { calls: 0, s429: 0, s503: 0 }; u.calls++; quota.used[m] = (quota.used[m] || 0) + 1;
       let r; try { r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body, signal: AbortSignal.timeout(120000) }); }
       catch (e) { why = 'busy'; last = `${m}: ${e?.name === 'TimeoutError' ? '시간 초과' : '연결 실패'}`; break; }   // 연결 실패·시간 초과는 붐빔처럼 (미룸)
-      if (r.status === 429) { u.s429++; spent.add(m); why = 'spent'; last = `${m}: 429 사용량 다 참`; break; }
+      if (r.status === 429) { u.s429++; spent.add(m); why = 'spent'; last = `${m}: 429 사용량 다 참`; break; }   // 재시도 없음
       if (r.status === 503) { u.s503++; if (n === 0) { await new Promise(s => setTimeout(s, RETRY_MS)); continue; } why = 'busy'; last = `${m}: 503 붐빔`; break; }
       if (!r.ok) { last = `${m}: HTTP ${r.status}`; if (r.status === 400 || r.status === 403) { const t = await r.text(); if (/API_KEY|PERMISSION/.test(t)) throw Object.assign(new Error(`${m}: 키 오류`), { stop: true }); } break; }
       const t = (await r.json())?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
@@ -121,7 +131,6 @@ export async function askGemini(pdf, text = '', { primaryOnly = false } = {}) {
     }
     end.push(why);
   }
-  if (end.every(x => x === 'spent')) throw Object.assign(new Error(primaryOnly ? `${models[0]} 사용량 다 참` : '모든 모델 429 사용량 다 참'), primaryOnly ? { skip: true } : { stop: true });
   if (end.every(x => x === 'spent' || x === 'busy')) throw Object.assign(new Error(`${last} · 다음 갱신에`), { skip: true });
   throw new Error(last || 'Gemini 실패');
 }
@@ -162,8 +171,9 @@ const nowKst = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 16
 // · 다시 읽기는 첫 모델로만 · 첫 모델 사용량이 다 차면 다시 읽기는 건너뜀(실패로 안 셈)
 // 실패 분류: 연결 실패·시간 초과·503·429(사용량)·HTTP 5xx = 미룸 (실패로 안 셈, 횟수는 _fail.json 의 defer 와 상세 파일 defer 에) · 404·403·PDF 아님·AI 가 못 읽음 = 실패 (3번이면 그만)
 export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log = console.log, basics = new Map(), deferLog = DEFER_LOG } = {}) {
-  spent.clear(); for (const k in used) delete used[k];
+  spent.clear(); for (const k in used) delete used[k]; for (const k in lastAt) delete lastAt[k];
   await mkdir(dir, { recursive: true });
+  const quotaFile = `${dir}_quota.json`, day = ptDay(); quota = await readJson(quotaFile, { day: '', used: {} }); if (quota.day !== day) quota = { day, used: {} };   // 태평양 날짜가 바뀌면 0부터
   const failFile = `${dir}_fail.json`, fail = await readJson(failFile, {}), have = new Set((await readdir(dir)).filter(f => /\.json$/.test(f) && !f.startsWith('_')).map(f => f.slice(0, -5)));
   const prev = new Map(); for (const id of have) prev.set(id, await readJson(`${dir}${id}.json`, {}));
   const needs = id => { const o = prev.get(id); return !o || o.source === 'api' ? false : (o.v || 1) < DETAIL_V || o.model !== MODELS[0]; };
@@ -177,35 +187,39 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
     if (!o.att) { o.att = a.att; await writeFile(`${dir}${it.id}.json`, JSON.stringify(o, null, 1) + '\n', 'utf8'); }
     else if (o.att !== a.att) { attChanged.add(it.id); log(`상세 · ${it.id}: 첨부가 바뀜 → 원문 확인`); } }
   const today = nowKst().slice(0, 10), due = i => i.to ? Math.round((Date.parse(i.to) - Date.parse(today)) / 864e5) : 9999, byDue = (a, b) => due(a) - due(b);
+  // 첫 모델(하루 예산) 우선순위: 마감 3일 이내 다시 읽기 → 원문(첨부)이 바뀐 공고 교체 → 나머지 다시 읽기 · 새 공고 첫 읽기는 lite (각각 마감 가까운 순)
   const again = items.filter(i => have.has(i.id) && (needs(i.id) || attChanged.has(i.id))).sort(byDue), fresh = items.filter(i => !have.has(i.id)).sort(byDue);
-  const todo = [...again.filter(i => due(i) <= 3), ...fresh, ...again.filter(i => due(i) > 3)];   // 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 다시 읽기 (각각 마감 가까운 순)
-  let made = 0, stopped = '', skipped = 0; const deferredNow = new Set();
+  const soon = again.filter(i => due(i) <= 3), changed = again.filter(i => due(i) > 3 && attChanged.has(i.id)), rest = again.filter(i => due(i) > 3 && !attChanged.has(i.id));
+  const todo = [...soon, ...changed, ...rest, ...fresh];
+  let made = 0, madeRe = 0, madeNew = 0, stopped = '', skipped = 0; const deferredNow = new Set();   // 한 번에: 첫 모델 다시 읽기 max 개 + lite 새 공고 max 개
   const defer = (it, why) => { skipped++; deferredNow.add(it.id); const f = fail[it.id] ?? {};
     fail[it.id] = { ...f, n: f.n || 0, defer: (f.defer || 0) + 1, deferWhy: why, deferAt: nowKst(), title: it.title || f.title || '', to: it.to || f.to || '' };
     log(`상세 · ${it.id}: 미룸 ${fail[it.id].defer}회째 (${why})`); };
   for (const it of todo) {
-    if (!safeId(it.id) || stopped || made >= max || (fail[it.id]?.n || 0) >= MAX_TRY || basics.has(it.id)) continue;
     const re = have.has(it.id);
-    if (re && spent.has(MODELS[0])) { defer(it, `${MODELS[0]} 사용량 다 참`); continue; }
+    if (!safeId(it.id) || stopped || (re ? madeRe : madeNew) >= max || (fail[it.id]?.n || 0) >= MAX_TRY || basics.has(it.id)) continue;
+    if (re && blocked(MODELS[0])) { defer(it, spent.has(MODELS[0]) ? `${MODELS[0]} 429 사용량 다 참` : `${MODELS[0]} 오늘 예산 다 씀 (${PRIMARY_BUDGET}/${PRIMARY_BUDGET})`); continue; }
     try {
       const p = await findPdf(it); if (!p) { fail[it.id] = { ...fail[it.id], n: MAX_TRY, why: '공고문 PDF 를 찾지 못함' }; log(`상세 · ${it.id}: PDF 없음`); continue; }
       const pdf = await downloadPdf(p), src = sourceHash(pdf, p.text), old = prev.get(it.id);
       if (attChanged.has(it.id) && old?.src === src) {   // 첨부 이름·식별자만 바뀌고 원문은 같음 → AI 없이 첨부 정보만 고침
         await writeFile(`${dir}${it.id}.json`, JSON.stringify({ ...old, att: p.att }, null, 1) + '\n', 'utf8'); log(`상세 · ${it.id}: 첨부 정보만 바뀜 (원문 같음)`); continue; }
-      const { data, model } = await askGemini(pdf, p.text, { primaryOnly: re });
+      const { data, model } = await askGemini(pdf, p.text, { models: re ? [MODELS[0]] : [MODELS[1]] });
       const neu = fillFromText(cleanDetail(data), p.text); if (!neu) throw new Error('AI 가 조건을 못 읽음');
       // 원문(PDF + 본문) 해시가 같을 때만 칸별 합치기 · 다르면(정정공고 등) 새 결과로 교체 · 예전 파일에 해시가 없으면(src 기록 전) 같은 원문으로 보고 합침 (단, 첨부가 바뀌었으면 다른 원문)
       const same = !!old && (old.src ? old.src === src : !attChanged.has(it.id));
       if (old && !same && model !== MODELS[0]) { defer(it, `원문이 바뀌었지만 ${model} 결과라 교체 안 함 · 다음 갱신에 ${MODELS[0]}`); continue; }   // 교체는 첫 모델로만
       const { d, kept } = mergeDetail(same ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
       await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, att: p.att, ...d }, null, 1) + '\n', 'utf8');
-      have.add(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${old && !same ? ' · 원문이 바뀌어 새로 교체' : ''}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
+      have.add(it.id); delete fail[it.id]; made++; re ? madeRe++ : madeNew++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${old && !same ? ' · 원문이 바뀌어 새로 교체' : ''}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
     } catch (e) {
       const why = scrubKey(e.message); if (e.skip || e.transient) { defer(it, why); continue; } if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }
       fail[it.id] = { ...fail[it.id], n: (fail[it.id]?.n || 0) + 1, why }; log(`상세 · ${it.id}: 실패 ${fail[it.id].n}회째 (${why})`);
     }
   }
   if (skipped) log(`상세 · ${skipped}건은 다음 갱신에 (사용량·붐빔)`);
+  await writeFile(quotaFile, JSON.stringify(quota, null, 1) + '\n', 'utf8');
+  log(`상세 · 첫 모델 오늘 사용 ${quota.used[MODELS[0]] || 0}/${PRIMARY_BUDGET} (태평양 ${day} · lite ${quota.used[MODELS[1]] || 0}번)`);
   for (const id of deferredNow) if (have.has(id)) {   // 상세 파일에도 미룸 횟수 (다시 읽기에 성공하면 새 파일에는 없음)
     const o = await readJson(`${dir}${id}.json`, null); if (o) await writeFile(`${dir}${id}.json`, JSON.stringify({ ...o, defer: { n: fail[id].defer, why: fail[id].deferWhy, at: fail[id].deferAt } }, null, 1) + '\n', 'utf8'); }
   const ids = new Set(items.map(i => i.id)), gone = [];
@@ -218,7 +232,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
     log(`상세 · 마감까지 미뤄진 공고 ${gone.length}건 → ${deferLog.split('/').slice(-3).join('/')}`); }
   await writeFile(failFile, JSON.stringify(fail, null, 1) + '\n', 'utf8');
   for (const it of items) { it.detail = have.has(it.id); it.dv = it.detail ? await detailStamp(`${dir}${it.id}.json`) : ''; }
-  return { made, stopped, skipped, have: have.size, use: geminiUse() };
+  return { made, madeRe, madeNew, stopped, skipped, have: have.size, use: geminiUse(), today: { day, ...quota.used } };
 }
 // 원문 해시(src): PDF 내용 + 게시판 본문의 '글 내용' 줄만 (다음글/이전글 뒤는 버리고, 조회수·등록일·목록·인쇄·공유·첨부 같은 주변 줄은 뺀다)
 // → 같으면 다시 읽은 결과와 합치고, 다르면 교체
