@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-07T16:00:57+09:00",
+ "updated": "2026-11-07T16:18:43+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판",
  "items": [
   {
@@ -70,7 +70,7 @@
    "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21471&houseSn=1",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true
   },
   {
    "id": "youth-6719",
@@ -126,7 +126,7 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312053",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true
   },
   {
    "id": "sh-312339",
@@ -140,7 +140,7 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312339",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true
   },
   {
    "id": "sh-311962",
@@ -154,7 +154,7 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311962",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true
   },
   {
    "id": "sh-312325",
@@ -182,7 +182,7 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311965",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true
   },
   {
    "id": "sh-311987",
@@ -196,7 +196,7 @@
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311987",
    "time": "",
    "startOnly": false,
-   "detail": false
+   "detail": true
   },
   {
    "id": "sh-311908",
