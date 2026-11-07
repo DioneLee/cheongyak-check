@@ -22,6 +22,8 @@ globalThis.fetch = async (url, o) => {
     { pblancId: 'A1', pblancNm: '서울 행복주택 입주자 모집 공고', suplyInsttNm: '한국토지주택공사', brtcNm: '서울특별시', signguNm: '마포구', suplyTyNm: '행복주택', rcritPblancDe: d(-2), beginDe: d(3), endDe: d(5), pcUrl: 'https://www.myhome.go.kr/a1' },
     { pblancId: 'A1', pblancNm: '서울 행복주택 입주자 모집 공고', signguNm: '용산구', brtcNm: '서울특별시' },
     { pblancId: 'B2', pblancNm: '장기전세 모집', suplyInsttNm: 'SH서울주택도시공사', brtcNm: '서울특별시', signguNm: '강서구', rcritPblancDe: d(-1), beginDe: d(10), endDe: d(12), pcUrl: 'javascript:alert(1)' }] } }));
+  if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do')) return new Response(u.searchParams.get('boardId') !== '7001' ? '<p>본문 없음</p>'
+    : `<h3>[민간임대] 개봉역 세이지움 &amp; 개봉 추가모집공고</h3><p>[공급일정]</p><p>■청약신청 : ‘${T(3).slice(2, 4)}. ${T(3).slice(5, 7)}. ${T(3).slice(8)}. (월) ~ ${T(4).slice(5, 7)}. ${T(4).slice(8)}. (화) 00:00 ~ 23:00</p><p>■ 청약신청 페이지 : https://naver.me/x</p><p>다음글</p>`);
   if (u.hostname === 'soco.seoul.go.kr') return new Response(JSON.stringify({ pagingInfo: { totPage: 1 }, resultList: [
     { boardId: 7001, nttSj: '[민간임대] 개봉역 세이지움 &amp; 개봉 추가모집공고', optn1: T(-1), optn4: T(3), optn2: '2' },
     { boardId: 7002, nttSj: '[공공임대] 지난 공고', optn1: T(-9), optn4: T(-2), optn2: '1' }, { boardId: 7003, nttSj: '' }] }));
@@ -39,10 +41,18 @@ t('SH 게시판: 모집공고만 (당첨·채용 글 뺌) · 구 이름 · 종�
   assert.equal(sh[1].region, '서울'); assert.equal(sh[1].kind, '토지임대부'); assert.equal(sh[0].to, ''); assert.equal(sh[0].posted, T(-3)); assert.match(sh[0].url, /^https:\/\/www\.i-sh\.co\.kr\/.*view\.do\?multi_itm_seq=2&seq=9001$/); });
 t('SH 쪽 넘김은 POST (page=1 · 임대·분양 두 게시판)', () => { const sh = seen.filter(u => u.hostname === 'www.i-sh.co.kr'); assert.equal(sh.length, 2); assert.ok(sh.every(u => u.m === 'POST' && u.b.includes('page=1'))); });
 t('SH: 마감일 없는 공고는 게시 21일까지만', () => { const g = F.buildFeed(sh); assert.deepEqual(g.items.map(i => i.id).sort(), ['sh-9001', 'sh-9003']); });
-t('청년안심주택: 신청일 = 마감일 · 공공/민간 · 상세 링크 · 빈 제목 뺌', () => { assert.equal(yo.length, 2); const a = yo[0];
-  assert.equal(a.title, '[민간임대] 개봉역 세이지움 & 개봉 추가모집공고'); assert.equal(a.to, T(3)); assert.equal(a.from, ''); assert.equal(a.kind, '청년안심주택(민간)'); assert.equal(a.region, '서울');
+t('청년안심주택: 상세 본문에서 마감일·시각 · 못 읽으면 시작일(startOnly) · 공공/민간 · 상세 링크 · 빈 제목 뺌', () => { assert.equal(yo.length, 2); const a = yo[0];
+  assert.equal(a.title, '[민간임대] 개봉역 세이지움 & 개봉 추가모집공고'); assert.equal(a.from, T(3)); assert.equal(a.to, T(4)); assert.equal(a.time, '23:00'); assert.equal(a.startOnly, false);
+  assert.equal(yo[1].to, T(-2)); assert.equal(yo[1].startOnly, true); assert.equal(a.kind, '청년안심주택(민간)'); assert.equal(a.region, '서울');
   assert.equal(a.url, 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=7001&menuNo=400008'); assert.equal(F.buildFeed(yo).items.length, 1); });
-t('청년안심주택은 POST · 키 안 보냄', () => { const y = seen.filter(u => u.hostname === 'soco.seoul.go.kr'); assert.equal(y.length, 1); assert.ok(y[0].m === 'POST' && y[0].b.includes('bbsId=BMSR00015') && !y[0].b.includes('TEST')); });
+t('청년안심주택은 POST · 키 안 보냄', () => { const y = seen.filter(u => u.hostname === 'soco.seoul.go.kr' && u.m === 'POST'); assert.equal(y.length, 1); assert.ok(y[0].m === 'POST' && y[0].b.includes('bbsId=BMSR00015') && !y[0].b.includes('TEST')); });
+t('마감일 읽기: 더포디엄830 본문 → 11.10 23:00', () => assert.deepEqual(F.parseDue('[공급일정]\n■모집공고 : ‘26. 11. 05. (목)\n■청약신청 : ‘26. 11. 09. (월) ~ 11. 10. (화) 00:00 ~ 23:00\n■서류심사 대상자 발표 : ‘26. 11. 11. (수) 17:00 예정', '2026-11-09'), { from: '2026-11-09', to: '2026-11-10', time: '23:00' }));
+t('마감일 읽기: 시작 시각 있음 · 하루짜리 · 24:00 · 해 넘김 · 못 읽음', () => {
+  assert.deepEqual(F.parseDue('■청약신청 : ‘26. 11. 06. (금) 09:00 ~ 11. 10. (화) 23:00'), { from: '2026-11-06', to: '2026-11-10', time: '23:00' });
+  assert.deepEqual(F.parseDue('■청약신청 : ‘26. 11. 02. (월) 00:00 ~ 23:00'), { from: '2026-11-02', to: '2026-11-02', time: '23:00' });
+  assert.equal(F.parseDue('■청약신청 : ‘26. 11. 12. (목) 00:00 ~ 11. 15. (일) 24:00').time, '24:00');
+  assert.equal(F.parseDue('■청약신청 : ‘26. 12. 30. (수) ~ 01. 02. (토) 18:00').to, '2027-01-02');
+  assert.equal(F.parseDue('■ 청약신청 페이지 : https://naver.me/x'), null); assert.equal(F.parseDue('청약신청 : 추후 안내'), null); });
 let shErr = ''; { const f0 = globalThis.fetch; globalThis.fetch = async () => new Response('<html>점검 중</html>'); try { await F.fetchSH({ pages: 1 }); } catch (e) { shErr = e.message; } globalThis.fetch = f0; }
 t('SH 목록 모양이 바뀌면 SH 만 실패로', () => assert.equal(shErr, 'SH 게시판: 목록 모양이 바뀜'));
 const feed = F.buildFeed([...my, ...lh]);
@@ -52,7 +62,7 @@ t('같은 공고(머리말·공고 글자 차이) 합침 · LH 우선 · 빈 칸
 t('마감 가까운 순 · http(s) 링크만', () => { assert.equal(feed.items[1].id, 'myhome-B2'); assert.equal(feed.items[1].url, ''); });
 t('서울 밖 공고는 뺌', () => { const g = F.buildFeed([{ feedId: 'lh-9', org: 'LH', title: '경기 행복주택', region: '경기', kind: '', posted: T(-1), from: '', to: T(3), url: '' }]); assert.equal(g.items.length, 0); });
 t('최상위 형식 · 출처 이름', () => { assert.deepEqual(Object.keys(feed), ['updated', 'source', 'items']); assert.equal(feed.source, '마이홈포털·LH 공식 API · SH·청년안심주택 게시판'); assert.match(feed.updated, /\+09:00$/); });
-t('항목 필드 10개 (사이트 normFeed 와 같은 모양)', () => assert.deepEqual(Object.keys(feed.items[0]), ['id', 'org', 'title', 'region', 'kind', 'posted', 'from', 'to', 'url', 'detail']));
+t('항목 필드 12개 (사이트 normFeed 와 같은 모양)', () => assert.deepEqual(Object.keys(feed.items[0]), ['id', 'org', 'title', 'region', 'kind', 'posted', 'from', 'to', 'url', 'time', 'startOnly', 'detail']));
 t('오류 메시지에서 키 지움', () => { const m = F.scrub('x serviceKey=TEST+KEY==-only&y TEST%2BKEY%3D%3D-only'); assert.ok(!m.includes('TEST'), m); });
 let err = ''; globalThis.fetch = async () => new Response('<returnAuthMsg>SERVICE_KEY_IS_NOT_REGISTERED_ERROR</returnAuthMsg>');
 try { await F.fetchLH(); } catch (e) { err = e.message; }

@@ -114,6 +114,10 @@ q('#subFeed [data-detail="lh-d1"]').click(); await W(300); fw.fetch = rf; const 
 ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 · 글자 그대로)', qa('#subFeed .dbtn').length === 1 && !dt1.hidden && dt1.textContent.includes('<b>청년</b>') && dt1.textContent.includes('한부모 가점') && dt1.textContent.includes('AI가 공고문에서'), dt1?.textContent.slice(0, 80));
 q('#subFeed [data-detail="lh-d1"]').click(); await W(50);
 ok('상세보기 다시 누르면 접힘', dt1.hidden && q('#subFeed [data-detail="lh-d1"]').getAttribute('aria-expanded') === 'false');
+fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('youth-d2', '2026-11-10'), org: '청년안심', from: '2026-11-09', time: '23:00' }, { ...fi('youth-d3', '2026-11-12'), org: '청년안심', startOnly: true }] }); await W(50);
+const r2 = qa('#subFeed li').map(li => li.textContent.replace(/\s+/g, ' '));
+ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3) · 마감일 모르면 시작일 표시', r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감') && r2[1].includes('청약신청일 11.12(목) · 마감일은 공고문에서'), r2.join(' / '));
+delete fw.__today;
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];
 const pdf = await (await fetch('samples/notice_example.pdf')).blob(), dt = new fw.DataTransfer(); dt.items.add(new fw.File([pdf], 'notice_example.pdf', { type: 'application/pdf' }));

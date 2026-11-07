@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 export const DETAIL_DIR = fileURLToPath(new URL('../feed/detail/', import.meta.url));
 const MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash-lite'];   // 사이트 AI_MODELS 와 같은 순서
-const MAX_NEW = 5, MAX_TRY = 3, MAX_PDF = 15 * 1048576;
+const MAX_NEW = 5, MAX_TRY = 3, MAX_PDF = 15 * 1048576, MAX_TEXT = 6000;
+export const DETAIL_V = 3;   // 읽는 방법을 바꾸면 올린다 → 예전 상세는 다시 읽음 (v2: 게시판 본문도 함께 보냄 · v3: 신청 방법·입주 기간·부담 비용·호수)
 const UA = { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' };
 
 export const DETAIL_PROMPT = `첨부한 주택 입주자 모집공고문을 읽고, 신청하려는 사람이 알아야 할 조건만 아래 형식의 JSON 하나로 정리해줘. 설명 문장 없이 JSON만.
@@ -15,14 +16,19 @@ export const DETAIL_PROMPT = `첨부한 주택 입주자 모집공고문을 읽�
 - target: 누가 신청할 수 있는지 한 줄 (예: '만 19~39세 무주택 미혼 청년').
 - eligibility: 신청 자격 조건 목록 (나이·혼인·무주택·거주지·청약통장 등), 최대 8개.
 - income, asset, car: 소득·총자산·자동차 기준 한 줄씩 (예: '전년도 도시근로자 월평균소득 100% 이하').
-- supply: 주택형(또는 단지)마다 type, area(전용면적), units(모집 세대), price(보증금·월임대료 또는 분양가), 최대 10개.
+- supply: 주택형(또는 호실)마다 type, area(전용면적), units(모집 세대), price(보증금·월임대료 또는 분양가), movein(그 호실의 입주 기간·입주 가능일), 최대 10개.
+  type 에는 주택형과 호수를 함께 쓴다 (예: '25A 1510호'). 공고문에 호수가 있으면 한 행도 빠짐없이 모든 행에 호수를 쓴다.
+- apply: 신청 방법 한 줄 (인터넷·방문·우편 등, 신청 페이지 주소가 있으면 주소 그대로 — 예: 네이버폼 https://naver.me/…).
+- costs: 임차인이 따로 내는 비용 목록 (임대보증금 보증보험 수수료·관리비 예치금·중개수수료 등, 금액이나 비율이 있으면 함께), 최대 6개.
 - schedule: 접수·서류 제출·발표·계약 일정 (label, date).
 - special: 가점·우선순위·특이사항과 주의할 점 (한부모·다자녀·세대 분리·부모 소득 합산·거주 기간 등이 있으면 꼭), 최대 8개.
-- contact: 문의처 한 줄.`;
+- contact: 문의처 한 줄 (전화번호 포함).
+- 함께 보내는 '게시판 본문'에도 일정·문의·신청 방법이 적혀 있을 수 있다. schedule 과 contact 는 공고문이나 본문 어디든 있으면 반드시 채운다.`;
 const S = { type: 'STRING', nullable: true }, SA = { type: 'ARRAY', items: { type: 'STRING' } };
 export const DETAIL_SCHEMA = { type: 'OBJECT', required: ['target', 'eligibility'], properties: {
   target: S, eligibility: SA, income: S, asset: S, car: S,
-  supply: { type: 'ARRAY', items: { type: 'OBJECT', properties: { type: S, area: S, units: S, price: S } } },
+  supply: { type: 'ARRAY', items: { type: 'OBJECT', properties: { type: S, area: S, units: S, price: S, movein: S } } },
+  apply: S, costs: SA,
   schedule: { type: 'ARRAY', items: { type: 'OBJECT', properties: { label: S, date: S } } },
   special: SA, contact: S } };
 
@@ -53,16 +59,25 @@ export function pdfFromMyHomeView(html) {   // 마이홈포털 상세: 공고문
   const list = [...String(html).matchAll(/fnDownFile\('([^']+)',\s*'(\d+)'\)"?[^>]*>\s*([^<]+?)\s*<\/a>/g)].map(m => ({ id: m[1], sn: m[2], name: m[3].trim() }));
   const f = pick(list); return f ? { url: 'https://www.myhome.go.kr/hws/com/fms/cvplFileDownload.do', method: 'POST', body: new URLSearchParams({ atchFileId: f.id, fileSn: f.sn }) } : null;
 }
+// 게시판 본문 글 (일정·문의가 PDF 보다 여기에 잘 정리된 곳이 많다): 태그를 빼고, 제목이 처음 나오는 곳부터 '다음글'/'목록' 앞까지
+export function pageText(html, title = '') {
+  let t = String(html).replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, ' ').replace(/<br\s*\/?>|<\/(p|div|li|tr|h\d)>/gi, '\n').replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  t = t.split('\n').map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
+  const key = title.replace(/^\s*(\[[^\]]*\]\s*)+/, '').slice(0, 12), i = key ? t.indexOf(key) : -1; if (i > 0) t = t.slice(i);
+  const j = t.search(/\n(다음글|이전글|목록)(\s|$)/); if (j > 0) t = t.slice(0, j);
+  return t.slice(0, MAX_TEXT);
+}
 export async function findPdf(item) {
-  const src = item.id.split('-')[0];
-  if (src === 'youth') return pdfFromYouthView(await (await get(item.url)).text(), item.url);
-  if (src === 'myhome') return pdfFromMyHomeView(await (await get(item.url)).text());
-  if (src === 'sh') {
-    const f = pick(shFiles(await (await get(item.url)).text())); if (!f) return null;
+  const src = item.id.split('-')[0]; if (!['youth', 'myhome', 'sh'].includes(src)) return null;   // LH 등: 아직 PDF 찾는 법을 모른다 → 상세 없음
+  const html = await (await get(item.url)).text(), text = pageText(html, item.title);
+  let p = null;
+  if (src === 'youth') p = pdfFromYouthView(html, item.url);
+  else if (src === 'myhome') p = pdfFromMyHomeView(html);
+  else { const f = pick(shFiles(html)); if (f) {
     const r = await get(`https://www.i-sh.co.kr/app/com/util/htmlConverter.do?brd_id=${encodeURIComponent(f.brdId)}&seq=${encodeURIComponent(f.seq)}&data_tp=A&file_seq=${encodeURIComponent(f.fileSeq)}`);
-    const url = shPdfFromViewer(r.url); return url ? { url } : null;
-  }
-  return null;   // LH 등: 아직 PDF 찾는 법을 모른다 → 상세 없음
+    const url = shPdfFromViewer(r.url); if (url) p = { url }; } }
+  return p ? { ...p, text } : null;
 }
 async function downloadPdf(p) {
   const r = await get(p.url, p.method ? { method: p.method, body: p.body } : {}), buf = Buffer.from(await r.arrayBuffer());
@@ -72,9 +87,9 @@ async function downloadPdf(p) {
 }
 
 // Gemini 로 읽기: 붐비면(503) 2초 뒤 한 번 더 · 모델 순서대로 · 429 는 그대로 위로 (이번 실행 멈춤)
-export async function askGemini(pdf) {
+export async function askGemini(pdf, text = '') {
   const key = geminiKey(); if (!key) throw Object.assign(new Error('GEMINI_API_KEY 없음'), { stop: true });
-  const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: DETAIL_PROMPT }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }] }],
+  const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: DETAIL_PROMPT }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }, ...(text ? [{ text: `게시판 본문:\n${text}` }] : [])] }],
     generationConfig: { responseMimeType: 'application/json', responseSchema: DETAIL_SCHEMA } });
   let last = '';
   for (const m of MODELS) for (let n = 0; n < 2; n++) {
@@ -95,7 +110,7 @@ export function cleanDetail(x) {
   const arr = (v, n) => (Array.isArray(v) ? v : []).map(t => s(t)).filter(Boolean).slice(0, n);
   const objs = (v, keys, n) => (Array.isArray(v) ? v : []).map(o => Object.fromEntries(keys.map(k => [k, s(o?.[k], 80)]))).filter(o => keys.some(k => o[k])).slice(0, n);
   const d = { target: s(x?.target), eligibility: arr(x?.eligibility, 8), income: s(x?.income), asset: s(x?.asset), car: s(x?.car),
-    supply: objs(x?.supply, ['type', 'area', 'units', 'price'], 10), schedule: objs(x?.schedule, ['label', 'date'], 8), special: arr(x?.special, 8), contact: s(x?.contact) };
+    supply: objs(x?.supply, ['type', 'area', 'units', 'price', 'movein'], 10), schedule: objs(x?.schedule, ['label', 'date'], 8), apply: s(x?.apply, 200), costs: arr(x?.costs, 6), special: arr(x?.special, 8), contact: s(x?.contact) };
   return d.target || d.eligibility.length ? d : null;
 }
 
@@ -106,14 +121,15 @@ const safeId = id => /^[a-z]+-[\w-]{1,60}$/.test(id);
 export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log = console.log } = {}) {
   await mkdir(dir, { recursive: true });
   const failFile = `${dir}_fail.json`, fail = await readJson(failFile, {}), have = new Set((await readdir(dir)).filter(f => /\.json$/.test(f) && !f.startsWith('_')).map(f => f.slice(0, -5)));
+  const old = new Set(); for (const id of have) if (((await readJson(`${dir}${id}.json`, {})).v || 1) < DETAIL_V) old.add(id);   // 예전 방법으로 읽은 것 (다시 읽을 때까지 그대로 보여 줌)
   let made = 0, stopped = '';
   for (const it of items) {
-    if (!safeId(it.id) || have.has(it.id) || stopped || made >= max || (fail[it.id]?.n || 0) >= MAX_TRY) continue;
+    if (!safeId(it.id) || (have.has(it.id) && !old.has(it.id)) || stopped || made >= max || (fail[it.id]?.n || 0) >= MAX_TRY) continue;
     try {
       const p = await findPdf(it); if (!p) { fail[it.id] = { n: MAX_TRY, why: '공고문 PDF 를 찾지 못함' }; log(`상세 · ${it.id}: PDF 없음`); continue; }
-      const d = cleanDetail(await askGemini(await downloadPdf(p))); if (!d) throw new Error('AI 가 조건을 못 읽음');
-      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, read: new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10), ...d }, null, 1) + '\n', 'utf8');
-      have.add(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: 읽음`);
+      const d = cleanDetail(await askGemini(await downloadPdf(p), p.text)); if (!d) throw new Error('AI 가 조건을 못 읽음');
+      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10), ...d }, null, 1) + '\n', 'utf8');
+      have.add(it.id); old.delete(it.id); delete fail[it.id]; made++; log(`상세 · ${it.id}: 읽음`);
     } catch (e) {
       const why = scrubKey(e.message); if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }
       fail[it.id] = { n: (fail[it.id]?.n || 0) + 1, why }; log(`상세 · ${it.id}: 실패 (${why})`);

@@ -17,14 +17,16 @@ globalThis.fetch = async (url, o = {}) => {
   if (u.hostname === 'www.myhome.go.kr' && u.pathname.includes('DetailView')) return new Response(`<a href="javascript:fnDownFile('1a18', '1')" >\n (영등포)행복주택 모집 공고문.pdf</a>`);
   return new Response(PDF);
 };
-await t('PDF 찾기: 청년안심주택 · 공고문 PDF 를 고름', async () => assert.deepEqual(await D.findPdf({ id: 'youth-1', url: 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=1' }), { url: 'https://soco.seoul.go.kr/coHouse/cmmn/file/fileDown.do?atchFileId=aa&fileSn=1' }));
-await t('PDF 찾기: SH 미리보기 주소 → 원본 PDF', async () => { assert.deepEqual(await D.findPdf({ id: 'sh-9', url: 'https://www.i-sh.co.kr/app/x/view.do?seq=9' }), { url: 'https://www.i-sh.co.kr/app/upload/bbs/GS0401/2026/10/2026_abc.pdf' });
+await t('PDF 찾기: 청년안심주택 · 공고문 PDF 를 고름', async () => assert.equal((await D.findPdf({ id: 'youth-1', title: 'x', url: 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=1' })).url, 'https://soco.seoul.go.kr/coHouse/cmmn/file/fileDown.do?atchFileId=aa&fileSn=1'));
+await t('PDF 찾기: SH 미리보기 주소 → 원본 PDF', async () => { assert.equal((await D.findPdf({ id: 'sh-9', title: 'x', url: 'https://www.i-sh.co.kr/app/x/view.do?seq=9' })).url, 'https://www.i-sh.co.kr/app/upload/bbs/GS0401/2026/10/2026_abc.pdf');
   assert.ok(calls.some(c => c.u.pathname.endsWith('htmlConverter.do') && c.u.searchParams.get('file_seq') === '2')); });
 await t('PDF 찾기: 마이홈 공고문 → POST 다운로드', async () => { const p = await D.findPdf({ id: 'myhome-1', url: 'https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=1' });
   assert.equal(p.method, 'POST'); assert.equal(String(p.body), 'atchFileId=1a18&fileSn=1'); });
 await t('PDF 찾기: LH 는 아직 없음', async () => assert.equal(await D.findPdf({ id: 'lh-1', url: 'https://apply.lh.or.kr' }), null));
+await t('게시판 본문: 제목부터 다음글 앞까지 · 태그 뺌', async () => { const x = D.pageText('<div>메뉴</div><h3>[민간임대] 개봉역 세이지움 공고</h3><p>청약신청 : 11. 9. ~ 11. 10.</p><p>문의 02-1234-5678</p><div>다음글 [민간임대] 다른 공고</div>', '[민간임대] 개봉역 세이지움 공고');
+  assert.equal(x, '개봉역 세이지움 공고\n청약신청 : 11. 9. ~ 11. 10.\n문의 02-1234-5678'); });
 await t('결과 다듬기: 빈 값 빼고 공백 정리', async () => { const d = D.cleanDetail({ target: ' a  b ', eligibility: ['x', '', 3], supply: [{}, { type: 'A' }] });
-  assert.equal(d.target, 'a b'); assert.deepEqual(d.eligibility, ['x']); assert.deepEqual(d.supply, [{ type: 'A', area: null, units: null, price: null }]); assert.equal(D.cleanDetail({ eligibility: [] }), null); });
+  assert.equal(d.target, 'a b'); assert.deepEqual(d.eligibility, ['x']); assert.deepEqual(d.supply, [{ type: 'A', area: null, units: null, price: null, movein: null }]); assert.equal(d.apply, null); assert.deepEqual(d.costs, []); assert.equal(D.cleanDetail({ eligibility: [] }), null); });
 
 const dir = await mkdtemp(join(tmpdir(), 'det-')) + '/', log = [];
 const items = [1, 2, 3, 4, 5, 6, 7].map(n => ({ id: `youth-${n}`, url: `https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=${n}` })).concat([{ id: 'lh-1', url: 'https://apply.lh.or.kr' }]);
@@ -33,7 +35,8 @@ calls.length = 0; let r = await D.addDetails(items, { dir, max: 5, log: m => log
 await t('한 번에 5개까지만 읽음 · 파일로 저장 · detail 표시', async () => { assert.equal(r.made, 5); assert.deepEqual(items.map(i => i.detail), [true, true, true, true, true, false, false, false]);
   const d = JSON.parse(await readFile(dir + 'youth-1.json', 'utf8')); assert.equal(d.target, '만 19~39세 청년'); assert.deepEqual(d.eligibility, ['무주택', '서울 거주']); assert.match(d.read, /^\d{4}-\d{2}-\d{2}$/); });
 await t('피드에서 빠진 공고 상세는 지움', async () => assert.ok(!(await readdir(dir)).includes('youth-old.json')));
-await t('키는 헤더로만 · 로그에 없음', async () => { const g = calls.filter(c => c.u.hostname === 'generativelanguage.googleapis.com');
+await t('키는 헤더로만 · 로그에 없음 · 본문 글도 함께 보냄', async () => { const g = calls.filter(c => c.u.hostname === 'generativelanguage.googleapis.com');
+  assert.ok(JSON.parse(g[0].o.body).contents[0].parts.some(p => /^게시판 본문:/.test(p.text || '')));
   assert.ok(g.length === 5 && g.every(c => c.o.headers['x-goog-api-key'] === 'TESTGEMINIKEY-only' && !c.u.search)); assert.ok(!log.join(' ').includes('TESTGEMINI')); });
 calls.length = 0; r = await D.addDetails(items, { dir, max: 5, log: () => {} });
 await t('이미 읽은 공고는 다시 안 읽음 · LH 는 PDF 없음으로 끝', async () => { assert.equal(r.made, 2); assert.equal(calls.filter(c => c.u.hostname === 'generativelanguage.googleapis.com').length, 2);
@@ -49,5 +52,9 @@ gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ te
 const bad = [{ id: 'youth-99', url: 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=99' }];
 for (let k = 0; k < 4; k++) await D.addDetails(bad, { dir, log: () => {} });
 await t('3번 실패한 공고는 그만 읽음', async () => { const f = JSON.parse(await readFile(dir + '_fail.json', 'utf8')); assert.equal(f['youth-99'].n, 3); });
+await writeFile(dir + 'youth-1.json', JSON.stringify({ id: 'youth-1', target: '예전' })); gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"target":"새로","eligibility":[]}' }] } }] }));
+await writeFile(dir + 'youth-2.json', JSON.stringify({ id: 'youth-2', v: D.DETAIL_V, target: '지금' }));
+r = await D.addDetails(items.slice(0, 2), { dir, log: () => {} });
+await t('예전 방법(v1)으로 읽은 상세는 다시 읽음', async () => { assert.equal(r.made, 1); const d = JSON.parse(await readFile(dir + 'youth-1.json', 'utf8')); assert.equal(d.target, '새로'); assert.equal(d.v, D.DETAIL_V); });
 await rm(dir, { recursive: true });
 console.log(`${ok}개 모두 OK`);

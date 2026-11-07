@@ -5,7 +5,7 @@
 // 사용: DATA_GO_KR_KEY=... node scripts/feed.mjs      검사: node scripts/verify/feed_check.mjs
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { addDetails } from './detail.mjs';
+import { addDetails, pageText } from './detail.mjs';
 
 export const FEED_OUT = fileURLToPath(new URL('../feed/notices.json', import.meta.url));
 const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH·청년안심주택 게시판';
@@ -119,13 +119,23 @@ export async function fetchSH({ pages = 4 } = {}) {   // 한 쪽 10개 · 4쪽�
   return [...new Map(out.map(i => [i.feedId, i])).values()];
 }
 
-// 서울 청년안심주택 모집공고 (soco.seoul.go.kr): 목록 화면이 부르는 JSON. optn1 = 공고게시일, optn4 = 청약신청일 (날짜 하나 → 마감일로 씀)
+// 서울 청년안심주택 모집공고 (soco.seoul.go.kr): 목록 화면이 부르는 JSON. optn1 = 공고게시일, optn4 = 청약신청 '시작일'
+// 마감일은 상세 게시판 본문의 '■청약신청 : ‘26. 11. 09. (월) ~ 11. 10. (화) 00:00 ~ 23:00' 줄에서 읽는다 (parseDue). 못 읽으면 시작일을 to 로 두고 startOnly
+export function parseDue(text, start = '') {
+  const line = String(text).split('\n').map(l => l.match(/청약\s*신청\s*[:：]\s*(.+)/)?.[1]).find(Boolean); if (!line) return null;
+  const ds = [...line.matchAll(/(?:[‘'’](\d{2})\.\s*|(\d{4})\.\s*)?(\d{1,2})\.\s*(\d{1,2})\.?\s*\(/g)]; if (!ds.length) return null;
+  let y = ds[0][1] ? 2000 + +ds[0][1] : ds[0][2] ? +ds[0][2] : +(start.slice(0, 4) || new Date().getFullYear()), pm = 0;
+  const out = ds.map(m => { if (m[1] || m[2]) y = m[1] ? 2000 + +m[1] : +m[2]; else if (+m[3] < pm) y++; pm = +m[3]; return `${y}-${String(m[3]).padStart(2, '0')}-${String(m[4]).padStart(2, '0')}`; });
+  const from = out[0], to = out.at(-1), tm = [...line.matchAll(/(\d{1,2}):(\d{2})/g)].at(-1);
+  if (to < from || Date.parse(to) - Date.parse(from) > 90 * 864e5) return null;   // 이상하게 읽힘
+  return { from, to, time: tm ? `${tm[1].padStart(2, '0')}:${tm[2]}` : '' };
+}
 const YOUTH = 'https://soco.seoul.go.kr/youth';
 export function parseYouth(data) {
   return (data?.resultList ?? []).filter(r => r?.boardId && r.nttSj).map(r => {
     const title = unHtml(r.nttSj), to = ymd(r.optn4);
     return { feedId: `youth-${r.boardId}`, org: '청년안심', title, region: '서울', kind: r.optn2 === '1' ? '청년안심주택(공공)' : r.optn2 === '2' ? '청년안심주택(민간)' : '청년안심주택',
-      posted: ymd(r.optn1), from: '', to, url: `${YOUTH}/bbs/BMSR00015/view.do?boardId=${encodeURIComponent(r.boardId)}&menuNo=400008` };
+      posted: ymd(r.optn1), from: '', to, startOnly: !!to, url: `${YOUTH}/bbs/BMSR00015/view.do?boardId=${encodeURIComponent(r.boardId)}&menuNo=400008` };
   });
 }
 export async function fetchYouth({ pages = 3 } = {}) {   // 한 쪽 10개 · 신청일이 지난 것은 buildFeed 가 뺀다
@@ -139,7 +149,12 @@ export async function fetchYouth({ pages = 3 } = {}) {   // 한 쪽 10개 · 신
     if (!Array.isArray(data?.resultList)) throw new Error('청년안심주택: 목록 모양이 바뀜');
     out.push(...parseYouth(data)); if (page >= Number(data.pagingInfo?.totPage ?? 1)) break;
   }
-  return [...new Map(out.map(i => [i.feedId, i])).values()];
+  const items = [...new Map(out.map(i => [i.feedId, i])).values()], since = todayKst(-30);
+  for (const i of items) if (i.to && i.to >= since) {   // 아직 열려 있을 수 있는 것만 상세를 열어 마감일을 읽는다 (실패해도 시작일로 둔다)
+    try { const r = await fetch(i.url, { headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) });
+      const d = r.ok ? parseDue(pageText(await r.text(), i.title), i.to) : null; if (d) Object.assign(i, d, { startOnly: false }); } catch { /* 시작일 그대로 */ }
+  }
+  return items;
 }
 
 // 같은 공고 판단용 이름: 공백·기호·[정정] 같은 머리말 제거
@@ -153,12 +168,12 @@ export function buildFeed(raw) {
   for (const it of [...raw].sort((a, b) => rank(a) - rank(b))) {
     const key = normTitle(it.title), g = groups.find(x => x.key === key && (!x.item.to || !it.to || x.item.to === it.to));
     if (!g) { groups.push({ key, item: { ...it } }); continue; }
-    for (const f of ['region', 'kind', 'posted', 'from', 'to', 'url']) if (!g.item[f] && it[f]) g.item[f] = it[f];
+    for (const f of ['region', 'kind', 'posted', 'from', 'to', 'time', 'url']) if (!g.item[f] && it[f]) g.item[f] = it[f];
     if (g.item.region && it.region && it.region.length > g.item.region.length && it.region.startsWith(g.item.region)) g.item.region = it.region;
   }
   const today = todayKst(), cutoff = todayKst(-NO_PERIOD_DAYS);
   const items = groups.map(g => g.item).filter(i => i.region.startsWith('서울') && (i.to ? i.to >= today : i.posted && i.posted >= cutoff))   // 서울 공고만
-    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', detail: false }))   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
+    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, detail: false }))   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
     .sort((a, b) => (a.to || '9999').localeCompare(b.to || '9999') || b.posted.localeCompare(a.posted));
   return { updated: new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 19) + '+09:00', source: SOURCE_LABEL, items };
 }
