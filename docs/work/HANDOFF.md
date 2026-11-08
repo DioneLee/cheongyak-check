@@ -49,6 +49,7 @@
   - 브라우저(`lib/feed-tools.js`, Node 검사와 같은 코드): .ics 만들기(Asia/Seoul · 마감 알림 2개 · UID '공고id-종류@dionelee.github.io' · 75바이트 줄 접기 · CRLF) · 신청 가능 판정(가능은 기준을 모두 판정할 수 있고 모두 통과할 때만 · 조건부 기준을 넘으면 확인 필요) · 필터(맞음/정보 없음/안 맞음 + 맞는 주택형)
   - 검사 `node scripts/verify/tools_check.mjs` · 사이트 `check.py`(PC 가상 시간 120초로 늘림)
 - [x] 보완(2026-11-08, sw 08b): 배지는 '기본 조건 충족' · 사용자가 직접 넣거나 '다음'으로 지나가며 확인한 칸(`state.subs.seen`)만 입력으로 봄(기본값 '자동차 없음'·자녀 0명 등은 확인 전 '입력 안 함') · .ics DTSTAMP=만든 시각(UTC) · SEQUENCE(일정 날짜·시각이 바뀌면 +1, 상세 파일 `seq` · 없으면 `_seq.json`) · LAST-MODIFIED=상세 readAt · 구독 캘린더는 DTSTAMP 말고 바뀐 게 있을 때만 새로 씀 · 역: 제목·본문의 '○○역(예정)'·'N번 출구'·'도보 N분'·'직선거리 Nm'(상세 `near`) → 본문 거리 > 번지 좌표 직선거리 > 역 이름만
+- 규칙: `lib/` 를 바꾸면 sw.js VERSION 을 올리고 index.html 의 `lib/feed-tools.js?v=` 도 같은 값으로 (check.py 가 확인) — 2026-11-08 배포 직후 예전 서비스 워커가 옛 lib 를 내줘 새 index.html 과 섞인 일이 있었음
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 JSON 도 읽기) · LH 공고문 PDF 찾기
 - 참고: check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 - 왜 LH·행복주택이 적은가: 2026-11-06 확인 시 LH 청약플러스 진행 중 52건 중 서울 0건, 마이홈 서울 모집중은 캠코 1건뿐 (데이터 문제 아님)

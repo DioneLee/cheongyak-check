@@ -24,6 +24,8 @@ src = (REPO / "index.html").read_text(encoding="utf-8")
 ok("기존 저장 키(newlywed-home-v1)는 읽기만", src.count("newlywed-home-v1") == 1 and not re.search(r"(setItem|removeItem)\(\s*OLD_KEY", src) and src.count("OLD_KEY") == 2, src.count("OLD_KEY"))
 tracked = [p for p in REPO.rglob("*") if p.is_file() and ".git" not in p.parts and p.suffix in {".html", ".js", ".mjs", ".json", ".yml", ".md", ".py", ".webmanifest"}]
 ok("API 키(AIza…) 없음", not any("AIza" in p.read_text(encoding="utf-8", errors="ignore") for p in tracked if p.name != "check.py"))
+_swv = re.search(r"VERSION = 'cheongyak-check-([\w-]+)'", (REPO / "sw.js").read_text(encoding="utf-8")).group(1)
+ok("lib/feed-tools.js?v= 가 sw.js VERSION 과 같음 (배포 직후 옛 lib 가 섞이지 않게)", f'lib/feed-tools.js?v={_swv}"' in src, _swv)
 ok("방문자 분석·광고 도구 없음", not re.search(r"googletagmanager|gtag\(|google-analytics|clarity\.ms|hotjar|mixpanel|amplitude|plausible", src))
 try:
     changed = subprocess.run(["git", "-C", str(REPO), "diff", "--name-only", "HEAD"], capture_output=True, text=True).stdout.split()

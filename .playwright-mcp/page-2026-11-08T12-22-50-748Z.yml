@@ -1,0 +1,91 @@
+- generic [active] [ref=f27e1]:
+  - banner [ref=f27e2]:
+    - generic [ref=f27e3]:
+      - link "청약 체크 처음으로" [ref=f27e4] [cursor=pointer]:
+        - /url: "#top"
+      - navigation "빠른 이동" [ref=f27e5]:
+        - button "진행중 공고" [ref=f27e6] [cursor=pointer]
+        - button "순위·점수 진단" [ref=f27e7] [cursor=pointer]
+        - button "AI 설정" [ref=f27e8] [cursor=pointer]
+  - main [ref=f27e9]:
+    - region [ref=f27e10]:
+      - heading "서울 진행중 공고" [level=1] [ref=f27e11]
+      - list "공고 원문 사이트" [ref=f27e12]:
+        - listitem [ref=f27e13]:
+          - link "LH 청약플러스 ↗ LH 임대·분양" [ref=f27e14] [cursor=pointer]:
+            - /url: https://apply.lh.or.kr
+            - generic [ref=f27e15]: LH 청약플러스 ↗
+            - generic [ref=f27e16]: LH 임대·분양
+        - listitem [ref=f27e17]:
+          - link "SH 인터넷청약 ↗ 서울 공공주택" [ref=f27e18] [cursor=pointer]:
+            - /url: https://www.i-sh.co.kr
+            - generic [ref=f27e19]: SH 인터넷청약 ↗
+            - generic [ref=f27e20]: 서울 공공주택
+        - listitem [ref=f27e21]:
+          - link "청년안심주택 ↗ 서울 청년·신혼 임대" [ref=f27e22] [cursor=pointer]:
+            - /url: https://soco.seoul.go.kr/youth/main/main.do
+            - generic [ref=f27e23]: 청년안심주택 ↗
+            - generic [ref=f27e24]: 서울 청년·신혼 임대
+        - listitem [ref=f27e25]:
+          - link "마이홈포털 ↗ 공공주택 모아보기" [ref=f27e26] [cursor=pointer]:
+            - /url: https://www.myhome.go.kr
+            - generic [ref=f27e27]: 마이홈포털 ↗
+            - generic [ref=f27e28]: 공공주택 모아보기
+    - region [ref=f27e29]:
+      - heading "내 청약 순위·점수 진단해보기" [level=2] [ref=f27e30]
+      - generic [ref=f27e32]:
+        - generic [ref=f27e33] [cursor=pointer]:
+          - text: 공고문 PDF 올리기
+          - button "공고문 PDF 올리기" [ref=f27e34]
+        - button "직접 붙여넣기" [ref=f27e35] [cursor=pointer]
+        - button "예시 공고로 보기" [ref=f27e36] [cursor=pointer]
+      - generic [ref=f27e37]:
+        - generic [ref=f27e38]:
+          - paragraph [ref=f27e39]: 1 / 7 · 누가
+          - progressbar "질문 진행" [ref=f27e40]
+          - navigation "질문 바로 가기" [ref=f27e42]:
+            - button "1. 누가" [ref=f27e43] [cursor=pointer]
+            - button "2. 생년월일" [ref=f27e44] [cursor=pointer]
+            - button "3. 결혼" [ref=f27e45] [cursor=pointer]
+            - button "4. 집" [ref=f27e46] [cursor=pointer]
+            - button "5. 소득" [ref=f27e47] [cursor=pointer]
+            - button "6. 자산·자동차" [ref=f27e48] [cursor=pointer]
+            - button "7. 사는 곳" [ref=f27e49] [cursor=pointer]
+        - group "누가 신청하나요?" [ref=f27e51]:
+          - generic [ref=f27e53]:
+            - button "신혼부부예요 결혼했거나 결혼할 예정인 부부" [pressed] [ref=f27e54] [cursor=pointer]:
+              - generic [ref=f27e55]: 신혼부부예요
+              - generic [ref=f27e56]: 결혼했거나 결혼할 예정인 부부
+            - button "혼자예요 (청년) 만 19~39세 미혼" [ref=f27e57] [cursor=pointer]:
+              - generic [ref=f27e58]: 혼자예요 (청년)
+              - generic [ref=f27e59]: 만 19~39세 미혼
+            - button "일반·생애최초 준비 중이에요" [disabled] [ref=f27e60]:
+              - generic [ref=f27e61]: 일반·생애최초
+              - generic [ref=f27e62]: 준비 중이에요
+        - button "이전" [disabled] [ref=f27e64]
+      - group [ref=f27e65]:
+        - generic "돈 조건 가진 돈 5,000만원 · 연 3% · 한 달 95만 이하 · 보증금 1억 3,000만원 이하 +" [ref=f27e66] [cursor=pointer]:
+          - generic [ref=f27e67]: 돈 조건
+          - generic [ref=f27e68]: 가진 돈 5,000만원 · 연 3% · 한 달 95만 이하 · 보증금 1억 3,000만원 이하
+          - text: +
+    - region "설정과 고급 도구" [ref=f27e69]:
+      - group [ref=f27e70]:
+        - generic "AI 설정 Google Gemini 키 +" [ref=f27e71] [cursor=pointer]:
+          - generic [ref=f27e72]: AI 설정
+          - generic [ref=f27e73]: Google Gemini 키
+          - text: +
+      - group [ref=f27e74]:
+        - generic "데이터 옮기기 JSON 파일 불러오기 · 내보내기 +" [ref=f27e75] [cursor=pointer]:
+          - generic [ref=f27e76]: 데이터 옮기기
+          - generic [ref=f27e77]: JSON 파일 불러오기 · 내보내기
+          - text: +
+      - group [ref=f27e78]:
+        - generic "고급 공고 원문 JSON 직접 고치기 +" [ref=f27e79] [cursor=pointer]:
+          - generic [ref=f27e80]: 고급
+          - generic [ref=f27e81]: 공고 원문 JSON 직접 고치기
+          - text: +
+  - contentinfo [ref=f27e82]:
+    - generic [ref=f27e83]:
+      - paragraph [ref=f27e84]: 계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·필터·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.
+      - paragraph [ref=f27e85]: "공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크) · 지금은 서울 공고만 보여 줘요"
+      - paragraph [ref=f27e86]: 본 서비스에서 제공하는 실제 월 부담·대출(LTV) 계산 및 청약 자격 판정은 의사결정을 돕기 위한 참고용 시뮬레이션이며 법적·금융적 효력이 없습니다. 실제 청약 신청 및 부동산 계약 전에는 반드시 모집공고문 원본과 금융기관을 통해 최종 확인하시기 바랍니다.
