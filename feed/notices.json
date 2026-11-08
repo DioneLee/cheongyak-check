@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-08T20:57:14+09:00",
+ "updated": "2026-11-08T21:21:22+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판",
  "items": [
   {
@@ -15,7 +15,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "491c731f17",
+   "dv": "ef8017a77c",
    "ev": [
     {
      "k": "start",
@@ -73,7 +73,14 @@
      "rent": 27
     }
    ],
-   "st": null
+   "st": {
+    "n": "화랑대역",
+    "m": null,
+    "w": null,
+    "src": "name",
+    "exit": "6"
+   },
+   "lm": "2026-11-07 18:33"
   },
   {
    "id": "youth-6722",
@@ -88,7 +95,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "268a94a98c",
+   "dv": "a3b55ea8a6",
    "ev": [
     {
      "k": "start",
@@ -158,7 +165,14 @@
      "rent": 35.46
     }
    ],
-   "st": null
+   "st": {
+    "n": "개봉역",
+    "m": null,
+    "w": null,
+    "src": "name",
+    "exit": "1"
+   },
+   "lm": "2026-11-07 18:41"
   },
   {
    "id": "youth-6721",
@@ -173,7 +187,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "086ec0fbdc",
+   "dv": "73272d6d0b",
    "ev": [
     {
      "k": "start",
@@ -231,7 +245,15 @@
      "rent": 38.72
     }
    ],
-   "st": null
+   "st": {
+    "n": "미아사거리역",
+    "m": null,
+    "w": null,
+    "src": "name",
+    "exit": "3",
+    "alt": "숭곡초교역"
+   },
+   "lm": "2026-11-07 18:34"
   },
   {
    "id": "youth-6720",
@@ -246,7 +268,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "dc237238ed",
+   "dv": "35bd3e7234",
    "ev": [
     {
      "k": "start",
@@ -343,8 +365,11 @@
    "st": {
     "n": "건대입구역",
     "m": 363,
-    "w": 7
-   }
+    "w": 7,
+    "src": "geo",
+    "exit": "6"
+   },
+   "lm": "2026-11-07 18:41"
   },
   {
    "id": "myhome-21471",
@@ -359,7 +384,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "3256289dd1",
+   "dv": "752b04a0da",
    "ev": [
     {
      "k": "start",
@@ -386,7 +411,8 @@
      "rent": 22.5
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-08 21:21"
   },
   {
    "id": "youth-6719",
@@ -401,7 +427,7 @@
    "time": "23:00",
    "startOnly": false,
    "detail": true,
-   "dv": "7bc687ae83",
+   "dv": "df3ffa5cfe",
    "ev": [
     {
      "k": "start",
@@ -526,7 +552,14 @@
      "rent": 108
     }
    ],
-   "st": null
+   "st": {
+    "n": "송정역",
+    "m": null,
+    "w": null,
+    "src": "name",
+    "exit": "4"
+   },
+   "lm": "2026-11-07 18:40"
   },
   {
    "id": "youth-6718",
@@ -541,7 +574,7 @@
    "time": "24:00",
    "startOnly": false,
    "detail": true,
-   "dv": "ad7074fe4a",
+   "dv": "8c1b66d7d4",
    "ev": [
     {
      "k": "start",
@@ -648,7 +681,14 @@
      "rent": 86
     }
    ],
-   "st": null
+   "st": {
+    "n": "효창공원앞역",
+    "m": null,
+    "w": null,
+    "src": "name",
+    "exit": "3"
+   },
+   "lm": "2026-11-07 19:12"
   },
   {
    "id": "sh-312351",
@@ -663,7 +703,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "2233c836f8",
+   "dv": "386b89f8fb",
    "ev": [
     {
      "k": "start",
@@ -739,7 +779,8 @@
      "rent": 44.4
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-07 19:12"
   },
   {
    "id": "sh-312053",
@@ -754,7 +795,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "b790c1c206",
+   "dv": "4d09d9d634",
    "ev": [
     {
      "k": "start",
@@ -808,7 +849,8 @@
      "rent": 44.43
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-07 21:48"
   },
   {
    "id": "sh-312339",
@@ -823,7 +865,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "06d9aa1699",
+   "dv": "697a42c275",
    "ev": [
     {
      "k": "start",
@@ -911,7 +953,8 @@
      "rent": 9.09
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-08 19:18"
   },
   {
    "id": "sh-311962",
@@ -926,7 +969,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "6c986a9904",
+   "dv": "494dd0d9a5",
    "ev": [
     {
      "k": "start",
@@ -1045,7 +1088,8 @@
      "rent": 28.11
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-07 18:48"
   },
   {
    "id": "sh-312325",
@@ -1060,7 +1104,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "2ce836507e",
+   "dv": "afc1708d4c",
    "ev": [
     {
      "k": "start",
@@ -1107,7 +1151,8 @@
      "rent": 81
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-08 19:18"
   },
   {
    "id": "sh-311965",
@@ -1122,7 +1167,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "4e4489b90b",
+   "dv": "5bca9c075e",
    "ev": [
     {
      "k": "start",
@@ -1197,7 +1242,8 @@
      "rent": null
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-08 19:19"
   },
   {
    "id": "sh-311987",
@@ -1212,7 +1258,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "bb9bba11b8",
+   "dv": "b0424d228f",
    "ev": [
     {
      "k": "start",
@@ -1287,7 +1333,8 @@
      "rent": 45.7
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-08 19:19"
   },
   {
    "id": "sh-311908",
@@ -1302,7 +1349,7 @@
    "time": "",
    "startOnly": false,
    "detail": true,
-   "dv": "e64c840271",
+   "dv": "66effaabf9",
    "ev": [
     {
      "k": "start",
@@ -1389,7 +1436,8 @@
      "rent": 24.04
     }
    ],
-   "st": null
+   "st": null,
+   "lm": "2026-11-07 18:39"
   }
  ]
 }
