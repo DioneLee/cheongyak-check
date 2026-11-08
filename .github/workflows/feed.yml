@@ -1,7 +1,7 @@
 # 공고 피드: 마이홈포털·LH 공식 API · SH·청년안심주택 게시판 → feed/notices.json + 공고 상세 feed/detail/ (바뀌었을 때만 커밋)
 # 필요: 저장소 Settings → Secrets and variables → Actions → DATA_GO_KR_KEY (공공데이터포털 인증키) · GEMINI_API_KEY (상세 읽기)
 # 정기 실행: GitHub schedule 이 자주 늦거나 건너뛰어서(2026-11-07 4번 중 1번) 1시간마다(:17) 부르고, Cloudflare Worker(worker-cron/, cheongyak-feed-cron)가
-#            매시 :47 에 workflow_dispatch(from_cron)로 한 번 더 부른다. 둘 다 '최근 100분 안에 성공한 실행이 있으면 건너뜀' → 실제로는 2시간쯤마다 한 번.
+#            매시 :47 에 workflow_dispatch(from_cron)로 한 번 더 부른다. 둘 다 '최근 100분 안에 실제로 갱신한(공고 받기 단계 성공) 실행이 있으면 건너뜀' → 실제로는 2시간쯤마다 한 번.
 #            겹치면 concurrency 로 줄 세우고 나중 것은 건너뜀.
 name: 공고 피드
 on:
@@ -38,11 +38,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          last=$(gh run list -R "$GITHUB_REPOSITORY" -w feed.yml -s success -L 10 --json databaseId,createdAt \
-            --jq "[.[] | select(.databaseId != ${GITHUB_RUN_ID})][0].createdAt // empty")
+          # 기준은 '공고 받기' 단계가 실제로 성공한 실행만 (건너뛴 실행도 결과는 success 라 그걸 기준으로 삼으면 계속 건너뜀 — 2026-11-07~08 21시간 멈춤)
+          last=""
+          while read -r id at; do
+            [ -z "$id" ] && continue
+            n=$(gh run view "$id" -R "$GITHUB_REPOSITORY" --json jobs --jq '[.jobs[].steps[] | select(.name == "공고 받기" and .conclusion == "success")] | length')
+            if [ "$n" -gt 0 ]; then last="$at"; break; fi
+          done < <(gh run list -R "$GITHUB_REPOSITORY" -w feed.yml -s success -L 30 --json databaseId,createdAt \
+            --jq ".[] | select(.databaseId != ${GITHUB_RUN_ID}) | \"\\(.databaseId) \\(.createdAt)\"")
           if [ -n "$last" ] && [ $(( $(date +%s) - $(date -d "$last" +%s) )) -lt 6000 ]; then
-            echo "최근(${last})에 성공한 실행이 있어 건너뜀"; echo "skip=true" >> "$GITHUB_OUTPUT"
-          else echo "마지막 성공: ${last:-없음} → 실행"; fi
+            echo "최근(${last})에 실제로 갱신한 실행이 있어 건너뜀"; echo "skip=true" >> "$GITHUB_OUTPUT"
+          else echo "마지막 실제 갱신: ${last:-없음} → 실행"; fi
       - uses: actions/checkout@v7
         if: ${{ steps.guard.outputs.skip != 'true' }}
       - uses: actions/setup-node@v7

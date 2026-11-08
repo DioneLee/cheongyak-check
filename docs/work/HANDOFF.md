@@ -36,6 +36,7 @@
 - **로컬 시험 규칙(2026-11-07)**: 이 Mac 등 로컬에서는 실제 Gemini 를 부르지 않는다. `scripts/detail.mjs` 는 GitHub Actions(`GITHUB_ACTIONS=true`)나 검사(`DETAIL_TEST=1`, 가짜 응답)에서만 부르고, 그 밖에는 "로컬 실행: 실제 Gemini 를 부르지 않음"으로 멈춤. 시험은 `node scripts/verify/detail_check.mjs`(가짜 응답). 꼭 실제로 불러야 하면 `DETAIL_ALLOW_REAL=1` — 그 호출도 `feed/detail/_quota.json` 에 더해지니 **끝나면 _quota.json 을 커밋·push** (Actions 하루 예산과 맞추기)
 - [x] lite↔첫 모델 비교(2026-11-07): lite 가 읽은 상세를 첫 모델로 다시 읽을 때 칸별 차이(목록 칸 항목 수 · 한 줄 칸 같음/채움/비움/바뀜, 바뀐 값 앞 80자)를 로그 한 줄 + `feed/detail/_compare.jsonl` 에 남김 → 며칠 모아 lite 로 충분한 칸이 있는지 판단
 - [x] Gemini 호출 수 로그: 갱신마다 `Gemini 호출 · 모델: n번 (429 n번 · 503 n번)` (AI Studio 하루 한도와 맞춰 보기)
+- [x] **버그 고침(2026-11-08)**: 겹침 방지가 '건너뛴 실행'(결과는 success)을 최근 성공으로 봐서 2026-11-07 22:00 ~ 11-08 19:00 KST 약 21시간 동안 모든 정기 실행이 건너뛰기만 함 → 이제 '공고 받기' 단계가 실제로 성공한 실행만 기준 (최근 30개 안에 없으면 실행)
 - [x] 정기 실행 겹침 방지: workflow 가 schedule 이면 '최근 100분 안에 성공한 실행이 있으면 건너뜀' (concurrency 로 줄 세움)
 - [x] 정기 실행 보강(2026-11-07): GitHub schedule 1시간마다(:17) + Cloudflare Worker `cheongyak-feed-cron`(worker-cron/, 매시 :47 → workflow_dispatch from_cron) · 둘 다 '최근 100분 안에 성공했으면 건너뜀'
   - Cron 칸: 무료 계정 5개 한도 → som 저장소의 demo-lookbook·estate·brand 크론을 끔(같은 DB 는 demo-shop 크론이 깨움, som master `0466719` · rack-renewal `fe20674`). 지금 Cron: som · demo-shop · cheongyak-feed-cron
