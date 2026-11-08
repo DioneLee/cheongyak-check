@@ -7,3 +7,6 @@ local-data/
 # Cloudflare Worker (worker-cron)
 worker-cron/.wrangler/
 worker-cron/.dev.vars
+
+# Playwright 임시 파일
+.playwright-mcp/
