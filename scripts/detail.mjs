@@ -192,8 +192,9 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
   const failFile = `${dir}_fail.json`, fail = await readJson(failFile, {}), have = new Set((await readdir(dir)).filter(f => /\.json$/.test(f) && !f.startsWith('_')).map(f => f.slice(0, -5)));
   const prev = new Map(); for (const id of have) prev.set(id, await readJson(`${dir}${id}.json`, {}));
   const needs = id => { const o = prev.get(id); return !o || o.source === 'api' ? false : (o.v || 1) < DETAIL_V || o.model !== MODELS[0]; };
-  for (const it of items) { const b = basics.get(it.id); if (!b || !safeId(it.id)) continue;   // API 기본 정보 → 매번 새로 씀 (AI 안 씀)
-    await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, source: 'api', read: nowKst().slice(0, 10), readAt: nowKst(), model: null, ...b }, null, 1) + '\n', 'utf8');
+  for (const it of items) { const b = basics.get(it.id); if (!b || !safeId(it.id)) continue;   // API 기본 정보 (AI 안 씀) · 내용이 같으면 읽은 시각도 그대로 (LAST-MODIFIED·커밋이 매번 바뀌지 않게)
+    const o = prev.get(it.id), same = o?.source === 'api' && JSON.stringify({ ...o, read: 0, readAt: 0, seq: 0 }) === JSON.stringify({ ...o, ...b, read: 0, readAt: 0, seq: 0 });
+    if (!same) await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, source: 'api', read: nowKst().slice(0, 10), readAt: nowKst(), model: null, ...b, ...(o?.seq ? { seq: o.seq } : {}) }, null, 1) + '\n', 'utf8');
     have.add(it.id); prev.set(it.id, { source: 'api' }); delete fail[it.id]; }
   // 첨부 확인: 이미 읽은 공고는 게시판 페이지만 받아 첨부 식별자를 비교 → 바뀐 것만 PDF 를 다시 받아 원문 해시를 본다 (처음이면 기록만)
   const attChanged = new Set();

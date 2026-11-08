@@ -140,6 +140,9 @@ calls.length = 0; const mh = [{ id: 'myhome-21471', url: 'https://www.myhome.go.
 r = await D.addDetails(mh, { dir, log: () => {}, basics: new Map([['myhome-21471', { target: null, eligibility: [], supply: [{ type: '나라키움', price: '보증금 4,650만원 · 월 22.5만원' }], schedule: [], contact: '02-6265-0620', addr: '서울 영등포구' }]]) });
 await t('마이홈포털: API 기본 정보로 상세 (source api · AI·상세 페이지 안 부름)', async () => { const d = await rd('myhome-21471');
   assert.equal(d.source, 'api'); assert.equal(d.model, null); assert.equal(d.contact, '02-6265-0620'); assert.equal(mh[0].detail, true); assert.equal(calls.length, 0); });
+{ await writeFile(dir + 'myhome-21471.json', JSON.stringify({ ...JSON.parse(await readFile(dir + 'myhome-21471.json', 'utf8')), read: '2000-01-01', readAt: '2000-01-01 00:00' }, null, 1) + '\n'); const before = await readFile(dir + 'myhome-21471.json', 'utf8');
+  await D.addDetails(mh, { dir, log: () => {}, basics: new Map([['myhome-21471', { target: null, eligibility: [], supply: [{ type: '나라키움', price: '보증금 4,650만원 · 월 22.5만원' }], schedule: [], contact: '02-6265-0620', addr: '서울 영등포구' }]]) });
+  await t('마이홈포털: 내용이 같으면 상세 파일을 다시 쓰지 않음 (읽은 시각 그대로)', async () => assert.equal(await readFile(dir + 'myhome-21471.json', 'utf8'), before)); }
 // 원문 해시(src): 같으면 합치고, 다르면(정정공고) 교체
 await t('원문 해시: 조회수 줄은 빼고 · PDF 나 본문이 바뀌면 달라짐', async () => {
   assert.equal(D.sourceHash(PDF, '제목\n조회수 : 5,269\n본문'), D.sourceHash(PDF, '제목\n조회수 : 9,999\n본문'));
