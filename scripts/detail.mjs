@@ -5,7 +5,7 @@ import { readFile, writeFile, mkdir, readdir, unlink, appendFile } from 'node:fs
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { dirname } from 'node:path';
-import { addrFrom } from './enrich.mjs';
+import { addrFrom, nearFrom } from './enrich.mjs';
 
 export const DETAIL_DIR = fileURLToPath(new URL('../feed/detail/', import.meta.url));
 export const DEFER_LOG = process.env.DETAIL_DEFER_LOG || fileURLToPath(new URL('../docs/work/미룸.md', import.meta.url));   // 검사는 DETAIL_DEFER_LOG 로 임시 파일에   // 마감까지 계속 미뤄진 공고 (인수인계 문서에서 링크)
@@ -200,7 +200,8 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
   for (const it of items) { const o = prev.get(it.id); if (!o || o.source === 'api' || !safeId(it.id) || needs(it.id)) continue;
     let a; try { a = await findAttach(it); } catch { continue; } if (!a) continue;
     const ad = !o.addr && addrFrom(a.text); if (ad) o.addr = ad;   // 게시판 본문의 '■주택위치 : …' 줄 (AI 안 씀)
-    if (!o.att || ad) { o.att ??= a.att; await writeFile(`${dir}${it.id}.json`, JSON.stringify(o, null, 1) + '\n', 'utf8'); }
+    const nr = nearFrom(it.title, a.text), nrCh = JSON.stringify(nr) !== JSON.stringify(o.near ?? null); if (nrCh) o.near = nr;   // 제목·본문의 역 이름·출구·거리 문구
+    if (!o.att || ad || nrCh) { o.att ??= a.att; await writeFile(`${dir}${it.id}.json`, JSON.stringify(o, null, 1) + '\n', 'utf8'); }
     else if (o.att !== a.att) { attChanged.add(it.id); log(`상세 · ${it.id}: 첨부가 바뀜 → 원문 확인`); } }
   const today = nowKst().slice(0, 10), due = i => i.to ? Math.round((Date.parse(i.to) - Date.parse(today)) / 864e5) : 9999, byDue = (a, b) => due(a) - due(b);
   // 첫 모델(하루 예산) 우선순위: 마감 3일 이내 다시 읽기 → 원문(첨부)이 바뀐 공고 교체 → 나머지 다시 읽기 · 새 공고 첫 읽기는 lite (각각 마감 가까운 순)
@@ -223,6 +224,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
       const { data, model } = await askGemini(pdf, p.text, { models: re ? [MODELS[0]] : [MODELS[1]] });
       const neu = fillFromText(cleanDetail(data), p.text); if (!neu) throw new Error('AI 가 조건을 못 읽음');
       neu.addr = addrFrom(p.text) || neu.addr;   // 본문 주소 줄이 있으면 그게 먼저
+      neu.near = nearFrom(it.title, p.text);
       // 원문(PDF + 본문) 해시가 같을 때만 칸별 합치기 · 다르면(정정공고 등) 새 결과로 교체 · 예전 파일에 해시가 없으면(src 기록 전) 같은 원문으로 보고 합침 (단, 첨부가 바뀌었으면 다른 원문)
       const same = !!old && (old.src ? old.src === src : !attChanged.has(it.id));
       if (old && !same && model !== MODELS[0]) { defer(it, `원문이 바뀌었지만 ${model} 결과라 교체 안 함 · 다음 갱신에 ${MODELS[0]}`); continue; }   // 교체는 첫 모델로만
@@ -230,7 +232,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
         const c = compareDetail(old, neu); log(`상세 · ${it.id}: lite↔첫 모델 비교 · ${c.text}`);
         await appendFile(`${dir}_compare.jsonl`, JSON.stringify({ at: nowKst(), id: it.id, same, lite: old.readAt || old.read || '', ...c, text: undefined }) + '\n', 'utf8'); }
       const { d, kept } = mergeDetail(same ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
-      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, att: p.att, ...d }, null, 1) + '\n', 'utf8');
+      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, att: p.att, ...d, ...(old?.seq ? { seq: old.seq } : {}) }, null, 1) + '\n', 'utf8');
       have.add(it.id); delete fail[it.id]; made++; re ? madeRe++ : madeNew++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${old && !same ? ' · 원문이 바뀌어 새로 교체' : ''}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
     } catch (e) {
       const why = scrubKey(e.message); if (e.skip || e.transient) { defer(it, why); continue; } if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }

@@ -1,6 +1,8 @@
 // 캘린더(.ics) · 신청 가능 배지 · 필터 · 공고 글 구조화 검사: node scripts/verify/tools_check.mjs (인터넷 안 씀)
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createRequire } from 'node:module';
 const FT = createRequire(import.meta.url)('../../lib/feed-tools.js');
 const E = await import('../enrich.mjs');
@@ -39,29 +41,45 @@ await t('.ics: RFC 5545 형식 — 모든 줄 CRLF · 75바이트 이하 · 접�
   assert.ok(lines.includes('VERSION:2.0') && lines.includes('TZID:Asia/Seoul')); assert.ok(lines.includes('DTSTART;VALUE=DATE:20261117') && lines.includes('DTEND;VALUE=DATE:20261121'));
   const unfolded = ics1.replace(/\r\n /g, ''); assert.match(unfolded, /SUMMARY:\[청약\] 건대입구역 더포디엄830 · 청약 마감 \(23:00까지\)\r\n/);   // 접었다 펴도 글자 그대로
   assert.equal((ics1.match(/BEGIN:VEVENT/g) || []).length, (ics1.match(/END:VEVENT/g) || []).length); });
+await t('.ics: SEQUENCE(기본 0, 바뀐 일정은 그 수) · LAST-MODIFIED(상세 읽은 시각 → UTC) · DTSTAMP(만든 시각 UTC)', async () => {
+  const s = FT.ics([{ ...n6720, lm: '2026-11-07 18:41', ev: [{ ...ev[0] }, { ...ev[1], q: 2 }] }]).replace(/\r\n /g, '');
+  assert.match(vevent(s, 'youth-6720-start@dionelee.github.io'), /SEQUENCE:0\r\n/); assert.match(vevent(s, 'youth-6720-end@dionelee.github.io'), /SEQUENCE:2\r\n/);
+  assert.match(s, /LAST-MODIFIED:20261107T094100Z/); const st = s.match(/DTSTAMP:(\d{8}T\d{6}Z)/)[1]; assert.ok(Math.abs(Date.parse(st.replace(/(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)Z/, '$1-$2-$3T$4:$5:$6Z')) - Date.now()) < 6e4); });
 await t('.ics: 시각 없는 마감은 하루 종일 · 알림은 전날 09:00 · 그날 21:00', async () => {
   const s = FT.ics([{ id: 'x-1', name: 'A', ev: [{ k: 'end', d: '2026-11-13' }] }]).replace(/\r\n /g, '');
   assert.match(s, /DTSTART;VALUE=DATE:20261113/); assert.match(s, /TRIGGER;VALUE=DATE-TIME:20261112T000000Z/); assert.match(s, /TRIGGER;VALUE=DATE-TIME:20261113T120000Z/); });
-await t('구독 캘린더는 청약 시작·마감만 · 내용이 같으면 파일도 같음(DTSTAMP 고정)', async () => {
+await t('구독 캘린더는 청약 시작·마감만 · 같은 DTSTAMP 면 같은 글자', async () => {
   const s = FT.ics([n6720], { kinds: ['start', 'end'], dtstamp: () => '20261105T000000Z', refresh: 'PT3H' });
   assert.equal((s.match(/BEGIN:VEVENT/g) || []).length, 2); assert.match(s, /REFRESH-INTERVAL;VALUE=DURATION:PT3H/); assert.equal(s, FT.ics([n6720], { kinds: ['start', 'end'], dtstamp: () => '20261105T000000Z', refresh: 'PT3H' })); });
 
-// 신청 가능 배지 (내 조건 × 자격 기준)
+// 신청 가능 배지 (내 조건 × 자격 기준) · SEEN: 사용자가 직접 넣거나 확인한 칸
+const SEEN = { hasCar: true };
 const today = '2026-11-08';
 const me = { a: { birth: '1997-03-01', income: 300 }, b: {}, nw: {}, yt: { single: true, homeless: true, house: 'alone', asset: 5000 }, hasCar: false, car: null, live: { city: '서울' }, work: {} };
 await t('자격 기준 읽기 (더포디엄830): 나이 19~39 · 세대 무주택 · 자동차 4,542만원', async () => assert.deepEqual(cr.c, [{ k: 'age', min: 19, max: 39 }, { k: 'homeless', scope: '세대' }, { k: 'car', max: 4542 }]));
-await t('배지: 정보가 다 있고 모두 통과 → 가능', async () => { const r = FT.judge(me, cr, { tier: 'youth', today }); assert.equal(r.st, 'ok', JSON.stringify(r.why));
+await t('배지: 정보가 다 있고 모두 통과 → 가능', async () => { const r = FT.judge(me, cr, { tier: 'youth', today, seen: SEEN }); assert.equal(r.st, 'ok', JSON.stringify(r.why));
   assert.deepEqual(r.why.filter(w => !w.extra).map(w => [w.ok, w.t, w.v]), [[true, '나이 만 19~39세', '만 29세'], [true, '세대원 모두 무주택', '무주택'], [true, '자동차가액 4,542만원 이하', '자동차 없음']]); });
 const crInc = { c: [...cr.c, { k: 'income', pct: 100, amt: { 1: 458 } }], x: 0 };
 await t('배지: 소득 기준이 있는데 소득 미입력 → 확인 필요 (이유: 입력 안 함)', async () => {
-  assert.equal(FT.judge(me, crInc, { tier: 'youth', today }).st, 'ok');
-  const r = FT.judge({ ...me, a: { birth: me.a.birth, income: null } }, crInc, { tier: 'youth', today }); assert.equal(r.st, 'unk'); assert.deepEqual(r.why.find(w => w.t.startsWith('월평균소득')), { ok: null, t: '월평균소득 100% 이하', v: '입력 안 함' }); });
-await t('배지: 나이 초과 → 어려움', async () => { const r = FT.judge({ ...me, a: { birth: '1980-01-01', income: 300 } }, cr, { tier: 'youth', today }); assert.equal(r.st, 'no'); assert.deepEqual(r.why[0], { ok: false, t: '나이 만 19~39세', v: '만 46세' }); });
-await t('배지: 자동차 있음인데 가액 미입력 → 확인 필요 "입력 안 함"', async () => { const r = FT.judge({ ...me, hasCar: true }, cr, { tier: 'youth', today }); assert.equal(r.st, 'unk'); assert.deepEqual(r.why[2], { ok: null, t: '자동차가액 4,542만원 이하', v: '입력 안 함' }); });
-await t('배지: 자격 기준이 구조화돼 있지 않은 공고 → 확인 필요 (판정 안 함)', async () => { assert.equal(FT.judge(me, null, { tier: 'youth', today }).st, 'unk'); assert.equal(FT.judge(me, { c: [], x: 3 }, { tier: 'youth', today }).st, 'unk'); });
+  assert.equal(FT.judge(me, crInc, { tier: 'youth', today, seen: SEEN }).st, 'ok');
+  const r = FT.judge({ ...me, a: { birth: me.a.birth, income: null } }, crInc, { tier: 'youth', today, seen: SEEN }); assert.equal(r.st, 'unk'); assert.deepEqual(r.why.find(w => w.t.startsWith('월평균소득')), { ok: null, t: '월평균소득 100% 이하', v: '입력 안 함' }); });
+await t('배지: 나이 초과 → 어려움', async () => { const r = FT.judge({ ...me, a: { birth: '1980-01-01', income: 300 } }, cr, { tier: 'youth', today, seen: SEEN }); assert.equal(r.st, 'no'); assert.deepEqual(r.why[0], { ok: false, t: '나이 만 19~39세', v: '만 46세' }); });
+await t('배지: 자동차 있음인데 가액 미입력 → 확인 필요 "입력 안 함"', async () => { const r = FT.judge({ ...me, hasCar: true }, cr, { tier: 'youth', today, seen: SEEN }); assert.equal(r.st, 'unk'); assert.deepEqual(r.why[2], { ok: null, t: '자동차가액 4,542만원 이하', v: '입력 안 함' }); });
+await t('배지: 기본값(자동차 없음)을 확인하지 않았으면 그 항목은 입력 안 함 → 확인 필요', async () => {
+  const r = FT.judge(me, cr, { tier: 'youth', today, seen: {} }); assert.equal(r.st, 'unk'); assert.deepEqual(r.why[2], { ok: null, t: '자동차가액 4,542만원 이하', v: '입력 안 함' }); });
+await t('배지: 수락(sh-312351) 기준 — 소득·자산 미입력이면 확인 필요 (기본값으로 통과시키지 않음)', async () => {
+  const c351 = { c: [{ k: 'age', min: 19, max: null }, { k: 'homeless', scope: '본인' }, { k: 'region', work: true, cond: true }, { k: 'car', max: 4542 }, { k: 'asset', by: { all: 34500, youth: 25100 } }, { k: 'income', pct: 120, amt: { 1: 458, 2: 704, 3: 980 } }], x: 1 };
+  const def = { a: { birth: '1997-03-01', income: null }, b: { birth: '', income: null }, hasCar: false, car: null, live: { city: '서울', gu: '' }, work: { city: '', gu: '' }, nw: { appl: 'a', homeless: null, others: 0, kids: 0, asset: null }, yt: { single: true, homeless: true, house: 'alone', hh: 2, hhIncome: null, asset: null } };
+  const r = FT.judge(def, c351, { tier: 'youth', today, seen: {} }); assert.equal(r.st, 'unk');
+  assert.deepEqual(r.why.filter(w => w.ok == null && !w.extra).map(w => [w.t, w.v]), [['자동차가액 4,542만원 이하', '입력 안 함'], ['총자산 2억 5,100만원 이하 (청년)', '입력 안 함'], ['월평균소득 120% 이하', '입력 안 함']]);
+  assert.equal(FT.judge({ ...def, a: { ...def.a, income: 300 }, yt: { ...def.yt, asset: 5000 } }, c351, { tier: 'youth', today, seen: { hasCar: true } }).st, 'ok'); });
+await t('배지: 신혼부부 소득은 자녀 수를 확인해야 가구원 수를 앎', async () => {
+  const c = { c: [{ k: 'income', pct: 120, amt: { 2: 700 } }], x: 0 }, nwMe = { a: { income: 300 }, b: { income: 300 }, nw: { kids: 0, others: 0 } };
+  assert.equal(FT.judge(nwMe, c, { tier: 'newlywed', today, seen: {} }).why[0].v, '가구원 수 입력 안 함'); assert.equal(FT.judge(nwMe, c, { tier: 'newlywed', today, seen: { 'nw.kids': true } }).st, 'ok'); });
+await t('배지: 자격 기준이 구조화돼 있지 않은 공고 → 확인 필요 (판정 안 함)', async () => { assert.equal(FT.judge(me, null, { tier: 'youth', today, seen: SEEN }).st, 'unk'); assert.equal(FT.judge(me, { c: [], x: 3 }, { tier: 'youth', today, seen: SEEN }).st, 'unk'); });
 await t('배지: 조건부 기준(소득 50% 이하만 해당 등)을 넘으면 어려움이 아니라 확인 필요', async () => {
-  assert.equal(FT.judge({ ...me, yt: { ...me.yt, asset: 30000 } }, { c: [{ k: 'asset', max: 24500, cond: true }], x: 0 }, { tier: 'youth', today }).st, 'unk');
-  assert.equal(FT.judge({ ...me, yt: { ...me.yt, asset: 30000 } }, { c: [{ k: 'asset', max: 24500 }], x: 0 }, { tier: 'youth', today }).st, 'no'); });
+  assert.equal(FT.judge({ ...me, yt: { ...me.yt, asset: 30000 } }, { c: [{ k: 'asset', max: 24500, cond: true }], x: 0 }, { tier: 'youth', today, seen: SEEN }).st, 'unk');
+  assert.equal(FT.judge({ ...me, yt: { ...me.yt, asset: 30000 } }, { c: [{ k: 'asset', max: 24500 }], x: 0 }, { tier: 'youth', today, seen: SEEN }).st, 'no'); });
 
 // 필터
 const it6720 = { ...I6720, ty, st: { n: '건대입구역', m: 150, w: 3 } }, noDet = { id: 'lh-1', title: 'LH 공고', ty: [], st: null };
@@ -85,4 +103,35 @@ await t('좌표 찾기: 번지까지 찾은 결과만 저장 · 도로·동 수�
   assert.match(cache['서울 도로만'].why, /tertiary 수준만 찾음/);   // 번지까지 못 찾으면 쓰지 않음 (정보 없음)
   await E.geocode('서울 A', cache, { fetchFn: async () => { n++; return new Response('[]'); } }); assert.equal(n, 1);
   assert.equal(await E.geocode('서울 B', cache, { fetchFn: async () => new Response('[]') }), null); assert.equal(await E.geocode('서울 B', cache, { fetchFn: async () => { throw new Error('안 불러야 함'); } }), null); });
+// SEQUENCE: 마감 시각이 바뀌면 +1 (상세 파일 seq 에 기록) · 역: 본문 거리 > 번지 좌표 > 역 이름만
+{ const dd = await mkdtemp(join(tmpdir(), 'enr-')) + '/', geoFile = dd + 'geo.json', stF = dd + 'st.json', noFetch = async () => { throw new Error('부르면 안 됨'); };
+  await writeFile(stF, JSON.stringify({ stations: { 건대입구역: [37.54044, 127.07086], 효창공원앞역: [37.53934, 126.96133] } }));
+  await writeFile(dd + 'youth-6720.json', JSON.stringify({ ...D6720, seq: undefined, near: { n: '건대입구역', exit: '6' }, addr: '서울특별시 광진구 아차산로 212' }));
+  await writeFile(geoFile, JSON.stringify({ '서울특별시 광진구 아차산로 212': { ll: [37.53872, 127.07436] } }));
+  const items = () => [{ ...I6720 }]; let L = items(); await E.enrich(L, { dir: dd, geoFile, stationsFile: stF, fetchFn: noFetch, log: () => {} });
+  await t('SEQUENCE: 처음은 0 · 상세 파일 seq 에 날짜·시각 기록', async () => { assert.equal(L[0].ev.find(e => e.k === 'end').q, undefined); const d = JSON.parse(await readFile(dd + 'youth-6720.json', 'utf8')); assert.deepEqual(d.seq.end, { n: 0, s: '2026-11-10||23:00' }); assert.match(L[0].dv, /^[0-9a-f]{10}$/); });
+  L = [{ ...I6720, time: '18:00' }]; await E.enrich(L, { dir: dd, geoFile, stationsFile: stF, fetchFn: noFetch, log: () => {} });
+  await t('SEQUENCE: 마감 시각이 23:00 → 18:00 으로 바뀌면 1 · .ics 에 SEQUENCE:1', async () => { assert.equal(L[0].ev.find(e => e.k === 'end').q, 1); assert.equal(L[0].ev.find(e => e.k === 'start').q, undefined);
+    assert.match(FT.ics([{ id: 'youth-6720', name: 'x', ev: L[0].ev }]).replace(/\r\n /g, ''), /UID:youth-6720-end@dionelee\.github\.io\r\nDTSTAMP:\d{8}T\d{6}Z\r\nSEQUENCE:1\r\n/); });
+  L = [{ ...I6720, time: '18:00' }]; await E.enrich(L, { dir: dd, geoFile, stationsFile: stF, fetchFn: noFetch, log: () => {} });
+  await t('SEQUENCE: 그대로면 안 올라감 · LAST-MODIFIED 용 lm = 상세 readAt', async () => { assert.equal(L[0].ev.find(e => e.k === 'end').q, 1); assert.equal(L[0].lm, D6720.readAt); });
+  await t('역: 본문 역이 있고 번지 좌표가 있으면 그 역까지 직선거리 (src geo)', async () => { assert.equal(L[0].st.n, '건대입구역'); assert.equal(L[0].st.src, 'geo'); assert.ok(L[0].st.m > 250 && L[0].st.m < 450); assert.equal(L[0].st.exit, '6'); });
+  await writeFile(dd + 'youth-6718.json', JSON.stringify({ ...D6720, id: 'youth-6718', addr: '서울특별시 용산구 효창원로 80', near: { n: '효창공원앞역', exit: '3', w: 4, m: 280 } }));
+  await writeFile(dd + 'youth-6721.json', JSON.stringify({ ...D6720, id: 'youth-6721', addr: null, near: { n: '미아사거리역', exit: '3', alt: '숭곡초교역' } }));
+  L = [{ ...I6720, id: 'youth-6718' }, { ...I6720, id: 'youth-6721' }, { ...I6720, id: 'sh-1', detail: false, title: '[청년] 숭곡초교역(예정) 앞 공고' }]; await E.enrich(L, { dir: dd, geoFile, stationsFile: stF, fetchFn: async () => new Response('[]'), log: () => {} });
+  await t('역: 본문에 거리가 있으면 그 값 (src text) · 없으면 역 이름만 (거리 null) · (예정)은 pre', async () => {
+    assert.deepEqual(L[0].st, { n: '효창공원앞역', m: 280, w: 4, src: 'text', exit: '3' });
+    assert.deepEqual(L[1].st, { n: '미아사거리역', m: null, w: null, src: 'name', exit: '3', alt: '숭곡초교역' });
+    assert.deepEqual(L[2].st, { n: '숭곡초교역', m: null, w: null, src: 'name', pre: true }); });
+  await t('필터: 역 이름만(거리 없음)이면 정보 없음', async () => assert.equal(FT.filterItem({ ty: [], st: L[1].st }, { walk: 10 }).st, 'unk'));
+  const cf = dd + 'cal.ics', it1 = [{ ...I6720, ev, lm: '' }];
+  await t('구독 캘린더: DTSTAMP = 만든 시각 · 일정이 그대로면 다시 쓰지 않음 · 바뀌면 씀', async () => {
+    assert.equal(await E.writeCalendar(it1, cf, new Date('2026-11-08T12:00:00Z')), true); assert.match(await readFile(cf, 'utf8'), /DTSTAMP:20261108T120000Z/);
+    assert.equal(await E.writeCalendar(it1, cf, new Date('2026-11-08T15:00:00Z')), false); assert.match(await readFile(cf, 'utf8'), /DTSTAMP:20261108T120000Z/);
+    assert.equal(await E.writeCalendar([{ ...it1[0], ev: ev.map(e => e.k === 'end' ? { ...e, t: '18:00' } : e) }], cf, new Date('2026-11-08T16:00:00Z')), true); });
+  await rm(dd, { recursive: true }); }
+await t('역 이름·거리 문구 읽기: 출구 · 도보 · 직선거리 · (예정) · 역세권·지역은 무시', async () => {
+  assert.deepEqual(E.nearFrom('[민간임대] 숭곡초교역(예정) 성북펠릭스', '■주택위치 : 서울 성북구 하월곡동 88-222 (4호선 미아사거리역 3번 출구)', { 미아사거리역: [0, 0] }), { n: '미아사거리역', exit: '3', alt: '숭곡초교역' });
+  assert.deepEqual(E.nearFrom('효창공원앞역 해링턴', '■교통 : 효창공원앞역 도보 4분, 직선거리 280m', { 효창공원앞역: [0, 0] }), { n: '효창공원앞역', w: 4, m: 280 });
+  assert.equal(E.nearFrom('역세권 지역 구역 공고', '역세권 단지', { 건대입구역: [0, 0] }), null); });
 console.log(`${ok}개 모두 OK`);
