@@ -5,6 +5,7 @@ import { readFile, writeFile, mkdir, readdir, unlink, appendFile } from 'node:fs
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { dirname } from 'node:path';
+import { addrFrom } from './enrich.mjs';
 
 export const DETAIL_DIR = fileURLToPath(new URL('../feed/detail/', import.meta.url));
 export const DEFER_LOG = process.env.DETAIL_DEFER_LOG || fileURLToPath(new URL('../docs/work/미룸.md', import.meta.url));   // 검사는 DETAIL_DEFER_LOG 로 임시 파일에   // 마감까지 계속 미뤄진 공고 (인수인계 문서에서 링크)
@@ -27,12 +28,13 @@ export const DETAIL_PROMPT = `첨부한 주택 입주자 모집공고문을 읽�
 - schedule: 접수·서류 제출·발표·계약 일정 (label, date).
 - special: 가점·우선순위·특이사항과 주의할 점 (한부모·다자녀·세대 분리·부모 소득 합산·거주 기간 등이 있으면 꼭), 최대 8개.
 - contact: 문의처 한 줄 (전화번호 포함).
+- addr: 주택(단지) 소재지 주소 한 줄 (도로명이나 지번, 예: '서울특별시 광진구 아차산로 212'). 여러 곳이면 첫 번째.
 - 함께 보내는 '게시판 본문'에도 일정·문의·신청 방법이 적혀 있을 수 있다. schedule 과 contact 는 공고문이나 본문 어디든 있으면 반드시 채운다.`;
 const S = { type: 'STRING', nullable: true }, SA = { type: 'ARRAY', items: { type: 'STRING' } };
 export const DETAIL_SCHEMA = { type: 'OBJECT', required: ['target', 'eligibility'], properties: {
   target: S, eligibility: SA, income: S, asset: S, car: S,
   supply: { type: 'ARRAY', items: { type: 'OBJECT', properties: { type: S, area: S, units: S, price: S, movein: S } } },
-  apply: S, costs: SA,
+  apply: S, costs: SA, addr: S,
   schedule: { type: 'ARRAY', items: { type: 'OBJECT', properties: { label: S, date: S } } },
   special: SA, contact: S } };
 
@@ -153,11 +155,11 @@ export function cleanDetail(x) {
   const objs = (v, keys, n) => (Array.isArray(v) ? v : []).map(o => Object.fromEntries(keys.map(k => [k, s(o?.[k], 80)]))).filter(o => keys.some(k => o[k])).slice(0, n);
   const unit = o => (o.units && /^\d+$/.test(o.units) ? { ...o, units: `${o.units}세대` } : o);
   const d = { target: s(x?.target), eligibility: arr(x?.eligibility, 8), income: s(x?.income), asset: s(x?.asset), car: s(x?.car),
-    supply: objs(x?.supply, ['type', 'area', 'units', 'price', 'movein'], 10).map(unit), schedule: objs(x?.schedule, ['label', 'date'], 8), apply: s(x?.apply, 200), costs: arr(x?.costs, 6), special: arr(x?.special, 8), contact: s(x?.contact) };
+    supply: objs(x?.supply, ['type', 'area', 'units', 'price', 'movein'], 10).map(unit), schedule: objs(x?.schedule, ['label', 'date'], 8), apply: s(x?.apply, 200), costs: arr(x?.costs, 6), special: arr(x?.special, 8), contact: s(x?.contact), addr: s(x?.addr, 100) };
   return d.target || d.eligibility.length ? d : null;
 }
 // lite 가 읽은 상세를 첫 모델로 다시 읽을 때 칸별 비교 (합치기 전 첫 모델 결과 그대로) → 로그 한 줄 + _compare.jsonl (며칠 모아 lite 로 충분한 칸을 본다)
-const KO = { eligibility: '자격', special: '특이', supply: '주택형', schedule: '일정', costs: '비용', target: '대상', income: '소득', asset: '자산', car: '자동차', apply: '신청', contact: '문의' };
+const KO = { eligibility: '자격', special: '특이', supply: '주택형', schedule: '일정', costs: '비용', target: '대상', income: '소득', asset: '자산', car: '자동차', apply: '신청', contact: '문의', addr: '주소' };
 export function compareDetail(lite, first) {
   const lists = Object.fromEntries(LIST_KEYS.map(k => [k, [lite?.[k]?.length || 0, first?.[k]?.length || 0]]));
   const lines = Object.fromEntries(LINE_KEYS.map(k => { const a = lite?.[k] || null, b = first?.[k] || null; return [k, a === b ? '같음' : !a ? '채움' : !b ? '비움' : '바뀜']; }));
@@ -166,7 +168,7 @@ export function compareDetail(lite, first) {
   return { lists, lines, changed, text };
 }
 // 퇴보 막기: 다시 읽은 결과와 예전 결과를 칸마다 합친다 — 목록은 항목이 더 많은 쪽, 한 줄 칸은 새 값이 비었으면 예전 값
-export const LIST_KEYS = ['eligibility', 'special', 'supply', 'schedule', 'costs'], LINE_KEYS = ['target', 'income', 'asset', 'car', 'apply', 'contact'];
+export const LIST_KEYS = ['eligibility', 'special', 'supply', 'schedule', 'costs'], LINE_KEYS = ['target', 'income', 'asset', 'car', 'apply', 'contact', 'addr'];
 export function mergeDetail(old, neu) {
   if (!old) return { d: neu, kept: [] }; const d = { ...neu }, kept = [];
   for (const k of LIST_KEYS) if ((old[k]?.length || 0) > (neu[k]?.length || 0)) { d[k] = old[k]; kept.push(k); }
@@ -197,7 +199,8 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
   const attChanged = new Set();
   for (const it of items) { const o = prev.get(it.id); if (!o || o.source === 'api' || !safeId(it.id) || needs(it.id)) continue;
     let a; try { a = await findAttach(it); } catch { continue; } if (!a) continue;
-    if (!o.att) { o.att = a.att; await writeFile(`${dir}${it.id}.json`, JSON.stringify(o, null, 1) + '\n', 'utf8'); }
+    const ad = !o.addr && addrFrom(a.text); if (ad) o.addr = ad;   // 게시판 본문의 '■주택위치 : …' 줄 (AI 안 씀)
+    if (!o.att || ad) { o.att ??= a.att; await writeFile(`${dir}${it.id}.json`, JSON.stringify(o, null, 1) + '\n', 'utf8'); }
     else if (o.att !== a.att) { attChanged.add(it.id); log(`상세 · ${it.id}: 첨부가 바뀜 → 원문 확인`); } }
   const today = nowKst().slice(0, 10), due = i => i.to ? Math.round((Date.parse(i.to) - Date.parse(today)) / 864e5) : 9999, byDue = (a, b) => due(a) - due(b);
   // 첫 모델(하루 예산) 우선순위: 마감 3일 이내 다시 읽기 → 원문(첨부)이 바뀐 공고 교체 → 나머지 다시 읽기 · 새 공고 첫 읽기는 lite (각각 마감 가까운 순)
@@ -219,6 +222,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
         await writeFile(`${dir}${it.id}.json`, JSON.stringify({ ...old, att: p.att }, null, 1) + '\n', 'utf8'); log(`상세 · ${it.id}: 첨부 정보만 바뀜 (원문 같음)`); continue; }
       const { data, model } = await askGemini(pdf, p.text, { models: re ? [MODELS[0]] : [MODELS[1]] });
       const neu = fillFromText(cleanDetail(data), p.text); if (!neu) throw new Error('AI 가 조건을 못 읽음');
+      neu.addr = addrFrom(p.text) || neu.addr;   // 본문 주소 줄이 있으면 그게 먼저
       // 원문(PDF + 본문) 해시가 같을 때만 칸별 합치기 · 다르면(정정공고 등) 새 결과로 교체 · 예전 파일에 해시가 없으면(src 기록 전) 같은 원문으로 보고 합침 (단, 첨부가 바뀌었으면 다른 원문)
       const same = !!old && (old.src ? old.src === src : !attChanged.has(it.id));
       if (old && !same && model !== MODELS[0]) { defer(it, `원문이 바뀌었지만 ${model} 결과라 교체 안 함 · 다음 갱신에 ${MODELS[0]}`); continue; }   // 교체는 첫 모델로만

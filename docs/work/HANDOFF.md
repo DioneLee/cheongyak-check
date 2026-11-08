@@ -43,6 +43,11 @@
   - Worker 비밀값 `GH_TOKEN`: fine-grained 토큰 · 저장소 DioneLee/cheongyak-check · Actions: Read and write 만
   - **GH_TOKEN 만료일: 2027-11-06 (넣은 날: 2026-11-07)** · Cloudflare 대시보드 Secret · 만료 전에 새 토큰을 만들어 `cd worker-cron && npx wrangler secret put GH_TOKEN` · 만료·권한 문제면 Worker 로그에 "토큰 만료/권한 오류"
   - 실행 간격 확인: `node scripts/verify/schedule_report.mjs` (예정 시각 대비 지연 · 건너뜀 · 안 돈 회차) · Worker 검사 `node scripts/verify/cron_check.mjs`
+- [x] 캘린더·신청 가능 배지·필터(2026-11-08, sw 08a) — 원칙: 내 입력(생년월일·소득·자산·관심 공고·필터)은 브라우저에만, 서버(Actions)는 공고 공개 정보만 미리 계산
+  - Actions(`scripts/enrich.mjs`): notices.json 항목에 `ev`(일정: 청약 시작·마감·발표·서류·계약) · `cr`(자격 기준: 나이·무주택·미혼·서울 거주·자동차·자산·소득, 조건부는 cond) · `ty`(주택형 면적·보증금·월세 만원) · `st`(가까운 역·직선거리·도보 약 N분 = 거리÷67×1.3) + 구독 캘린더 `feed/calendar.ics`(청약 시작·마감만)
+  - 역 거리: 단지 주소(게시판 '■주택위치' 줄 · AI 상세 addr) → OSM Nominatim(번지까지 찾은 것만, `feed/geo.json` 저장) → `feed/stations.json`(OSM 서울 지하철역 332개). **Nominatim 은 한국 주소에 약해 2026-11-08 기준 7개 중 1개만 번지까지 찾음** → 나머지는 '정보 없음'. 정확도를 올리려면 브이월드·카카오 지오코더 키 필요
+  - 브라우저(`lib/feed-tools.js`, Node 검사와 같은 코드): .ics 만들기(Asia/Seoul · 마감 알림 2개 · UID '공고id-종류@dionelee.github.io' · 75바이트 줄 접기 · CRLF) · 신청 가능 판정(가능은 기준을 모두 판정할 수 있고 모두 통과할 때만 · 조건부 기준을 넘으면 확인 필요) · 필터(맞음/정보 없음/안 맞음 + 맞는 주택형)
+  - 검사 `node scripts/verify/tools_check.mjs` · 사이트 `check.py`(PC 가상 시간 120초로 늘림)
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 JSON 도 읽기) · LH 공고문 PDF 찾기
 - 참고: check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 - 왜 LH·행복주택이 적은가: 2026-11-06 확인 시 LH 청약플러스 진행 중 52건 중 서울 0건, 마이홈 서울 모집중은 캠코 1건뿐 (데이터 문제 아님)

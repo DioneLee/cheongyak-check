@@ -74,7 +74,7 @@ t('같은 공고(머리말·공고 글자 차이) 합침 · LH 우선 · 빈 칸
 t('마감 가까운 순 · http(s) 링크만', () => { assert.equal(feed.items[1].id, 'myhome-B2'); assert.equal(feed.items[1].url, ''); });
 t('서울 밖 공고는 뺌', () => { const g = F.buildFeed([{ feedId: 'lh-9', org: 'LH', title: '경기 행복주택', region: '경기', kind: '', posted: T(-1), from: '', to: T(3), url: '' }]); assert.equal(g.items.length, 0); });
 t('최상위 형식 · 출처 이름', () => { assert.deepEqual(Object.keys(feed), ['updated', 'source', 'items']); assert.equal(feed.source, '마이홈포털·LH 공식 API · SH·청년안심주택 게시판'); assert.match(feed.updated, /\+09:00$/); });
-t('항목 필드 13개 (사이트 normFeed 와 같은 모양)', () => assert.deepEqual(Object.keys(feed.items[0]), ['id', 'org', 'title', 'region', 'kind', 'posted', 'from', 'to', 'url', 'time', 'startOnly', 'detail', 'dv']));
+t('항목 필드 17개 (사이트 normFeed 와 같은 모양)', () => assert.deepEqual(Object.keys(feed.items[0]), ['id', 'org', 'title', 'region', 'kind', 'posted', 'from', 'to', 'url', 'time', 'startOnly', 'detail', 'dv', 'ev', 'cr', 'ty', 'st']));
 t('오류 메시지에서 키 지움', () => { const m = F.scrub('x serviceKey=TEST+KEY==-only&y TEST%2BKEY%3D%3D-only'); assert.ok(!m.includes('TEST'), m); });
 let err = ''; globalThis.fetch = async () => new Response('<returnAuthMsg>SERVICE_KEY_IS_NOT_REGISTERED_ERROR</returnAuthMsg>');
 try { await F.fetchLH(); } catch (e) { err = e.message; }

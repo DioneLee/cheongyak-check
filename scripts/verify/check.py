@@ -27,7 +27,7 @@ ok("API 키(AIza…) 없음", not any("AIza" in p.read_text(encoding="utf-8", er
 ok("방문자 분석·광고 도구 없음", not re.search(r"googletagmanager|gtag\(|google-analytics|clarity\.ms|hotjar|mixpanel|amplitude|plausible", src))
 try:
     changed = subprocess.run(["git", "-C", str(REPO), "diff", "--name-only", "HEAD"], capture_output=True, text=True).stdout.split()
-    ok("index.html·아이콘·예시를 바꿨으면 sw.js VERSION 도 바꿈", not any(c.startswith(("index.html", "icons/", "samples/", "manifest")) for c in changed) or "sw.js" in changed, changed)
+    ok("index.html·아이콘·예시를 바꿨으면 sw.js VERSION 도 바꿈", not any(c.startswith(("index.html", "icons/", "samples/", "manifest", "lib/")) for c in changed) or "sw.js" in changed, changed)
 except Exception as e:
     ok("git 확인 (처음 커밋 전이면 건너뜀)", True, e)
 
@@ -105,9 +105,9 @@ ok('기존 사이트 키는 만들지 않음', fw.localStorage.getItem('newlywed
 const fi = (id, to) => ({ id, org: 'LH', title: '피드 ' + id, region: '서울', kind: '행복주택', posted: '2026-11-01', from: '', to, url: 'https://apply.lh.or.kr' });
 fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포털·LH 공식 API', items: [1,2,3,4,5,6,7,8,9,10].map(i => fi('f' + i, '2099-01-' + String(i).padStart(2, '0'))) }); await W(50);
 fw.eval('setFeed')({ updated: '', source: '', items: [fi('s1', '2099-01-01'), { ...fi('g1', '2099-01-01'), region: '경기 성남시' }] }); await W(50);
-ok('피드는 서울 공고만', qa('#subFeed li').length === 1 && !q('#subFeed').textContent.includes('경기'));
+ok('피드는 서울 공고만', qa('#subFeed .flist > li').length === 1 && !q('#subFeed').textContent.includes('경기'));
 fw.eval('setFeed')({ updated: '2026-11-06T09:00:00+09:00', source: '마이홈포털·LH 공식 API', items: [1,2,3,4,5,6,7,8,9,10].map(i => fi('f' + i, '2099-01-' + String(i).padStart(2, '0'))) }); await W(50);
-ok('피드 8개 + 더 보기 · 줄 전체가 링크', qa('#subFeed li').length === 8 && qa('#subFeed li a.nm[target="_blank"]').length === 8 && /2개 더 보기/.test(q('#subFeed [data-feedmore]')?.textContent || ''), qa('#subFeed li').length);
+ok('피드 8개 + 더 보기 · 줄 전체가 링크', qa('#subFeed .flist > li').length === 8 && qa('#subFeed .flist > li a.nm[target="_blank"]').length === 8 && /2개 더 보기/.test(q('#subFeed [data-feedmore]')?.textContent || ''), qa('#subFeed .flist > li').length);
 const rf = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/lh-d1.json') ? new fw.Response(JSON.stringify({ id: 'lh-d1', read: '2026-11-07', target: '<b>청년</b>', eligibility: ['무주택'], special: ['한부모 가점'], supply: [{ type: '25A 1510호', area: '20.17㎡', units: '1', price: '보증금 9,300만원' }] })) : rf(u, o);
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('lh-d1', '2099-01-01'), detail: true }, fi('f2', '2099-01-02'), { ...fi('f3', '2099-01-03'), id: '../x', detail: true }] }); await W(50);
 q('#subFeed [data-detail="lh-d1"]').click(); await W(300); fw.fetch = rf; const dt1 = q('#subFeed [data-det="lh-d1"]');
@@ -116,10 +116,51 @@ q('#subFeed [data-detail="lh-d1"]').click(); await W(50);
 ok('상세보기 다시 누르면 접힘', dt1.hidden && q('#subFeed [data-detail="lh-d1"]').getAttribute('aria-expanded') === 'false');
 ok('상세 없는 공고는 [공고 원문 보기] 링크', qa('#subFeed a.dlink[target="_blank"]').length === 2 && qa('#subFeed a.dlink').every(a => a.textContent.includes('공고 원문 보기')));
 fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('youth-d2', '2026-11-10'), org: '청년안심', from: '2026-11-09', time: '23:00' }, { ...fi('youth-d3', '2026-11-12'), org: '청년안심', startOnly: true }] }); await W(50);
-const r2 = qa('#subFeed li').map(li => li.textContent.replace(/\s+/g, ' '));
+const r2 = qa('#subFeed .flist > li').map(li => li.textContent.replace(/\s+/g, ' '));
 ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3) · 마감일 모르면 시작일 표시', r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감') && r2[1].includes('청약신청일 11.12(목) · 마감일은 공고문에서'), r2.join(' / '));
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('sh-f1', '2099-01-01'), org: 'SH', title: '[정정] 고덕강일 3단지 입주자모집공고' }] }); await W(50);
 ok('정정공고는 배지', q('#subFeed .dd.fix')?.textContent === '정정공고' && q('#subFeed .nm').textContent.startsWith('고덕강일 3단지'));
+// 캘린더 · 신청 가능 배지 · 필터 (공개 정보 ev·cr·ty·st 는 Actions 가 notices.json 에 넣음 · 판정·필터·.ics 는 브라우저에서)
+ok('개인정보 문구: 캘린더 파일은 브라우저에서', d.querySelector('footer').textContent.includes('캘린더 파일은 브라우저에서 만들어져요'));
+const PODIUM = { ...fi('youth-6720', '2026-11-10'), org: '청년안심', title: '[민간임대] 건대입구역 더포디엄830 추가모집공고', from: '2026-11-09', time: '23:00', detail: true, dv: 'abcdef1234',
+  ev: [{ k: 'start', l: '청약 시작', d: '2026-11-09' }, { k: 'end', l: '청약 마감', d: '2026-11-10', t: '23:00' }, { k: 'announce', l: '서류심사 대상자 발표', d: '2026-11-11', t: '17:00' }],
+  cr: { c: [{ k: 'age', min: 19, max: 39 }, { k: 'homeless', scope: '세대' }, { k: 'car', max: 4542 }], x: 1 },
+  ty: [{ n: '25A 1510호', a: 20.17, dep: 9300, rent: 64.72 }, { n: '25B 529호', a: 20.4, dep: 9300, rent: 64.92 }, { n: '52A 2007호', a: 42.17, dep: 17300, rent: 121.45 }], st: { n: '건대입구역', m: 150, w: 3 } };
+const LHX = { ...fi('lh-77', '2026-11-20'), title: 'LH 서울 행복주택 모집공고' };
+fw.__today = '2026-11-08';
+fw.eval(`state.subs.tab = 'youth'; Object.assign(state.subs.me, { a: { ...state.subs.me.a, birth: '1997-03-01', income: 300 }, hasCar: false, car: null }); state.subs.me.yt.homeless = true; state.subs.wizard.done = true; render()`);
+fw.eval('setFeed')({ updated: '', source: '', items: [PODIUM, LHX] }); await W(80);
+ok('신청 가능 배지: 입력값으로 가능 · 누르면 항목별 이유', q('#subFeed [data-why="youth-6720"]')?.textContent === '가능' && q('#subFeed [data-whyp="youth-6720"]').hidden, q('#subFeed [data-why="youth-6720"]')?.textContent);
+q('#subFeed [data-why="youth-6720"]').click(); await W(50);
+const why = q('#subFeed [data-whyp="youth-6720"]');
+ok('이유: 나이 만 19~39세 ✔ · 자동차 ✔ · 기타 조건은 원문에서', !why.hidden && /✔ 나이 만 19~39세: 만 29세/.test(why.textContent) && /✔ 자동차가액 4,542만원 이하: 자동차 없음/.test(why.textContent) && /기타 조건 1개/.test(why.textContent), why.textContent.slice(0, 160));
+ok('자격 기준 없는 공고는 확인 필요', q('#subFeed [data-why="lh-77"]')?.textContent === '확인 필요');
+fw.eval(`state.subs.me.a.birth = '1980-01-01'; render()`); await W(50);
+ok('나이 초과로 바꾸면 어려움', q('#subFeed [data-why="youth-6720"]')?.textContent === '어려움');
+fw.eval(`state.subs.me.a.birth = '1997-03-01'; state.subs.wizard.done = false; render()`); await W(50);
+ok('진단 전이면 배지 대신 안내 한 줄', !q('#subFeed .jb') && q('#subFeed .fhint')?.textContent.includes('내 조건 넣고 가능 여부 보기'));
+fw.eval(`state.subs.wizard.done = true; render()`); await W(50);
+ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공고 원문에서" · 구독 링크 webcal://', !!q('#subFeed [data-ics="youth-6720"]') && q('#subFeed [data-fid="lh-77"] .nocal')?.textContent === '일정은 공고 원문에서' && /^webcal:\/\/.+\/feed\/calendar\.ics$/.test(q('#subFeed .facts a').getAttribute('href')));
+{ let blob = null, name = ''; const ou = fw.URL.createObjectURL, oc = fw.HTMLAnchorElement.prototype.click; fw.URL.createObjectURL = b => { blob = b; return 'blob:x'; }; fw.HTMLAnchorElement.prototype.click = function () { name = this.download; };
+  const rf2 = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/youth-6720.json') ? new fw.Response(JSON.stringify({ apply: '인터넷 신청: https://naver.me/GUTJuhOO', supply: [{ type: '25A 1510호' }, { type: '25B 529호' }, { type: '52A 2007호' }] })) : rf2(u, o);
+  q('#subFeed [data-ics="youth-6720"]').click(); for (let n = 0; n < 20 && !blob; n++) await W(50);
+  const txt = blob ? (await blob.text()).replace(/\r\n /g, '') : '';
+  ok('캘린더에 추가 → 브라우저에서 .ics 만듦 (마감 23:00 · 알림 2개 · 고정 UID · 신청 링크)', /DTEND;TZID=Asia\/Seoul:20261110T230000/.test(txt) && (txt.match(/BEGIN:VALARM/g) || []).length === 2 && txt.includes('UID:youth-6720-end@dionelee.github.io') && txt.includes('신청: https://naver.me/GUTJuhOO') && /\.ics$/.test(name), name + ' ' + txt.slice(0, 80));
+  q('#subFeed [data-star="youth-6720"]').click(); await W(50);
+  ok('★ 관심 공고: 이 브라우저에만 저장 · 관심 공고 캘린더 버튼 켜짐', JSON.parse(fw.localStorage.getItem('cheongyak-check-stars')).includes('youth-6720') && !q('#subFeed [data-starics]').disabled && q('#subFeed [data-star="youth-6720"]').textContent === '★');
+  blob = null; q('#subFeed [data-starics]').click(); for (let n = 0; n < 20 && !blob; n++) await W(50);
+  ok('관심 공고 전체 캘린더로 받기', !!blob && (await blob.text()).includes('X-WR-CALNAME:청약 체크 · 관심 공고') || (blob && (await blob.text()).includes('UID:youth-6720-start@')));
+  // 필터: 보증금 1억 이하
+  const sel = q('#subFeed select[data-f="dep"]'); sel.value = '10000'; sel.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(50);
+  const okIds = qa('#subFeed .flist:not(.funk) > li').map(li => li.dataset.fid), unkIds = qa('#subFeed .funk > li').map(li => li.dataset.fid);
+  ok('필터 보증금 1억 이하: 더포디엄830 남음 · 상세 없는 공고는 "정보 없음" 묶음 · 필터는 브라우저에 저장', okIds.join() === 'youth-6720' && unkIds.join() === 'lh-77' && q('#subFeed .fgroup')?.textContent.includes('정보 없음') && JSON.parse(fw.localStorage.getItem('cheongyak-check-feed-filter')).dep === 10000, okIds + ' / ' + unkIds);
+  q('#subFeed [data-detail="youth-6720"]').click(); for (let n = 0; n < 20 && !q('#subFeed [data-det="youth-6720"] li.hit'); n++) await W(50);
+  ok('필터에 맞는 주택형 강조: 25A·25B 만', qa('#subFeed [data-det="youth-6720"] li.hit').map(li => li.querySelector('b').textContent).join() === '25A 1510호,25B 529호', qa('#subFeed [data-det="youth-6720"] li.hit').length);
+  const s5 = q('#subFeed select[data-f="dep"]'); s5.value = '5000'; s5.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(50);
+  ok('보증금 5천 이하: 더포디엄830 숨김(몇 개 숨겼는지 표시) · LH 는 정보 없음에 남음', !q('#subFeed [data-fid="youth-6720"]') && !!q('#subFeed .funk [data-fid="lh-77"]') && /안 맞는 1개 숨김/.test(q('#subFeed .foot').textContent));
+  q('#subFeed [data-freset]').click(); await W(50);
+  ok('필터 지우기 → 모두 보임', qa('#subFeed .flist > li').length === 2 && !q('#subFeed .funk'));
+  fw.fetch = rf2; fw.URL.createObjectURL = ou; fw.HTMLAnchorElement.prototype.click = oc; }
 delete fw.__today;
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];
@@ -226,7 +267,8 @@ def main():
     if have_old: procs.append(serve(OLD_PORT, OLD_REPO))
     logs_all = []
     try:
-        for label, body, kw in [("PC 1280", PC, {}), ("휴대폰 390", MOBILE, {"w": 390, "h": 844, "seeds": {"newlywed-home-v1": old_seed}}), ("서비스 워커", SW, {"budget": None})]:
+        for label, body, kw in [("PC 1280", PC, {"budget": 120000}),   # 캘린더·배지·필터 검사가 늘어 가상 시간 60초 → 120초
+                               ("휴대폰 390", MOBILE, {"w": 390, "h": 844, "seeds": {"newlywed-home-v1": old_seed}}), ("서비스 워커", SW, {"budget": None})]:
             res, logs = run(body, REPO, NEW_PORT, "/index.html", **kw); logs_all += logs
             for st, n, g in res: rows.append((st, f"[{label}] {n}", g))
         if have_old:
