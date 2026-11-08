@@ -1,56 +1,77 @@
-# 인수인계 — 청약 체크 (2026-11-06)
+# 인수인계 — 청약 체크 (마지막 정리 2026-11-08)
+
+새 세션은 이 파일 → [변경기록.md](변경기록.md)(왜 이렇게 됐는지) → `docs/design/분리설계.md`(설계) 순서로 읽는다.
 
 ## 지금 상태
 
-- 배포됨: https://dionelee.github.io/cheongyak-check/ (저장소 DioneLee/cheongyak-check, Pages = main / root) · 2026-11-06
-- 검사: `python scripts/verify/check.py` 70/70 OK (서울 한정 2건 포함 · SUITABLE HOME 과 판정 동등성 16건 포함) · `node scripts/verify/feed_check.mjs` 10/10
-- 화면 사진: `screenshots/{first,result}_{pc1280,mobile390}.png`
-- SUITABLE HOME(../sjcu) 쪽: 청약 탭 맨 위 안내 한 줄 (커밋 e0e8447, 백업 `index_v27_backup.html`) · v10 73/73 · v8 55/55
+- 배포: https://dionelee.github.io/cheongyak-check/ (저장소 DioneLee/cheongyak-check · Pages = main / root · 서비스 워커 `cheongyak-check-2026-11-08c`)
+- 첫 화면: 서울 진행중 공고(원문 사이트 4곳 · 공고 목록 · 필터 · 관심 공고 · 캘린더) → 내 청약 순위·점수 진단(PDF 올리기 + 질문)
+- 공고 출처: LH·마이홈포털 공공데이터 API + SH 공고 게시판 + 서울 청년안심주택 모집공고 목록 (서울만)
+- 공고 상세(신청 조건 요약): Actions 가 공고문 PDF 를 Gemini 로 읽음. 2026-11-08 기준 15건 모두 상세 있음 (마이홈 1건은 API 기본 정보)
+- 검사 (2026-11-08 마지막): `CHECK_PORT=8792 python3 scripts/verify/check.py` 81/81 · `node scripts/verify/tools_check.mjs` 34 · `detail_check.mjs` 57 · `feed_check.mjs` 21 · `cron_check.mjs` 5
+  - SUITABLE HOME 과의 판정 동등성 검사는 `../sjcu` 가 있는 PC 에서만 돈다 (이 Mac 에는 없음)
+  - check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 
-## 다음
+## 구조 (데이터 흐름)
 
-- [x] Secrets `DATA_GO_KR_KEY` · Actions 첫 실행 성공 (해외 서버에서도 API 응답)
-- [x] 안티그래비티 아이콘 적용 (sw VERSION 06b) · AI 붐빔 2초 재시도 · 첫 방문 3단계 안내 · 1단계 카드 누르면 바로 다음
-- LH 0건 원인(2026-11-06 진단 `lh_probe.mjs`): 필터·필드 이름은 정상. 최근 90일 서울 LH 공고 8건이 모두 접수 마감이라 빠짐. 진단은 Actions → 공고 피드 → Run workflow → probe 체크
-- [x] 피드백 반영(2026-11-06, sw 06d): 첫 화면 = 공고 바로가기, 진단은 둘째(제목 밑에 바로 PDF 올리기 + 질문) · 설명·3단계 카드·PC 왼쪽 칸 뺌 → `docs/design/분리설계.md` 화면
-- `check.py` 는 Mac 에서도 돈다 (Chrome 경로 자동 · 포트가 겹치면 `CHECK_PORT=8792 python3 scripts/verify/check.py`)
-- [ ] 피드백 남은 질문: 한부모·세대 분리(부모 밑 등재)·부모님 재정에 따른 공고별 특이사항은 판정에 없음 → 판정 규칙을 넓힐지 결정 (SUITABLE HOME 과 동등성 유지 필요)
+```
+GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :47 · 최근 100분 안에 실제 갱신했으면 건너뜀)
+  scripts/feed.mjs     공고 목록 (LH·마이홈 API, SH 게시판, 청년안심주택 JSON) → 서울만 · 마감 지난 것 빼기 · 정정공고면 예전 것 숨김
+  scripts/detail.mjs   공고 상세: PDF + 게시판 본문 → Gemini(첫 모델 하루 18번 · 새 공고는 lite) → feed/detail/{id}.json
+  scripts/enrich.mjs   공개 정보 구조화: 일정(ev) · 자격 기준(cr) · 주택형(ty) · 역(st) → notices.json · 구독 캘린더 feed/calendar.ics
+사이트 index.html + lib/feed-tools.js (브라우저에서만): 신청 가능 배지 · 필터 · .ics 만들기 · 관심 공고(★) · 진단
+```
+
+- 내 입력(생년월일·소득·자산·관심 공고·필터)은 브라우저 localStorage 에만. 서버로 보내지 않음
+- 상세 파일 주요 칸: `model`·`readAt`(누가 언제 읽었나) · `src`(원문 해시) · `att`(첨부 식별자) · `seq`(.ics SEQUENCE) · `near`(본문의 역·출구) · `addr` · `defer`(미룸 횟수)
+- 상태 파일(feed/detail/): `_quota.json`(첫 모델 오늘 사용 수) · `_fail.json`(실패·미룸) · `_compare.jsonl`(lite↔첫 모델 비교) · `_seq.json` / feed/: `geo.json`(좌표) · `stations.json`(OSM 서울 지하철역)
+
+## 운영 방법
+
+- 손으로 갱신: `gh workflow run feed.yml` (손으로 돌리면 건너뛰기 없이 항상 돈다) · 결과 `gh run view <id> --log`
+- 로그에서 볼 줄: `상세 · 첫 모델 오늘 사용 N/18` · `Gemini 호출 · …` · `꾸미기 · 일정 … 역 …` · `상세 · …: lite↔첫 모델 비교 …`
+- 정기 실행 간격 표: `node scripts/verify/schedule_report.mjs` (예정 대비 지연 · 건너뜀 · 안 돈 회차, :17 GitHub / :47 Cloudflare)
+- 진단 실행: Actions → 공고 피드 → Run workflow → `probe`(LH API) · `probe_myhome`(마이홈 API 응답 칸)
+- 상세가 줄어들었을 때 복구: `node scripts/restore_details.mjs --dry` → 확인 후 `--dry` 없이 (원문 해시가 같은 버전끼리만 · AI 안 씀)
+- **로컬에서는 실제 Gemini 를 부르지 않는다**: detail.mjs 는 Actions·검사(`DETAIL_TEST=1`)에서만 부름. 꼭 필요하면 `DETAIL_ALLOW_REAL=1` → 그 호출도 `_quota.json` 에 더해지니 끝나면 `_quota.json` 커밋·push
+- `lib/` 를 바꾸면 sw.js VERSION 을 올리고 index.html 의 `lib/feed-tools.js?v=` 도 같은 값으로 (check.py 가 확인)
+- push 전에 항상 `git pull --rebase origin main` (Actions 가 피드 커밋을 자주 올림)
+
+## 저장소 밖에 있는 설정
+
+| 어디 | 무엇 | 메모 |
+|---|---|---|
+| GitHub Secrets | `DATA_GO_KR_KEY` (공공데이터) · `GEMINI_API_KEY` (상세 읽기 전용, Google Cloud 프로젝트 cheongyak-check) | 값은 저장소·로그에 남기지 않음 |
+| AI Studio 한도 (cheongyak-check) | gemini-3.6-flash RPM 5·RPD 20 · gemini-3.5-flash-lite RPM 15·RPD 500 · TPM 250K | 태평양 자정(한국 17:00) 초기화 · 429 시도도 사용량에 셈 |
+| Cloudflare Worker `cheongyak-feed-cron` | 코드 `worker-cron/` · Cron `47 * * * *` · 비밀값 `GH_TOKEN` · Observability 로그 켬 | 배포 `cd worker-cron && npx wrangler deploy` |
+| GH_TOKEN | fine-grained · 저장소 DioneLee/cheongyak-check · Actions: Read and write 만 | **만료 2027-11-06 (넣은 날 2026-11-07)** · 만료 전에 새로 만들어 `npx wrangler secret put GH_TOKEN` · 만료되면 Worker 로그에 "토큰 만료/권한 오류" |
+| Cloudflare Cron 칸 (무료 5개) | 지금: som · demo-shop · cheongyak-feed-cron | som 저장소의 demo-lookbook·estate·brand 크론을 껐음 (master `0466719` · rack-renewal `fe20674`). **som 의 rack-renewal 을 배포하기 전에 `git pull`** (안 하면 크론이 다시 생겨 6개 → 배포 실패) |
+| GitHub CLI(gh) | `workflow` 권한 추가함 (workflow 파일 push 에 필요) | 다른 PC 는 `gh auth refresh -h github.com -s workflow` |
+
+## 남은 일
+
+- [ ] lite↔첫 모델 비교 며칠 모은 뒤 칸별 판단 (`feed/detail/_compare.jsonl`). 첫 4건(SH)은 첫 모델이 일정·비용을 더 적게 채움
+- [ ] 정기 실행 표 다시 보기 (21시간 멈춤 버그를 2026-11-08 19시쯤 고친 뒤 :17·:47 이 제대로 번갈아 도는지)
+- [ ] 역 거리 정확도: 국내 지오코더(브이월드·카카오) 키가 있으면 바꾸기 · 역 좌표를 서울시 공공데이터로 바꾸려면 인증키 필요 (지금은 OSM)
+- [ ] 특이사항 점수: 한부모·부모 밑 세대·부모님 재정 등 공고별 가점을 판정에 넣을지 (실사용자 질문, 2026-11-06)
+- [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 공고 JSON 도 읽기) · LH 공고문 PDF 찾기
+- [ ] 신청 가능 배지: '기타 조건'(청약자=계약자 동일인 등)은 판정하지 않음 → 이대로 둘지
 - [ ] 화면 사진 `screenshots/` 는 예전 구성 그대로 (새로 찍기)
-- [x] SH 공고 게시판을 피드에 추가(2026-11-06, sw 06e): 주택임대·주택분양 목록 4쪽씩 POST · 제목에 '모집'이 있고 당첨·발표·채용·안내 등이 없는 글만 · 마감일은 안 읽음(게시 21일까지, 화면에 "게시 날짜 · 마감일은 공고문에서") · SH 목록 모양이 바뀌면 SH 만 실패하고 LH·마이홈은 그대로
-- [x] 서울 청년안심주택 모집공고도 피드에 추가(2026-11-06, sw 06f): soco.seoul.go.kr 목록 JSON(`bbsListJson.json`, bbsId BMSR00015) 3쪽 · 청약신청일(optn4)을 마감일로 → D-day 표시·지난 공고 자동 제외
-- [x] 공고 목록 모양(2026-11-06 손그림, sw 06g): 제목 '서울 진행중 공고' · 카드 하나에 한 줄씩(짧은 이름 ↗ + 기관·종류·날짜, 오른쪽 D-day) · 8개 + 더 보기 · 짧은 이름은 `shortTitle`(머리말·'모집공고' 꼬리 뺌, 전체 제목은 title)
-- [x] 공고 상세보기(2026-11-07, sw 07b): Actions 가 공고문 PDF 를 받아 Gemini(Secrets `GEMINI_API_KEY`, 자동 갱신 전용 프로젝트 키)로 신청 조건을 읽어 `feed/detail/{id}.json` · 사이트는 detail 있는 공고에 [상세보기] · 검사 `node scripts/verify/detail_check.mjs` · 설계 `분리설계.md` '공고 상세'
-- [x] 청년안심주택 마감일(2026-11-07, sw 07c): 목록 JSON 의 청약신청일(optn4)은 시작일 → 상세 본문 '■청약신청 : …' 줄에서 마감일·시각을 읽음(`parseDue`) · D-day·목록에서 빠지는 시점 = 마감일 · 못 읽으면 시작일 + '마감일은 공고문에서'(startOnly)
-- [x] 상세 v3: 게시판 본문도 함께 보냄 · 신청 방법·링크 · 호실별 입주 기간 · 임차인 부담 비용 · 모든 행에 호수 (DETAIL_V 를 올리면 예전 상세는 다시 읽음)
-- [x] 상세 v5(2026-11-07, sw 07d): 모델·시각 기록 · lite 로 읽은 건 첫 모델로 다시 읽기 · 퇴보 막기(칸마다 합침) · 비용 예시(보증수수료 비율·해약금·관리비·선납) · 마이홈포털은 API 기본 정보로 상세 · 상세 없으면 [공고 원문 보기] · 진단 `probe_myhome`
-- [x] 상세 캐시·복구(2026-11-07, sw 07e): notices.json 항목에 상세 내용 해시 `dv` → 사이트가 `?v=` 로 받음 · 서비스 워커도 feed/detail 은 인터넷 먼저 · `node scripts/restore_details.mjs` 로 git 기록의 예전 상세를 칸별 합치기(AI 안 씀) · 읽는 순서 = 마감 3일 이내 다시 읽기 → 새 공고 → 나머지 · 503 은 30초 뒤 한 번 더 → 다음 모델 → 모두 붐비면 다음 갱신(실패로 안 셈)
-- [x] 원문 해시(2026-11-07, sw 07f): 상세 파일 `src` = PDF + 게시판 본문(조회수 줄 뺌) 해시 · 다시 읽을 때 같으면 칸별 합치기, 다르면(정정공고) 새 결과로 교체 · src 가 없는 예전 파일은 합침 · restore_details.mjs 는 src 가 같은 버전끼리만 · 세대 수 숫자만 오면 'n세대'
-- [x] 해시 범위·정정공고(2026-11-07, sw 07g): 원문 해시는 본문 '글 내용' 줄만(다음글/이전글 뒤·조회수·등록일·목록·인쇄·공유·첨부 줄 뺌, `contentText`) · 원문이 바뀐 교체는 첫 모델 결과만(lite 면 미룸) · 제목에 정정·변경·재공고가 있으면 같은 기관·같은 단지의 예전 공고를 피드에서 숨기고 새 공고에 '정정공고' 배지
-- [x] 첨부 정보(2026-11-07): 상세 파일 `att` = 첨부 식별자(청년안심 atchFileId·fileSn / SH brdId·seq·fileSeq) + 파일명 · 갱신 때 이미 읽은 공고는 게시판 페이지만 받아 비교 → 바뀐 것만 PDF 를 다시 받아 원문 해시 비교(같으면 첨부 정보만 고침, 다르면 첫 모델로 다시 읽어 교체) · att 없는 예전 파일은 기록만
-- 참고: GitHub 정기 실행은 자주 늦거나(40~90분) 건너뜀 (2026-11-07 3시간마다 설정일 때 03:17·06:17 UTC 안 돎, 09:17 은 54분 늦음)
-- [x] 실패 분류(2026-11-07): 연결 실패·시간 초과·503·429·HTTP 5xx = **미룸**(실패로 안 셈 · `_fail.json` 의 defer·deferWhy·deferAt, 이미 읽은 공고는 상세 파일 `defer`) · 404·403·PDF 아님·AI 가 못 읽음 = 실패(3번이면 그만) · 미룬 채 마감으로 목록에서 빠진 공고 → **[미룸.md](미룸.md)** 에 자동 기록
-- [x] Gemini 한도 맞춤(2026-11-07, AI Studio cheongyak-check 프로젝트): 3.6-flash RPM 5·RPD 20 · 3.5-flash-lite RPM 15·RPD 500 · TPM 250K · 하루는 태평양 자정(한국 17:00)에 초기화
-  - 첫 모델 하루 예산 18번(여유 2) · `feed/detail/_quota.json` 에 태평양 날짜별로 셈(429·503 시도도 셈) · 예산이 차면 그날은 안 부름 · 로그 "첫 모델 오늘 사용 N/18"
-  - 호출 간격 첫 모델 13초 · lite 5초 · 429 는 그 실행에서 그 모델 즉시 그만(재시도 없음) · 503 만 30초 뒤 1번
-  - 첫 모델은 다시 읽기에만: 마감 3일 이내 → 원문(첨부)이 바뀐 공고 → 나머지 · 새 공고 첫 읽기는 lite · 한 번에 첫 모델 다시 읽기 5건 + lite 새 공고 5건
-- **로컬 시험 규칙(2026-11-07)**: 이 Mac 등 로컬에서는 실제 Gemini 를 부르지 않는다. `scripts/detail.mjs` 는 GitHub Actions(`GITHUB_ACTIONS=true`)나 검사(`DETAIL_TEST=1`, 가짜 응답)에서만 부르고, 그 밖에는 "로컬 실행: 실제 Gemini 를 부르지 않음"으로 멈춤. 시험은 `node scripts/verify/detail_check.mjs`(가짜 응답). 꼭 실제로 불러야 하면 `DETAIL_ALLOW_REAL=1` — 그 호출도 `feed/detail/_quota.json` 에 더해지니 **끝나면 _quota.json 을 커밋·push** (Actions 하루 예산과 맞추기)
-- [x] lite↔첫 모델 비교(2026-11-07): lite 가 읽은 상세를 첫 모델로 다시 읽을 때 칸별 차이(목록 칸 항목 수 · 한 줄 칸 같음/채움/비움/바뀜, 바뀐 값 앞 80자)를 로그 한 줄 + `feed/detail/_compare.jsonl` 에 남김 → 며칠 모아 lite 로 충분한 칸이 있는지 판단
-- [x] Gemini 호출 수 로그: 갱신마다 `Gemini 호출 · 모델: n번 (429 n번 · 503 n번)` (AI Studio 하루 한도와 맞춰 보기)
-- [x] **버그 고침(2026-11-08)**: 겹침 방지가 '건너뛴 실행'(결과는 success)을 최근 성공으로 봐서 2026-11-07 22:00 ~ 11-08 19:00 KST 약 21시간 동안 모든 정기 실행이 건너뛰기만 함 → 이제 '공고 받기' 단계가 실제로 성공한 실행만 기준 (최근 30개 안에 없으면 실행)
-- [x] 정기 실행 겹침 방지: workflow 가 schedule 이면 '최근 100분 안에 성공한 실행이 있으면 건너뜀' (concurrency 로 줄 세움)
-- [x] 정기 실행 보강(2026-11-07): GitHub schedule 1시간마다(:17) + Cloudflare Worker `cheongyak-feed-cron`(worker-cron/, 매시 :47 → workflow_dispatch from_cron) · 둘 다 '최근 100분 안에 성공했으면 건너뜀'
-  - Cron 칸: 무료 계정 5개 한도 → som 저장소의 demo-lookbook·estate·brand 크론을 끔(같은 DB 는 demo-shop 크론이 깨움, som master `0466719` · rack-renewal `fe20674`). 지금 Cron: som · demo-shop · cheongyak-feed-cron
-  - Worker 비밀값 `GH_TOKEN`: fine-grained 토큰 · 저장소 DioneLee/cheongyak-check · Actions: Read and write 만
-  - **GH_TOKEN 만료일: 2027-11-06 (넣은 날: 2026-11-07)** · Cloudflare 대시보드 Secret · 만료 전에 새 토큰을 만들어 `cd worker-cron && npx wrangler secret put GH_TOKEN` · 만료·권한 문제면 Worker 로그에 "토큰 만료/권한 오류"
-  - 실행 간격 확인: `node scripts/verify/schedule_report.mjs` (예정 시각 대비 지연 · 건너뜀 · 안 돈 회차) · Worker 검사 `node scripts/verify/cron_check.mjs`
-- [x] 캘린더·신청 가능 배지·필터(2026-11-08, sw 08a) — 원칙: 내 입력(생년월일·소득·자산·관심 공고·필터)은 브라우저에만, 서버(Actions)는 공고 공개 정보만 미리 계산
-  - Actions(`scripts/enrich.mjs`): notices.json 항목에 `ev`(일정: 청약 시작·마감·발표·서류·계약) · `cr`(자격 기준: 나이·무주택·미혼·서울 거주·자동차·자산·소득, 조건부는 cond) · `ty`(주택형 면적·보증금·월세 만원) · `st`(가까운 역·직선거리·도보 약 N분 = 거리÷67×1.3) + 구독 캘린더 `feed/calendar.ics`(청약 시작·마감만)
-  - 역 거리: 단지 주소(게시판 '■주택위치' 줄 · AI 상세 addr) → OSM Nominatim(번지까지 찾은 것만, `feed/geo.json` 저장) → `feed/stations.json`(OSM 서울 지하철역 332개). **Nominatim 은 한국 주소에 약해 2026-11-08 기준 7개 중 1개만 번지까지 찾음** → 나머지는 '정보 없음'. 정확도를 올리려면 브이월드·카카오 지오코더 키 필요
-  - 브라우저(`lib/feed-tools.js`, Node 검사와 같은 코드): .ics 만들기(Asia/Seoul · 마감 알림 2개 · UID '공고id-종류@dionelee.github.io' · 75바이트 줄 접기 · CRLF) · 신청 가능 판정(가능은 기준을 모두 판정할 수 있고 모두 통과할 때만 · 조건부 기준을 넘으면 확인 필요) · 필터(맞음/정보 없음/안 맞음 + 맞는 주택형)
-  - 검사 `node scripts/verify/tools_check.mjs` · 사이트 `check.py`(PC 가상 시간 120초로 늘림)
-- [x] 보완(2026-11-08, sw 08b): 배지는 '기본 조건 충족' · 사용자가 직접 넣거나 '다음'으로 지나가며 확인한 칸(`state.subs.seen`)만 입력으로 봄(기본값 '자동차 없음'·자녀 0명 등은 확인 전 '입력 안 함') · .ics DTSTAMP=만든 시각(UTC) · SEQUENCE(일정 날짜·시각이 바뀌면 +1, 상세 파일 `seq` · 없으면 `_seq.json`) · LAST-MODIFIED=상세 readAt · 구독 캘린더는 DTSTAMP 말고 바뀐 게 있을 때만 새로 씀 · 역: 제목·본문의 '○○역(예정)'·'N번 출구'·'도보 N분'·'직선거리 Nm'(상세 `near`) → 본문 거리 > 번지 좌표 직선거리 > 역 이름만
-- 규칙: `lib/` 를 바꾸면 sw.js VERSION 을 올리고 index.html 의 `lib/feed-tools.js?v=` 도 같은 값으로 (check.py 가 확인) — 2026-11-08 배포 직후 예전 서비스 워커가 옛 lib 를 내줘 새 index.html 과 섞인 일이 있었음
-- [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 JSON 도 읽기) · LH 공고문 PDF 찾기
-- 참고: check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
-- 왜 LH·행복주택이 적은가: 2026-11-06 확인 시 LH 청약플러스 진행 중 52건 중 서울 0건, 마이홈 서울 모집중은 캠코 1건뿐 (데이터 문제 아님)
 - [ ] 2027-01-20 이후: SUITABLE HOME 청약 탭을 링크로 바꿀지 결정
+- [ ] GH_TOKEN 만료(2027-11-06) 전에 새 토큰
+
+## 사고와 교훈 (다시 안 겪게)
+
+- 정기 실행 21시간 멈춤 (2026-11-07~08): 건너뛴 실행도 결과가 success → '최근 성공' 판단에 쓰면 안 됨. 배포 뒤 몇 시간 안에 `schedule_report.mjs` 로 확인할 것
+- 배포 직후 옛 lib 가 섞임: 서비스 워커가 저장본 먼저로 주던 파일은 index.html 과 버전이 엇갈릴 수 있음 → `?v=버전` + 인터넷 먼저
+- 예전 브라우저가 옛 상세를 보여 줌: 상세 주소에 내용 해시(dv)를 붙임
+- lite 가 다시 읽으며 상세가 줄어듦: 다시 읽기는 첫 모델로만 · 칸별 합치기 · 원문 해시가 다르면 교체
+- 검사가 저장소 파일(`docs/work/미룸.md`)에 가짜 기록을 씀: 검사는 임시 폴더만 쓰게(`DETAIL_DEFER_LOG`)
+- Playwright 임시 파일이 커밋에 섞임: `.playwright-mcp/` 는 .gitignore 에 (2026-11-08 한 번 커밋됐다가 지움, 기록에는 남음)
+- `git add -A` 전에 `git status -s` 로 무엇이 들어가는지 볼 것
+
+## 참고
+
+- LH·행복주택이 적은 이유: 2026-11-06 확인 시 LH 진행 중 52건 중 서울 0건 (데이터 문제 아님) · LH 진단은 `probe`
+- [미룸.md](미룸.md): 상세를 못 읽은 채 마감된 공고가 자동으로 적힘
+- SUITABLE HOME(../sjcu) 쪽: 청약 탭 맨 위 안내 한 줄 (커밋 e0e8447, 백업 `index_v27_backup.html`)
