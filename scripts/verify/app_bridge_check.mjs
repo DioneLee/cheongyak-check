@@ -13,12 +13,12 @@ const tick = () => new Promise(r => setTimeout(r, 20));
 
 function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true } = {}) {
   class Storage { constructor(o) { this._ = { ...o }; } getItem(k) { return k in this._ ? this._[k] : null; } setItem(k, v) { this._[k] = String(v); } clear() { this._ = {}; } }
-  const local = new Storage(ls), log = { reload: 0, scheduled: [], cancelled: [], asked: 0, shared: [], exit: 0 }, listeners = {};
+  const local = new Storage(ls), log = { reload: 0, scheduled: [], cancelled: [], asked: 0, shared: [], exit: 0, types: null }, listeners = {}, wl = {};
   const P = {
     Preferences: { get: async ({ key }) => ({ value: prefs[key] ?? null }), set: async ({ key, value }) => { prefs[key] = value; } },
     LocalNotifications: { requestPermissions: async () => { log.asked++; }, checkPermissions: async () => ({ display: granted ? 'granted' : 'denied' }),
       getPending: async () => ({ notifications: log.scheduled.map(n => ({ id: n.id, extra: n.extra })) }), cancel: async ({ notifications }) => { log.cancelled.push(...notifications.map(n => n.id)); log.scheduled = log.scheduled.filter(n => !notifications.some(c => c.id === n.id)); },
-      schedule: async ({ notifications }) => { log.scheduled.push(...notifications); } },
+      schedule: async ({ notifications }) => { log.scheduled.push(...notifications); }, registerActionTypes: async o => { log.types = o; }, addListener: (e, f) => { listeners['ln:' + e] = f; } },
     Filesystem: { writeFile: async ({ path }) => ({ uri: 'file:///cache/' + path }) }, Share: { share: async o => { log.shared.push(o); } },
     App: { addListener: (e, f) => { listeners[e] = f; }, exitApp: () => { log.exit++; } },
   };
@@ -26,12 +26,13 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true }
   const loc = { hash: '#settings', reload() { log.reload++; }, replace(h) { this.hash = h; } };
   const win = {
     Capacitor: native ? { isNativePlatform: () => true, Plugins: P } : undefined, localStorage: local, location: loc,
-    fetch: async u => { if (!net) throw new TypeError('offline'); return new Response(String(u).includes('notices.json') ? feedTxt : 'x'); },
+    fetch: async u => { if (!net) throw new TypeError('offline'); return new Response(String(u).includes('notices.json') ? feedTxt : String(u).includes('danji.json') ? '{"danji":[1]}' : 'x'); },
+    addEventListener: (e, f) => { wl[e] = f; },
   };
   class A { click() { log.plain = (log.plain || 0) + 1; } }
   const ctx = vm.createContext({ window: win, Storage, localStorage: local, location: loc, history: { back() {} }, HTMLAnchorElement: A, Response, console: { warn() {} }, setTimeout, Promise, JSON, Date, Math, String, Set });
   vm.runInContext(SRC, ctx);
-  return { ctx, win, local, prefs, log, P, listeners, A };
+  return { ctx, win, local, prefs, log, P, listeners, A, wl };
 }
 
 // 웹(앱 아님): 아무것도 안 바꿈
@@ -67,6 +68,31 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true }
   ok('피드 말고 다른 주소는 그대로 (오프라인이면 실패)', threw); }
 { const b = boot({ ls: { 'cheongyak-check-v1': '{}' }, granted: false }); await tick(); await b.win.fetch('feed/notices.json'); b.local.setItem('cheongyak-check-stars', '["a"]'); await tick(); await tick();
   ok('알림을 허용 안 했으면 예약 안 함', b.log.scheduled.length === 0); }
+// 6) 관심 단지 새 공고 알림 · 단지 피드 오프라인
+{ const b = boot({ ls: { 'cheongyak-check-v1': '{}' } }); await tick();
+  ok("알림 버튼 종류 등록: '이 공고 마감 알림도 받기'", b.log.types?.types[0].id === 'cc-danji' && b.log.types.types[0].actions[0].title === '이 공고 마감 알림도 받기');
+  b.local.setItem('cheongyak-check-danji-stars', '["x1"]'); await tick();
+  ok('처음 단지 ★ 때 알림 허용을 한 번 물음', b.log.asked === 1);
+  const det = [{ id: 'elyes-a', title: '어바니엘 염창 공실세대', danji: '어바니엘 염창', starred: false }, { id: 'elyes-b', title: '루미니 추가모집', danji: '남영역 용산 원효 루미니', starred: true }];
+  b.wl['cc-danji-new']({ detail: det }); await tick(); await tick();
+  const s = b.log.scheduled.filter(n => n.extra.ccNew);
+  ok('cc-danji-new → 바로 알림 (예약 시각 없음) · 단지 이름 — 공고 이름 · ★ 안 한 공고만 버튼 · 정확한 알람 아님', s.length === 2 && !s[0].schedule && s[0].body === '어바니엘 염창 — 어바니엘 염창 공실세대' && s[0].actionTypeId === 'cc-danji' && !s[1].actionTypeId && s.every(n => n.isExactNotification === false), JSON.stringify(s));
+  b.wl['cc-danji-new']({ detail: det }); await tick(); await tick();
+  ok('같은 공고는 한 번만 알림 (이 기기에 기억)', b.log.scheduled.filter(n => n.extra.ccNew).length === 2 && JSON.parse(b.local.getItem('cheongyak-check-app-danji-notified')).length === 2);
+  const starred = []; b.win.ccStarNotice = id => starred.push(id);
+  b.listeners['ln:localNotificationActionPerformed']({ actionId: 'star', notification: s[0] });
+  ok("알림의 '이 공고 마감 알림도 받기' → 공고 ★ (화면 함수)", starred.join() === 'elyes-a');
+  b.ctx.location.hash = '#danji'; b.listeners['ln:localNotificationActionPerformed']({ actionId: 'tap', notification: s[0] });
+  ok('알림을 누르면 공고 탭', b.ctx.location.hash === '#notices' && starred.length === 1);
+  let refreshed = 0; b.win.ccRefreshFeed = () => refreshed++; b.listeners.resume();
+  ok('앱을 다시 볼 때 피드 새로 받기 (새 공고 확인)', refreshed === 1);
+  await (await b.win.fetch('https://dionelee.github.io/cheongyak-check/feed/danji.json')).text();
+  ok('단지 피드도 받으면 기억', b.local.getItem('cheongyak-check-app-danji') === '{"danji":[1]}'); }
+{ const b = boot({ ls: { 'cheongyak-check-v1': '{}' }, granted: false }); await tick();
+  b.wl['cc-danji-new']({ detail: [{ id: 'q', title: 't' }] }); await tick(); await tick();
+  ok('알림을 허용 안 했으면 새 공고 알림 없음 · 다음에 다시 (기억 안 함)', !b.log.scheduled.length && !b.local.getItem('cheongyak-check-app-danji-notified')); }
+{ const b = boot({ ls: { 'cheongyak-check-v1': '{}', 'cheongyak-check-app-danji': '{"danji":[9]}' }, net: false }); await tick();
+  ok('인터넷이 안 되면 기억해 둔 단지 피드', (await (await b.win.fetch('feed/danji.json')).json()).danji[0] === 9); }
 // 4) 파일 받기 · 5) 뒤로 버튼
 { const b = boot({ ls: { 'cheongyak-check-v1': '{}' } }); await tick();
   const a = new b.A(); a.download = 'x.ics'; a.href = 'blob:abc'; b.win.fetch = b.win.fetch; a.click(); await tick();

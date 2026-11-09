@@ -7,9 +7,13 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { addDetails, pageText } from './detail.mjs';
 import { enrich, writeCalendar } from './enrich.mjs';
+import * as elyes from './sources/elyes.mjs';
+import { DANJI_OUT, matchDanji, refreshDanji } from './danji.mjs';
 
 export const FEED_OUT = fileURLToPath(new URL('../feed/notices.json', import.meta.url));
-const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH·청년안심주택 게시판';
+const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 단지 직접(엘리스)';
+// 단지 직접 공고 출처 (출처 하나 = scripts/sources/ 파일 하나 · SOURCE · parse · fetchList)
+export const SOURCES = [elyes];
 const MYHOME = 'https://apis.data.go.kr/1613000/HWSPR02/rsdtRcritNtcList';
 const LH = 'https://apis.data.go.kr/B552555/lhLeaseNoticeInfo1/lhLeaseNoticeInfo1';
 const LH_TYPES = ['06', '13', '39'];   // 임대주택 · 주거복지 · 신혼희망타운
@@ -19,28 +23,8 @@ const SH = 'https://www.i-sh.co.kr/app/lay2/program';
 // · 같은 사이트에 요청 사이 3초 이상 (polite) · 실행마다 robots.txt 확인 (User-agent: * 의 Disallow 에 걸리면 그 출처는 건너뜀)
 // · 저장·표시는 제목·기관·날짜·원문 링크만 — 본문·첨부(공고문 PDF) 내용은 읽어 저장하지 않는다 (상세 AI 요약도 안 만듦, main 의 addDetails 참고)
 // · 청년안심주택 상세 페이지는 마감일(날짜) 한 줄만 읽고 버린다
-export const GAP_MS = Number(process.env.SCRAPE_GAP_MS ?? 3000);
-const lastHit = {}, robots = {};
-export async function polite(url, opt) {
-  const h = new URL(url).host, w = (lastHit[h] || 0) + GAP_MS - Date.now(); if (w > 0) await new Promise(r => setTimeout(r, w));
-  lastHit[h] = Date.now(); return fetch(url, opt);
-}
-// robots.txt 의 'User-agent: *' 묶음 Disallow 만 본다 (없거나 4xx 면 허용 — 표준과 같음 · 5xx·연결 실패면 이번엔 건너뜀)
-export function robotsAllows(txt, path) {
-  let star = false, inGroup = false; const dis = [];
-  for (const raw of String(txt).split(/\r?\n/)) { const l = raw.replace(/#.*/, '').trim(), m = l.match(/^([\w-]+)\s*:\s*(.*)$/); if (!m) continue;
-    const k = m[1].toLowerCase(), v = m[2].trim();
-    if (k === 'user-agent') { if (!inGroup) star = false; inGroup = true; if (v === '*') star = true; continue; }
-    inGroup = false; if (star && k === 'disallow' && v) dis.push(v); }
-  return !dis.some(d => path.startsWith(d));
-}
-async function robotsOk(url) {
-  const u = new URL(url);
-  if (!(u.host in robots)) { try { const r = await polite(`${u.origin}/robots.txt`, { headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) });
-    robots[u.host] = r.ok ? await r.text() : r.status < 500 ? '' : null; } catch { robots[u.host] = null; } }
-  if (robots[u.host] === null) throw new Error(`${u.host}: robots.txt 를 확인하지 못해 이번엔 건너뜀`);
-  if (!robotsAllows(robots[u.host], u.pathname)) throw new Error(`${u.host}: robots.txt 가 ${u.pathname} 를 막아 건너뜀`);
-}
+export { GAP_MS, polite, robotsAllows } from './net.mjs';
+import { polite, robotsOk } from './net.mjs';
 const SH_BOARDS = [{ path: 'S48T1581C563/www/brd/m_247', seq: '2', kind: '임대' }, { path: 'S48T1581C1617/www/brd/m_244', seq: '1', kind: '분양' }];   // 주택임대 · 주택분양
 
 export function dataKey() {
@@ -198,6 +182,15 @@ export async function fetchYouth({ pages = 3 } = {}) {   // 한 쪽 10개 · 신
   return items;
 }
 
+// 공고 → 단지 id (feed/danji.json 의 101개 + 그 밖의 서울 민간임대). 단지 직접 공고는 출처 표의 이름으로, 나머지는 제목으로
+export function tagDanji(raw, dj) {
+  const list = [...(dj?.danji ?? []), ...(dj?.other ?? [])], byName = new Map(list.map(d => [d.name, d]));
+  for (const i of raw) {
+    const d = (i.danji && list.find(x => x.id === i.danji)) || (i.danjiName && byName.get(i.danjiName)) || (!i.direct && matchDanji(i.title, list));
+    i.danji = d?.id || ''; if (i.direct && d?.gu) i.region = `서울 ${d.gu}`;
+  }
+  return raw;
+}
 export const FIX_RE = /정정|변경|재공고/;
 export const fixKey = t => normTitle(String(t).replace(/[\[(【<]\s*(정정|변경|재)\s*(공고)?\s*[\])】>]/g, '').replace(/(정정|변경|재)\s*공고|정정|변경/g, ''));
 // 같은 공고 판단용 이름: 공백·기호·[정정] 같은 머리말 제거
@@ -206,17 +199,17 @@ export function normTitle(t = '') {
     .replace(/공고문?$/, '').replace(/[\s\[\]【】()（）<>「」『』·・.,\-_'"“”‘’~:/]/g, '').toLowerCase();
 }
 // LH 먼저(기관 공식), 같은 이름·같은 마감일(한쪽이 비었으면 이름만)이면 하나로 합치고 빈 칸은 뒤 출처로 채운다
-export function buildFeed(raw) {
-  const rank = i => ({ lh: 0, sh: 1, youth: 1, myhome: 2 })[i.feedId.split('-')[0]] ?? 9, groups = [];
+export function buildFeed(raw, today = todayKst()) {   // today: 검사에서 날짜 고정
+  const rank = i => ({ lh: 0, sh: 1, youth: 1, myhome: 2, elyes: 3 })[i.feedId.split('-')[0]] ?? 9, groups = [];
   for (const it of [...raw].sort((a, b) => rank(a) - rank(b))) {
     const key = normTitle(it.title), g = groups.find(x => x.key === key && (!x.item.to || !it.to || x.item.to === it.to));
     if (!g) { groups.push({ key, item: { ...it } }); continue; }
     for (const f of ['region', 'kind', 'posted', 'from', 'to', 'time', 'url']) if (!g.item[f] && it[f]) g.item[f] = it[f];
     if (g.item.region && it.region && it.region.length > g.item.region.length && it.region.startsWith(g.item.region)) g.item.region = it.region;
   }
-  const today = todayKst(), cutoff = todayKst(-NO_PERIOD_DAYS);
+  const cutoff = new Date(Date.parse(today) - NO_PERIOD_DAYS * 864e5).toISOString().slice(0, 10);
   let items = groups.map(g => g.item).filter(i => i.region.startsWith('서울') && (i.to ? i.to >= today : i.posted && i.posted >= cutoff))   // 서울 공고만
-    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, detail: false, dv: '', ev: [], cr: null, ty: [], st: null }))   // dv: 상세 파일 내용 해시 (사이트가 ?v= 로 붙여 예전 캐시를 피함)   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
+    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, direct: !!i.direct, danji: i.danji || '', detail: false, dv: '', ev: [], cr: null, ty: [], st: null }))   // dv: 상세 파일 내용 해시 (사이트가 ?v= 로 붙여 예전 캐시를 피함)   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
     .sort((a, b) => (a.to || '9999').localeCompare(b.to || '9999') || b.posted.localeCompare(a.posted));
   // 정정공고: 제목에 정정·변경·재공고가 있고 같은 기관·같은 단지(정정 글자를 뺀 이름)의 더 예전 공고가 있으면 예전 것은 숨긴다 (사이트는 새 공고에 '정정공고' 배지)
   const gone = new Set();
@@ -233,13 +226,18 @@ export async function writeFeed(feed, out = FEED_OUT) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const got = await Promise.allSettled([fetchLH(), fetchMyHome(), fetchSH(), fetchYouth()]), raw = [], bad = [];
-  got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH', '청년안심주택'][i]}: ${scrub(r.reason?.message)}`));
+  const got = await Promise.allSettled([fetchLH(), fetchMyHome(), fetchSH(), fetchYouth(), ...SOURCES.map(s => s.fetchList())]), raw = [], bad = [];
+  got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH', '청년안심주택', ...SOURCES.map(s => s.SOURCE.label)][i]}: ${scrub(r.reason?.message)}`));
+  let dj = null; try { dj = JSON.parse(await readFile(DANJI_OUT, 'utf8')); } catch { /* 단지 파일 없음 → 단지 연결 없이 */ }
+  tagDanji(raw, dj);
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
   // 게시판(SH·청년안심) 공고는 상세(본문·공고문 PDF 읽기)를 만들지 않음 → 예전 상세 파일은 addDetails 가 지움
-  const feed = buildFeed(raw), det = await addDetails(feed.items.filter(i => !/^(sh|youth)-/.test(i.id)), { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) });
+  const feed = buildFeed(raw), det = await addDetails(feed.items.filter(i => !/^(sh|youth|elyes)-/.test(i.id)), { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) });
   await enrich(feed.items); const cal = await writeCalendar(feed.items); const wrote = await writeFeed(feed);   // 일정·자격 기준·주택형·역 거리 + 구독 캘린더
+  // 단지 정보는 하루 1번 (지금 접수 중인 공고가 있는 단지 = 청약중) · 실패해도 공고 피드는 그대로
+  try { const r = await refreshDanji({ openIds: new Set(feed.items.filter(i => i.danji && i.to && i.to >= todayKst()).map(i => i.danji)) }); console.log('단지 ·', r.note); }
+  catch (e) { console.error('단지 · 실패 (이전 것 그대로):', scrub(e.message)); }
   for (const [m, u] of Object.entries(det.use)) console.log(`Gemini 호출 · ${m}: ${u.calls}번 (429 ${u.s429}번 · 503 ${u.s503}번)`);   // 하루 한도 가늠용
   console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · 상세 ${det.have}건 (이번에 ${det.made}건 읽음${det.skipped ? ` · 다시 읽기 ${det.skipped}건 미룸` : ''}${det.stopped ? ` · 멈춤: ${det.stopped}` : ''}) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);
 }

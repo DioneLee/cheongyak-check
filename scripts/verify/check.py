@@ -82,10 +82,10 @@ PC = r"""
 const q = s => d.querySelector(s), qa = s => [...d.querySelectorAll(s)];
 ok('기존 데이터 없으면 가져오기 숨김 (진단 배너 · 공고 탭 한 줄)', q('#importBanner').hidden && q('#importHint').hidden);
 ok('맨 위는 서울 진행중 공고 (원문 사이트 4곳)', q('h1').textContent.includes('진행중 공고') && qa('#linksSec .src-grid a[target="_blank"]').length === 4);
-// 탭 3개 (#notices · #diag · #settings)
+// 탭 4개 (#notices · #danji · #diag · #settings)
 const vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join(), cur = () => qa('[aria-current="page"]').map(a => a.dataset.tabLink).join();
 const foot = () => q('footer').offsetHeight > 0 && q('footer').textContent.includes('참고용');
-ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/진단/설정" · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/진단/설정' && foot(), vis() + ' ' + cur());
+ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/단지/진단/설정" · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/단지/진단/설정' && foot(), vis() + ' ' + cur());
 fw.scrollTo(0, 400); q('[data-tab-link="diag"]').click(); await W(150);
 ok('탭: 진단 링크 → 진단 탭만 · 맨 위로 · 제목에 포커스 · 맨 아래 안내 그대로', vis() === 'diag' && cur() === 'diag' && fw.scrollY === 0 && d.activeElement === q('#h-diag') && foot(), vis() + ' ' + fw.scrollY + ' ' + d.activeElement?.id);
 q('[data-tab-link="settings"]').click(); await W(150);
@@ -156,7 +156,7 @@ ok('상세보기 다시 누르면 접힘', dt1.hidden && q('#subFeed [data-detai
 ok('상세 없는 공고는 [공고 원문 보기] 링크', qa('#subFeed a.dlink[target="_blank"]').length === 2 && qa('#subFeed a.dlink').every(a => a.textContent.includes('공고 원문 보기')));
 fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('youth-d2', '2026-11-10'), org: '청년안심', from: '2026-11-09', time: '23:00' }, { ...fi('youth-d3', '2026-11-12'), org: '청년안심', startOnly: true }] }); await W(50);
 const r2 = qa('#subFeed .flist > li').map(li => li.textContent.replace(/\s+/g, ' '));
-ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3) · 마감일 모르면 시작일 표시', r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감') && r2[1].includes('청약신청일 11.12(목) · 마감일은 공고문에서'), r2.join(' / '));
+ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3) · 마감일 모르면 시작일 표시', r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감') && r2[1].includes('청약신청일 11.12(목) · 마감일은 공고 원문에서'), r2.join(' / '));
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('sh-f1', '2099-01-01'), org: 'SH', title: '[정정] 고덕강일 3단지 입주자모집공고' }] }); await W(50);
 ok('정정공고는 배지', q('#subFeed .dd.fix')?.textContent === '정정공고' && q('#subFeed .nm').textContent.startsWith('고덕강일 3단지'));
 // 캘린더 · 신청 가능 배지 · 필터 (공개 정보 ev·cr·ty·st 는 Actions 가 notices.json 에 넣음 · 판정·필터·.ics 는 브라우저에서)
@@ -240,6 +240,67 @@ q('#importFile').files = dt2.files; q('#importFile').dispatchEvent(new fw.Event(
 ok('입력이 있으면 덮어쓰기 확인', !!q('#ioYes') && fw.eval('state.subs.notices.length') === 2);
 q('#ioYes')?.click(); await W(200);
 ok('확인하면 불러온 내용으로', fw.eval('state.subs.notices.length') === 1 && fw.eval('state.settings.myCash') === 3000);
+// ---------- 단지 탭 (실제 feed/danji.json) · 단지 직접 공고 · 관심 단지 새 공고 ----------
+const APP = '앱을 열면 관심 단지 새 공고를 알려 드려요', OTH = '청년안심주택이 아니라 자격이 다를 수 있어요 · 공고문 확인';
+fw.location.hash = 'notices'; await W(150); q('[data-tab-link="danji"]').click(); await W(300);
+const cards = () => qa('#danjiList li[data-did]'), main = () => qa('#danjiList .flist')[0]?.children.length ?? 0;
+ok('단지 탭: 메뉴 → #danji · 단지 탭만 · 제목 포커스 · 지금 탭 표시', fw.location.hash === '#danji' && vis() === 'danji' && cur() === 'danji' && d.activeElement === q('#h-danji'), vis() + ' ' + d.activeElement?.id);
+ok('단지 탭: 청년안심주택 100곳 + "그 밖의 서울 민간임대" 6곳 (서울 밖 없음 · 단지 아닌 글 없음)', main() === 100 && !/모집공고/.test(qa('#danjiList .flist')[0].textContent) && /그 밖의 서울 민간임대 6곳/.test(q('#danjiList .fgroup')?.textContent) && qa('#danjiList .flist')[1].children.length === 6 && !/부산|양산|김포|화성/.test(q('#danjiList').textContent), main());
+ok('단지 탭: 그 밖의 민간임대 카드마다 "' + OTH + '"', qa('#danjiList .flist')[1].querySelectorAll('.dj-other').length === 6 && [...qa('#danjiList .flist')[1].querySelectorAll('.dj-other')].every(p => p.textContent === OTH) && !qa('#danjiList .flist')[0].querySelector('.dj-other'));
+ok('단지 탭·설정에 정확히 "' + APP + '"', [...q('#danjiSec').querySelectorAll('p')].some(p => p.textContent.trim() === APP) && q('[data-tab="settings"]').textContent.includes(APP));
+{ const c = q('#danjiList li[data-did="20000413"]') || qa('#danjiList li[data-did]').find(l => l.textContent.includes('마에스트로')), ln = c.querySelector('.dj-links a[href^="http"]');
+  ok('단지 카드: 이름 · 구 · 역 · 보증금/월세 · 홈페이지 ↗(새 창) · 전화', !!c.querySelector('.nm') && /구 · .*보증금 .*월세 /.test(c.querySelector('.finfo').textContent) && (!ln || (ln.target === '_blank' && ln.textContent === '홈페이지 ↗')) && qa('#danjiList a[href^="tel:"]').length > 50, c.textContent.slice(0, 120)); }
+ok("단지 카드: '자체 사이트에서만 공고' 배지 (1년 넘음 · 추가모집 0번 단지에만)", qa('#danjiList .dd').some(b => b.textContent === '자체 사이트에서만 공고') && fw.eval(`danji.danji.filter(x => selfOnly(x, todayYmd())).every(x => x.extra === 0 && x.first)`), qa('#danjiList .dd').filter(b => b.textContent === '자체 사이트에서만 공고').length);
+{ const rk = li => { const b = [...li.querySelectorAll('.dd')].map(x => x.textContent); return b.includes('청약중') ? 0 : b.includes('청약예정') ? 1 : li.querySelector('[data-dstar]').getAttribute('aria-pressed') === 'true' ? 2 : 3; };
+  const main = [...qa('#danjiList .flist')[0].children], rs = main.map(rk), last = main.filter(li => rk(li) === 3);
+  ok('단지 정렬: 청약중 → 청약예정 → 관심 ★ → 나머지(구 가나다) · 공급완료 배지 없음', rs.every((r, k) => !k || rs[k - 1] <= r) && rs[0] === 0 && rs.includes(1) && !qa('#danjiList .dd').some(b => b.textContent === '공급완료') && !q('#danjiList').textContent.includes('공급완료')
+    && last.every((li, k) => !k || last[k - 1].querySelector('.finfo').textContent.split(' · ').at(-0) !== null), rs.slice(0, 10).join(''));
+  const pick = last.at(-1).dataset.did; q(`#danjiList [data-dstar="${pick}"]`).click(); await W(80);
+  const rs2 = [...qa('#danjiList .flist')[0].children].map(rk);
+  ok('단지 정렬: ★ 누른 단지는 청약예정 다음', rs2.every((r, k) => !k || rs2[k - 1] <= r) && [...qa('#danjiList .flist')[0].children][rs2.indexOf(2)].dataset.did === pick, rs2.slice(0, 10).join(''));
+  q(`#danjiList [data-dstar="${pick}"]`).click(); await W(80); }
+const setDf = async (k, v) => { const el = q(`#danjiBox [data-df="${k}"]`); el.value = v; el.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(80); };
+await setDf('gu', '강남구');
+ok('단지 필터: 구', cards().length > 0 && cards().every(li => li.querySelector('.finfo').textContent.includes('강남구')), cards().length);
+await setDf('gu', ''); await setDf('st', '선릉역');
+ok('단지 필터: 역', cards().length >= 1 && cards().every(li => li.textContent.includes('선릉역')), cards().length);
+await setDf('st', ''); const qi = q('#danjiBox [data-df="q"]'); qi.focus(); await setDf('q', '마에스트로');
+ok('단지 검색: 이름 · 입력 중 포커스 유지', cards().length >= 1 && cards().length < 5 && cards().every(li => li.textContent.includes('마에스트로')) && cards()[0].textContent.includes('마에스트로') && d.activeElement === q('#danjiBox [data-df="q"]'), cards().length);
+await setDf('q', '어바니엘');
+ok('단지 검색: 그 밖의 민간임대도', cards().length >= 4 && cards().every(li => li.textContent.includes('어바니엘')), cards().length);
+await setDf('q', '');
+q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(80);
+ok('단지 ★: 이 기기에 저장 · 눌린 표시 · 공고 ★와 다른 키', JSON.parse(fw.localStorage.getItem('cheongyak-check-danji-stars')).includes('x-elyes-yeomchang') && q('#danjiList [data-dstar="x-elyes-yeomchang"]').getAttribute('aria-pressed') === 'true' && !(JSON.parse(fw.localStorage.getItem('cheongyak-check-stars') || '[]')).includes('x-elyes-yeomchang'));
+fw.history.back(); await W(200);
+ok('단지 탭: 뒤로가기 → 공고', vis() === 'notices' && fw.location.hash === '#notices', fw.location.hash);
+// 단지 직접 공고가 섞인 공고 목록 (가짜 피드)
+const T = fw.eval('todayYmd()'), el1 = { id: 'elyes-a1', org: '엘리스', title: '[어바니엘 염창] 공실세대 모집공고 (접수기간: 11/6~11/8)', region: '서울 강서구', kind: '민간임대', posted: T, from: T, to: T, time: '17:00', url: 'https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=a1', direct: true, danji: 'x-elyes-yeomchang' };
+const el2 = { ...el1, id: 'elyes-a2', title: '[용산원효루미니] 추가모집공고', region: '서울 용산구', kind: '청년안심주택(민간)', to: '2099-02-01', from: '2099-01-30', danji: '20000406' };
+const mix = items => fw.eval('setFeed')({ updated: '', source: '', items }); await mix([fi('o1', '2099-01-01'), el2, el1]); await W(120);
+{ const L = qa('#subFeed .flist > li'), b1 = q('#subFeed [data-fid="elyes-a1"] .org')?.textContent, b2 = q('#subFeed [data-fid="elyes-a2"] .org')?.textContent;
+  ok('공고 탭: 단지 직접 공고가 섞임 · 오늘 마감이 맨 위', L.length === 3 && L[0].dataset.fid === 'elyes-a1' && L[0].textContent.includes('오늘 마감'), L.map(l => l.dataset.fid).join());
+  ok("배지: '단지 직접 · 엘리스 · 민간임대' · 101개 단지는 '단지 직접 · 엘리스'", b1 === '단지 직접 · 엘리스 · 민간임대' && b2 === '단지 직접 · 엘리스', b1 + ' / ' + b2);
+  ok('단지 직접 공고 이름은 [단지 이름] 을 살림 · D-day 는 마감일 기준', q('#subFeed [data-fid="elyes-a1"] .nm').textContent.startsWith('어바니엘 염창') && /마감/.test(q('#subFeed [data-fid="elyes-a2"]').textContent), q('#subFeed [data-fid="elyes-a1"] .nm').textContent); }
+const setSrc = async v => { const s = q('#subFeed [data-f="src"]'); s.value = v; s.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(80); };
+await setSrc('direct');
+ok('출처 필터: 단지 직접만', qa('#subFeed .flist > li').map(l => l.dataset.fid).sort().join() === 'elyes-a1,elyes-a2' && /필터 1개 켜짐/.test(q('#subFeed .ffilter summary').textContent));
+await setSrc('official');
+ok('출처 필터: 공식만', qa('#subFeed .flist > li').map(l => l.dataset.fid).join() === 'o1');
+q('#subFeed [data-freset]').click(); await W(80);
+ok('출처 필터: 필터 지우기 → 전체 · 저장값도', qa('#subFeed .flist > li').length === 3 && JSON.parse(fw.localStorage.getItem('cheongyak-check-feed-filter')).src === null);
+ok('관심 단지 띠: ★ 한 뒤에 올라온 공고 → 띠', !q('#danjiNew').hidden && !!q('#danjiNew [data-dnseen="elyes-a1"]'), q('#danjiNew').textContent);
+q('#danjiNew [data-dnseen="elyes-a1"]').click(); await W(80);
+q('[data-tab-link="danji"]').click(); await W(150); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); q('[data-tab-link="notices"]').click(); await W(150);
+ok('관심 단지 띠: ★ 다시 눌러도 이미 본 공고는 그대로 숨김', q('#danjiNew').hidden);
+const evs = []; fw.addEventListener('cc-danji-new', e => evs.push(e.detail));
+const el3 = { ...el1, id: 'elyes-a3', title: '[어바니엘 염창] 재임대 모집공고 (접수기간: 12/1~12/3)', to: '2099-03-03', from: '2099-03-01' }; await mix([fi('o1', '2099-01-01'), el2, el1, el3]); await W(120);
+{ const nb = q('#danjiNew'), btn = nb.querySelector('[data-dnstar="elyes-a3"]');
+  ok('관심 단지 띠: 공고 탭 맨 위 "관심 단지 새 공고" · 새 공고만 · "이 공고 마감 알림도 받기"', !nb.hidden && nb.querySelector('h2').textContent === '관심 단지 새 공고' && nb.compareDocumentPosition(q('#h-links')) & 4 && nb.querySelectorAll('li').length === 1 && btn?.textContent === '이 공고 마감 알림도 받기', nb.textContent);
+  ok('앱 알림용 이벤트 cc-danji-new (공고 id · 단지 이름)', evs.length >= 1 && evs.at(-1)[0].id === 'elyes-a3' && evs.at(-1)[0].danji === '어바니엘 염창', JSON.stringify(evs.at(-1)));
+  btn.click(); await W(80); }
+ok('"이 공고 마감 알림도 받기" → 공고 ★ 바로 켜짐 (목록 ★ 도)', JSON.parse(fw.localStorage.getItem('cheongyak-check-stars')).includes('elyes-a3') && q('#subFeed [data-star="elyes-a3"]')?.getAttribute('aria-pressed') === 'true' && /받는 중/.test(q('#danjiNew').textContent));
+q('#danjiNew [data-dnseen="elyes-a3"]').click(); await W(80);
+ok('관심 단지 띠: 확인 → 숨김 · 이 기기에 기억', q('#danjiNew').hidden && JSON.parse(fw.localStorage.getItem('cheongyak-check-danji-seen')).includes('elyes-a3'));
 """
 
 MOBILE = r"""
@@ -247,7 +308,7 @@ const q = s => d.querySelector(s), before = localStorage.getItem('newlywed-home-
 const qa = s => [...d.querySelectorAll(s)], vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join();
 ok('390 첫 화면은 공고 탭 (다른 탭 숨김)', q('h1').getBoundingClientRect().bottom <= fw.innerHeight && vis() === 'notices');
 { const ls = qa('[data-tab-link]'), nav = q('.chips');
-  ok('390 메뉴 3개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 3 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
+  ok('390 메뉴 4개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 4 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
 ok('기존 사이트 입력 발견 → 진단 탭 맨 위 배너 + 공고 탭 위 한 줄', !q('#importBanner').hidden && q('#h-diag').nextElementSibling === q('#importBanner') && !q('#importHint').hidden && q('#importHint').textContent.includes('SUITABLE HOME 조건 가져오기 → 진단') && q('#importHint').getAttribute('href') === '#diag');
 q('#importHint').click(); await W(150);
@@ -261,7 +322,7 @@ ok('가져오기: 돈 조건', fw.eval('state.settings.depMax') === JSON.parse(b
 ok('기존 사이트 데이터는 그대로 (글자 하나 안 바뀜)', localStorage.getItem('newlywed-home-v1') === before);
 ok('가져온 뒤 배너·공고 탭 한 줄 숨김 · 결과 보임', q('#importBanner').hidden && q('#importHint').hidden && !!q('#subJudge .sig'));
 for (const x of d.querySelectorAll('details')) x.open = true; await W(100);
-for (const tb of ['diag', 'notices', 'settings']) { fw.location.hash = tb; await W(150);
+for (const tb of ['diag', 'notices', 'danji', 'settings']) { fw.location.hash = tb; await W(150);
   ok(`390 가로 넘침 없음 (${tb} 탭 · 접힌 칸 모두 펼침)`, vis() === tb && d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth); }
 fw.location.hash = 'diag'; await W(150);
 ok('휴대폰 진단 탭: 내 공고 → 결과 순서', q('#subListBox').getBoundingClientRect().top < q('#subJudge').getBoundingClientRect().top);

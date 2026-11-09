@@ -20,7 +20,9 @@ SUITABLE HOME(https://dionelee.github.io/suitable-home/)의 청약 화면을 따
 | `manifest.webmanifest`, `icons/` | 홈 화면에 추가(PWA). 아이콘은 임시본 — 디자인 담당이 교체 |
 | `sw.js` | index.html·공고 피드는 인터넷 먼저, 실패할 때만 저장본. 배포 때 `VERSION` 을 바꾼다 |
 | `feed/notices.json` | 새로 올라온 공고 (GitHub Actions 가 갱신) |
-| `scripts/feed.mjs` | 마이홈포털·LH 공식 API → 피드. SH·청년안심주택은 원문 링크만 |
+| `scripts/feed.mjs` | 마이홈포털·LH 공식 API · SH·청년안심주택 게시판(제목·링크만) · 단지 직접 공고 → 피드 |
+| `scripts/sources/*.mjs` | 단지 직접 공고 출처 (출처 하나 = 파일 하나 · 지금은 엘리스) |
+| `scripts/danji.mjs` | 서울 청년안심주택 단지 정보 하루 1번 → `feed/danji.json` (단지 탭) |
 | `.github/workflows/feed.yml` | 3시간마다 피드 갱신 · 바뀌었을 때만 커밋 |
 | `samples/` | 시연용 예시 공고, 테스트용 예시 PDF |
 
