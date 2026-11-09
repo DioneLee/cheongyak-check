@@ -198,6 +198,8 @@ ok('390 첫 화면은 공고 바로가기부터', q('h1').getBoundingClientRect(
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
 ok('기존 사이트 입력 발견 → 배너', !q('#importBanner').hidden);
 q('#importGo').click(); await W(600);
+ok('가져오기 문구: 조사가 받침에 맞음 ("공고 1개를")', /공고 \d+개(를| · 내 조건을) 가져왔어요/.test(q('#subMsg').textContent) && !/개을 |\(를\)/.test(q('#subMsg').textContent), q('#subMsg').textContent);
+ok('조사 고르기: 받침 · 숫자 · 괄호 · 영문', [['자동차가액', '을'], ['결혼 여부', '를'], ['공고 1개', '를'], ['공고 3', '을'], ['공고 2', '를'], ['규제지역 (서울 등)', '을'], ['2억원', '을'], ['LH', '를']].every(([w, j]) => fw.eval('jo')(w, '을', '를') === j));
 const S = fw.eval('state.subs'), O = JSON.parse(before).subs;
 ok('가져오기: 공고·내 상황 그대로', S.notices.length === O.notices.length && JSON.stringify(S.me) === JSON.stringify(O.me) && S.tab === O.tab, S.notices.length);
 ok('가져오기: 돈 조건', fw.eval('state.settings.depMax') === JSON.parse(before).settings.depMax);
@@ -268,6 +270,16 @@ ok('오프라인에서도 예시 공고(저장본)', fw.eval('state.subs.notices
 await fetch('/__offline/off?' + Date.now(), { cache: 'no-store' });
 """
 
+# 기준(SUITABLE HOME v28 백업)은 조사를 '을(를)'로 썼다 → 이 사이트는 받침에 맞게 고침 (2026-11-09). 그 차이만 맞춰 놓고 비교한다
+def _jo(w, a, b):
+    ch = w.strip()[-1]; k = ord(ch) - 0xAC00
+    return (a if k % 28 else b) if 0 <= k <= 11171 else (a if ch in "013678" else b)
+def josa_fixed(x):
+    if isinstance(x, str): return re.sub(r"(\S)을\(를\)", lambda m: m.group(1) + _jo(m.group(1), "을", "를"), x)
+    if isinstance(x, list): return [josa_fixed(v) for v in x]
+    if isinstance(x, dict): return {k: josa_fixed(v) for k, v in x.items()}
+    return x
+
 def main():
     swt = REPO / "feed/detail/zz-swtest.json"; swt.parent.mkdir(exist_ok=True); swt.write_text('{"id":"zz-swtest","target":"새 상세","eligibility":["새로"]}', encoding="utf-8")   # 서비스 워커 상세 캐시 검사용 (끝나면 지움)
     procs = [serve(NEW_PORT, REPO)]
@@ -286,7 +298,7 @@ def main():
             da, db = run(DEMO, OLD_REPO, OLD_PORT, OLD_PAGE, seeds={"suitable-intro": "1"}, hash_="#subs"), run(DEMO, REPO, NEW_PORT, "/index.html")
             logs_all += la + lb + da[1] + db[1]
             data = lambda res: json.loads(next((g for s, n, g in res if s == "DATA"), "{}"))
-            ja, jb = {**data(a), **data(da[0])}, {**data(b), **data(db[0])}
+            ja, jb = josa_fixed({**data(a), **data(da[0])}), {**data(b), **data(db[0])}
             ok("[판정 동등성] 결과를 모음", len(ja) == len(jb) == 2 + len(SCEN) * 2, f"old {len(ja)} · new {len(jb)}")
             for k in ja:
                 ok(f"[판정 동등성] {k}", ja[k] is not None and ja[k] == jb.get(k), "" if ja[k] == jb.get(k) else json.dumps({"old": ja[k], "new": jb.get(k)}, ensure_ascii=False)[:600])
