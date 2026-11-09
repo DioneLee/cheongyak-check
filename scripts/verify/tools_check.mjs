@@ -140,6 +140,12 @@ await t('좌표 찾기: 번지까지 찾은 결과만 저장 · 도로·동 수�
     assert.equal(await E.writeCalendar(it1, cf, new Date('2026-11-08T12:00:00Z')), true); assert.match(await readFile(cf, 'utf8'), /DTSTAMP:20261108T120000Z/);
     assert.equal(await E.writeCalendar(it1, cf, new Date('2026-11-08T15:00:00Z')), false); assert.match(await readFile(cf, 'utf8'), /DTSTAMP:20261108T120000Z/);
     assert.equal(await E.writeCalendar([{ ...it1[0], ev: ev.map(e => e.k === 'end' ? { ...e, t: '18:00' } : e) }], cf, new Date('2026-11-08T16:00:00Z')), true); });
+  await t('구독 캘린더: 마감됨(closed) 단지 직접 공고는 빼고 · 단지 직접 공고 제목은 [단지 이름]을 남김', async () => {
+    const e1 = [{ k: 'end', d: '2026-11-13', t: '15:00' }];
+    await E.writeCalendar([{ id: 'elyes-a', title: "[독산역 롯데캐슬] 신혼부부특별공급세대 재임대 모집공고(접수: '26.11.13)", direct: true, url: '', lm: '', ev: e1 },
+      { id: 'elyes-b', title: "[용산원효루미니] 추가모집공고(접수일 '26.11.09)-->마감되었습니다.", direct: true, closed: true, url: '', lm: '', ev: [{ k: 'end', d: '2026-11-09' }] }], cf, new Date('2026-11-09T12:00:00Z'));
+    const s = (await readFile(cf, 'utf8')).replace(/\r\n /g, ''); assert.ok(!s.includes('elyes-b')); assert.match(s, /SUMMARY:\[청약\] 독산역 롯데캐슬 신혼부부특별공급세대 재임대 · 청약 마감 \(15:00까지\)\r\n/);
+    assert.equal(FT.calName('[민간임대] 건대입구역 더포디엄830 추가모집공고'), '건대입구역 더포디엄830'); assert.equal(FT.calName('[남영역 롯데캐슬] 남영역 롯데캐슬 공실세대 모집공고', true), '남영역 롯데캐슬 공실세대'); });
   await rm(dd, { recursive: true }); }
 await t('역 이름·거리 문구 읽기: 출구 · 도보 · 직선거리 · (예정) · 역세권·지역은 무시', async () => {
   assert.deepEqual(E.nearFrom('[민간임대] 숭곡초교역(예정) 성북펠릭스', '■주택위치 : 서울 성북구 하월곡동 88-222 (4호선 미아사거리역 3번 출구)', { 미아사거리역: [0, 0] }), { n: '미아사거리역', exit: '3', alt: '숭곡초교역' });
