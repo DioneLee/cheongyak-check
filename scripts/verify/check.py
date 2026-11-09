@@ -188,11 +188,11 @@ ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공
   const rf2 = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/youth-6720.json') ? new fw.Response(JSON.stringify({ apply: '인터넷 신청: https://naver.me/GUTJuhOO', supply: [{ type: '25A 1510호' }, { type: '25B 529호' }, { type: '52A 2007호' }] })) : rf2(u, o);
   q('#subFeed [data-ics="youth-6720"]').click(); for (let n = 0; n < 20 && !blob; n++) await W(50);
   const txt = blob ? (await blob.text()).replace(/\r\n /g, '') : '';
-  ok('캘린더에 추가 → 브라우저에서 .ics 만듦 (마감 23:00 · 알림 2개 · 고정 UID · 신청 링크)', /DTEND;TZID=Asia\/Seoul:20261110T230000/.test(txt) && (txt.match(/BEGIN:VALARM/g) || []).length === 2 && txt.includes('UID:youth-6720-end@dionelee.github.io') && txt.includes('신청: https://naver.me/GUTJuhOO') && /\.ics$/.test(name), name + ' ' + txt.slice(0, 80));
+  ok('캘린더에 추가 → 브라우저에서 .ics 만듦 (청약 기간 11.9~11.10 · 23:00 마감 · 알림 2개 · 고정 UID · 신청 링크)', /DTSTART;VALUE=DATE:20261109\r\nDTEND;VALUE=DATE:20261111/.test(txt) && txt.replace(/\r\n /g, '').includes('청약 기간 (11/10 23:00 마감)') && (txt.match(/BEGIN:VALARM/g) || []).length === 2 && txt.includes('UID:youth-6720-end@dionelee.github.io') && txt.includes('신청: https://naver.me/GUTJuhOO') && /\.ics$/.test(name), name + ' ' + txt.slice(0, 80));
   q('#subFeed [data-star="youth-6720"]').click(); await W(50);
   ok('★ 관심 공고: 이 브라우저에만 저장 · 관심 공고 캘린더 버튼 켜짐', JSON.parse(fw.localStorage.getItem('cheongyak-check-stars')).includes('youth-6720') && !q('#subFeed [data-starics]').disabled && q('#subFeed [data-star="youth-6720"]').textContent === '★');
   blob = null; q('#subFeed [data-starics]').click(); for (let n = 0; n < 20 && !blob; n++) await W(50);
-  ok('관심 공고 전체 캘린더로 받기', !!blob && (await blob.text()).includes('X-WR-CALNAME:청약 체크 · 관심 공고') || (blob && (await blob.text()).includes('UID:youth-6720-start@')));
+  ok('관심 공고 전체 캘린더로 받기', !!blob && (await blob.text()).includes('X-WR-CALNAME:청약 체크 · 관심 공고') || (blob && (await blob.text()).includes('UID:youth-6720-end@')));
   // 필터: 보증금 1억 이하
   const sel = q('#subFeed select[data-f="dep"]'); sel.value = '10000'; sel.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(50);
   const okIds = qa('#subFeed .flist:not(.funk) > li').map(li => li.dataset.fid), unkIds = qa('#subFeed .funk > li').map(li => li.dataset.fid);

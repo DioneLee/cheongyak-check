@@ -59,6 +59,9 @@ t('마감일 읽기: 시작 시각 있음 · 하루짜리 · 24:00 · 해 넘김
   assert.equal(F.parseDue('■청약신청 : ‘26. 11. 12. (목) 00:00 ~ 11. 15. (일) 24:00').time, '24:00');
   assert.equal(F.parseDue('■청약신청 : ‘26. 12. 30. (수) ~ 01. 02. (토) 18:00').to, '2027-01-02');
   assert.equal(F.parseDue('■ 청약신청 페이지 : https://naver.me/x'), null); assert.equal(F.parseDue('청약신청 : 추후 안내'), null); });
+t('발표 줄 읽기: 같은 줄 · 날짜 없는 줄은 빼기 (청년안심 본문)', () => {
+  assert.deepEqual(F.parseAnnounce('■청약신청 : ‘26. 11. 09. (월) ~ 11. 10. (화) 00:00 ~ 23:00\n■서류심사 대상자 발표 : ‘26. 11. 11. (수) 17:00 예정\n■계약체결 : ‘26. 11. 17. (화)'), [{ label: '서류심사 대상자 발표', date: '‘26. 11. 11. (수) 17:00 예정' }]);
+  assert.deepEqual(F.parseAnnounce('■당첨자 발표 : 추후 개별 안내\n발표 결과는 문자로'), []); assert.deepEqual(F.parseAnnounce(''), []); });
 t('마이홈: API 기본 정보 → 상세 (주택·가격·일정·문의·주소)', () => { const b = my[0].basic;
   assert.deepEqual(b.supply[0], { type: '마포 행복주택', area: '아파트', units: '총 63세대', price: '보증금 4,650만원 · 계약금 465만원 · 월 22.5만원', movein: null });
   assert.deepEqual(b.schedule, [{ label: '접수', date: `${T(3).replaceAll('-', '.')} ~ ${T(5).replaceAll('-', '.')}` }, { label: '당첨자 발표', date: '2027.03.05' }]);
@@ -86,7 +89,7 @@ t('같은 공고(머리말·공고 글자 차이) 합침 · LH 우선 · 빈 칸
 t('마감 가까운 순 · http(s) 링크만', () => { assert.equal(feed.items[1].id, 'myhome-B2'); assert.equal(feed.items[1].url, ''); });
 t('서울 밖 공고는 뺌', () => { const g = F.buildFeed([{ feedId: 'lh-9', org: 'LH', title: '경기 행복주택', region: '경기', kind: '', posted: T(-1), from: '', to: T(3), url: '' }]); assert.equal(g.items.length, 0); });
 t('최상위 형식 · 출처 이름', () => { assert.deepEqual(Object.keys(feed), ['updated', 'source', 'items']); assert.equal(feed.source, '마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)'); assert.match(feed.updated, /\+09:00$/); });
-t('항목 필드 20개 (사이트 normFeed 와 같은 모양)', () => assert.deepEqual(Object.keys(feed.items[0]), ['id', 'org', 'title', 'region', 'kind', 'posted', 'from', 'to', 'url', 'time', 'startOnly', 'direct', 'closed', 'danji', 'detail', 'dv', 'ev', 'cr', 'ty', 'st']));
+t('항목 필드 20개 + sch(발표 줄 · enrich 가 일정으로 바꾸고 지움) (사이트 normFeed 와 같은 모양)', () => assert.deepEqual(Object.keys(feed.items[0]), ['id', 'org', 'title', 'region', 'kind', 'posted', 'from', 'to', 'url', 'time', 'startOnly', 'direct', 'closed', 'danji', 'sch', 'detail', 'dv', 'ev', 'cr', 'ty', 'st']));
 t('오류 메시지에서 키 지움', () => { const m = F.scrub('x serviceKey=TEST+KEY==-only&y TEST%2BKEY%3D%3D-only'); assert.ok(!m.includes('TEST'), m); });
 let err = ''; globalThis.fetch = async () => new Response('<returnAuthMsg>SERVICE_KEY_IS_NOT_REGISTERED_ERROR</returnAuthMsg>');
 try { await F.fetchLH(); } catch (e) { err = e.message; }

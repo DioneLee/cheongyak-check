@@ -17,6 +17,8 @@ const ev = E.eventsFor(I6720, D6720), ty = E.typesOf(D6720), cr = E.critsOf(D672
 
 await t('일정: 청약 시작 11.9 · 마감 11.10 23:00 · 발표 11.11 17:00 · 서류 11.12~13 · 계약 11.17~20', async () => assert.deepEqual(ev.map(e => [e.k, e.d, e.e || '', e.t || '']), [
   ['start', '2026-11-09', '', ''], ['end', '2026-11-10', '', '23:00'], ['announce', '2026-11-11', '', '17:00'], ['docs', '2026-11-12', '2026-11-13', ''], ['contract', '2026-11-17', '2026-11-20', '']]));
+await t('일정: 게시판 본문의 발표 줄(sch)도 발표 일정으로 · 청약 기간은 목록 것 그대로', async () => assert.deepEqual(E.eventsFor({ ...I6720, sch: [{ label: '서류심사 대상자 발표', date: '‘26. 11. 11. (수) 17:00 예정' }] }, null).map(e => [e.k, e.d, e.t || '', e.l]),
+  [['start', '2026-11-09', '', '청약 시작'], ['end', '2026-11-10', '23:00', '청약 마감'], ['announce', '2026-11-11', '17:00', '서류심사 대상자 발표']]));
 await t('날짜 글 읽기: 여러 모양 (점·월일·오전/오후·24:00·해 넘김)', async () => {
   assert.deepEqual(E.parseWhen('2026. 11. 2. ~ 11. 12. 18시', 2026), { d1: '2026-11-02', d2: '2026-11-12', t1: '', t2: '18:00' });
   assert.deepEqual(E.parseWhen('11월 10일 ~ 11월 17일', 2026), { d1: '2026-11-10', d2: '2026-11-17', t1: '', t2: '' });
@@ -27,32 +29,39 @@ await t('날짜 글 읽기: 여러 모양 (점·월일·오전/오후·24:00·�
 const n6720 = { id: 'youth-6720', name: '건대입구역 더포디엄830', url: I6720.url, apply: 'https://naver.me/GUTJuhOO', ev };
 const ics1 = FT.ics([n6720]), ics2 = FT.ics([n6720]);
 const vevent = (s, uid) => s.replace(/\r\n /g, '').split('BEGIN:VEVENT').find(b => b.includes(`UID:${uid}`));
-await t('.ics: 마감 2026-11-10 23:00(Asia/Seoul) 이벤트 + 알림 2개(하루 전 09:00 · 3시간 전)', async () => {
+await t('.ics: 청약 기간 11.9~11.10 한 일정(하루 종일, 마감 시각은 제목) + 알림 2개(하루 전 09:00 · 3시간 전)', async () => {
   const e = vevent(ics1, 'youth-6720-end@dionelee.github.io'); assert.ok(e);
-  assert.match(e, /DTEND;TZID=Asia\/Seoul:20261110T230000\r\n/); assert.match(e, /SUMMARY:\[청약\] 건대입구역 더포디엄830 · 청약 마감 \(23:00까지\)/);
+  assert.match(e, /DTSTART;VALUE=DATE:20261109\r\nDTEND;VALUE=DATE:20261111\r\n/); assert.match(e, /SUMMARY:\[청약\] 건대입구역 더포디엄830 · 청약 기간 \(11\/10 23:00 마감\)/);
   assert.equal((e.match(/BEGIN:VALARM/g) || []).length, 2);
   assert.match(e, /TRIGGER;VALUE=DATE-TIME:20261109T000000Z/); assert.match(e, /TRIGGER;VALUE=DATE-TIME:20261110T110000Z/);   // 11.9 09:00 KST · 11.10 20:00 KST
   assert.match(e, /DESCRIPTION:.*공고 원문: https:\/\/soco\.seoul\.go\.kr.*\\n신청: https:\/\/naver\.me\/GUTJuhOO/); });
+await t('.ics: 시작일을 모르는 마감은 따로 — 마감 2026-11-10 23:00(Asia/Seoul) 1시간 일정', async () => {
+  const e = vevent(FT.ics([{ ...n6720, ev: [ev[1]] }]).replace(/\r\n /g, ''), 'youth-6720-end@dionelee.github.io');
+  assert.match(e, /DTEND;TZID=Asia\/Seoul:20261110T230000\r\n/); assert.match(e, /SUMMARY:\[청약\] 건대입구역 더포디엄830 · 청약 마감 \(23:00까지\)/); assert.equal((e.match(/BEGIN:VALARM/g) || []).length, 2); });
+await t('.ics: 발표 일정 제목은 공고의 이름 그대로 (서류심사 대상자 발표)', async () => {
+  const e = vevent(FT.ics([{ ...n6720, ev: [{ k: 'announce', l: '서류심사 대상자 발표', d: '2026-11-11', t: '17:00' }] }]).replace(/\r\n /g, ''), 'youth-6720-announce@dionelee.github.io');
+  assert.match(e, /DTSTART;TZID=Asia\/Seoul:20261111T170000\r\n/); assert.match(e, /SUMMARY:\[청약\] 건대입구역 더포디엄830 · 서류심사 대상자 발표\r\n/); });
 await t('.ics: 같은 공고로 다시 만들면 UID 가 같음 (캘린더에서 갱신)', async () => {
   const uids = s => [...s.replace(/\r\n /g, '').matchAll(/^UID:(.+)$/gm)].map(m => m[1].trim());
-  assert.deepEqual(uids(ics1), uids(ics2)); assert.deepEqual(uids(ics1), ['youth-6720-start@dionelee.github.io', 'youth-6720-end@dionelee.github.io', 'youth-6720-announce@dionelee.github.io', 'youth-6720-docs@dionelee.github.io', 'youth-6720-contract@dionelee.github.io']); });
+  assert.deepEqual(uids(ics1), uids(ics2)); assert.deepEqual(uids(ics1), ['youth-6720-end@dionelee.github.io', 'youth-6720-announce@dionelee.github.io', 'youth-6720-docs@dionelee.github.io', 'youth-6720-contract@dionelee.github.io']); });
 await t('.ics: RFC 5545 형식 — 모든 줄 CRLF · 75바이트 이하 · 접은 줄은 공백으로 시작 · VCALENDAR/VTIMEZONE · 하루 종일은 VALUE=DATE', async () => {
   assert.ok(ics1.endsWith('\r\n')); assert.ok(!/[^\r]\n/.test(ics1), 'LF 만 있는 줄');
   const lines = ics1.split('\r\n').slice(0, -1); for (const l of lines) assert.ok(Buffer.byteLength(l, 'utf8') <= 75, `${Buffer.byteLength(l)}바이트: ${l}`);
   assert.ok(lines.some(l => l.startsWith(' ')), '긴 줄이 접혀 있어야 함'); assert.equal(lines[0], 'BEGIN:VCALENDAR'); assert.equal(lines.at(-1), 'END:VCALENDAR');
   assert.ok(lines.includes('VERSION:2.0') && lines.includes('TZID:Asia/Seoul')); assert.ok(lines.includes('DTSTART;VALUE=DATE:20261117') && lines.includes('DTEND;VALUE=DATE:20261121'));
-  const unfolded = ics1.replace(/\r\n /g, ''); assert.match(unfolded, /SUMMARY:\[청약\] 건대입구역 더포디엄830 · 청약 마감 \(23:00까지\)\r\n/);   // 접었다 펴도 글자 그대로
+  const unfolded = ics1.replace(/\r\n /g, ''); assert.match(unfolded, /SUMMARY:\[청약\] 건대입구역 더포디엄830 · 청약 기간 \(11\/10 23:00 마감\)\r\n/);   // 접었다 펴도 글자 그대로
   assert.equal((ics1.match(/BEGIN:VEVENT/g) || []).length, (ics1.match(/END:VEVENT/g) || []).length); });
-await t('.ics: SEQUENCE(기본 0, 바뀐 일정은 그 수) · LAST-MODIFIED(상세 읽은 시각 → UTC) · DTSTAMP(만든 시각 UTC)', async () => {
+await t('.ics: SEQUENCE(기본 0, 바뀐 일정은 그 수 · 청약 기간은 시작+마감+1 — 예전 마감 일정보다 커서 덮어씀) · LAST-MODIFIED(상세 읽은 시각 → UTC) · DTSTAMP(만든 시각 UTC)', async () => {
   const s = FT.ics([{ ...n6720, lm: '2026-11-07 18:41', ev: [{ ...ev[0] }, { ...ev[1], q: 2 }] }]).replace(/\r\n /g, '');
-  assert.match(vevent(s, 'youth-6720-start@dionelee.github.io'), /SEQUENCE:0\r\n/); assert.match(vevent(s, 'youth-6720-end@dionelee.github.io'), /SEQUENCE:2\r\n/);
+  assert.equal(vevent(s, 'youth-6720-start@dionelee.github.io'), undefined); assert.match(vevent(s, 'youth-6720-end@dionelee.github.io'), /SEQUENCE:3\r\n/);
+  assert.match(vevent(FT.ics([{ ...n6720, ev: [{ ...ev[1], q: 2 }] }]).replace(/\r\n /g, ''), 'youth-6720-end@dionelee.github.io'), /SEQUENCE:2\r\n/);
   assert.match(s, /LAST-MODIFIED:20261107T094100Z/); const st = s.match(/DTSTAMP:(\d{8}T\d{6}Z)/)[1]; assert.ok(Math.abs(Date.parse(st.replace(/(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)Z/, '$1-$2-$3T$4:$5:$6Z')) - Date.now()) < 6e4); });
 await t('.ics: 시각 없는 마감은 하루 종일 · 알림은 전날 09:00 · 그날 21:00', async () => {
   const s = FT.ics([{ id: 'x-1', name: 'A', ev: [{ k: 'end', d: '2026-11-13' }] }]).replace(/\r\n /g, '');
   assert.match(s, /DTSTART;VALUE=DATE:20261113/); assert.match(s, /TRIGGER;VALUE=DATE-TIME:20261112T000000Z/); assert.match(s, /TRIGGER;VALUE=DATE-TIME:20261113T120000Z/); });
-await t('구독 캘린더는 청약 시작·마감만 · 같은 DTSTAMP 면 같은 글자', async () => {
-  const s = FT.ics([n6720], { kinds: ['start', 'end'], dtstamp: () => '20261105T000000Z', refresh: 'PT3H' });
-  assert.equal((s.match(/BEGIN:VEVENT/g) || []).length, 2); assert.match(s, /REFRESH-INTERVAL;VALUE=DURATION:PT3H/); assert.equal(s, FT.ics([n6720], { kinds: ['start', 'end'], dtstamp: () => '20261105T000000Z', refresh: 'PT3H' })); });
+await t('구독 캘린더는 청약 기간·발표만 (서류·계약 빼고) · 같은 DTSTAMP 면 같은 글자', async () => {
+  const K = ['start', 'end', 'announce'], s = FT.ics([n6720], { kinds: K, dtstamp: () => '20261105T000000Z', refresh: 'PT3H' });
+  assert.deepEqual([...s.matchAll(/^UID:(.+)$/gm)].map(m => m[1].trim()), ['youth-6720-end@dionelee.github.io', 'youth-6720-announce@dionelee.github.io']); assert.match(s, /REFRESH-INTERVAL;VALUE=DURATION:PT3H/); assert.equal(s, FT.ics([n6720], { kinds: K, dtstamp: () => '20261105T000000Z', refresh: 'PT3H' })); });
 
 // 신청 가능 배지 (내 조건 × 자격 기준) · SEEN: 사용자가 직접 넣거나 확인한 칸
 const SEEN = { hasCar: true };
@@ -113,8 +122,8 @@ await t('좌표 찾기: 번지까지 찾은 결과만 저장 · 도로·동 수�
   const items = () => [{ ...I6720 }]; let L = items(); await E.enrich(L, { dir: dd, geoFile, stationsFile: stF, fetchFn: noFetch, log: () => {} });
   await t('SEQUENCE: 처음은 0 · 상세 파일 seq 에 날짜·시각 기록', async () => { assert.equal(L[0].ev.find(e => e.k === 'end').q, undefined); const d = JSON.parse(await readFile(dd + 'youth-6720.json', 'utf8')); assert.deepEqual(d.seq.end, { n: 0, s: '2026-11-10||23:00' }); assert.match(L[0].dv, /^[0-9a-f]{10}$/); });
   L = [{ ...I6720, time: '18:00' }]; await E.enrich(L, { dir: dd, geoFile, stationsFile: stF, fetchFn: noFetch, log: () => {} });
-  await t('SEQUENCE: 마감 시각이 23:00 → 18:00 으로 바뀌면 1 · .ics 에 SEQUENCE:1', async () => { assert.equal(L[0].ev.find(e => e.k === 'end').q, 1); assert.equal(L[0].ev.find(e => e.k === 'start').q, undefined);
-    assert.match(FT.ics([{ id: 'youth-6720', name: 'x', ev: L[0].ev }]).replace(/\r\n /g, ''), /UID:youth-6720-end@dionelee\.github\.io\r\nDTSTAMP:\d{8}T\d{6}Z\r\nSEQUENCE:1\r\n/); });
+  await t('SEQUENCE: 마감 시각이 23:00 → 18:00 으로 바뀌면 1 · .ics 청약 기간은 SEQUENCE:2 (마감 1 + 시작 0 + 1)', async () => { assert.equal(L[0].ev.find(e => e.k === 'end').q, 1); assert.equal(L[0].ev.find(e => e.k === 'start').q, undefined);
+    assert.match(FT.ics([{ id: 'youth-6720', name: 'x', ev: L[0].ev }]).replace(/\r\n /g, ''), /UID:youth-6720-end@dionelee\.github\.io\r\nDTSTAMP:\d{8}T\d{6}Z\r\nSEQUENCE:2\r\n/); });
   L = [{ ...I6720, time: '18:00' }]; await E.enrich(L, { dir: dd, geoFile, stationsFile: stF, fetchFn: noFetch, log: () => {} });
   await t('SEQUENCE: 그대로면 안 올라감 · LAST-MODIFIED 용 lm = 상세 readAt', async () => { assert.equal(L[0].ev.find(e => e.k === 'end').q, 1); assert.equal(L[0].lm, D6720.readAt); });
   await t('역: 본문 역이 있고 번지 좌표가 있으면 그 역까지 직선거리 (src geo)', async () => { assert.equal(L[0].st.n, '건대입구역'); assert.equal(L[0].st.src, 'geo'); assert.ok(L[0].st.m > 250 && L[0].st.m < 450); assert.equal(L[0].st.exit, '6'); });

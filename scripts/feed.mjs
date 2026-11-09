@@ -154,6 +154,10 @@ export function parseDue(text, start = '') {
   if (to < from || Date.parse(to) - Date.parse(from) > 90 * 864e5) return null;   // 이상하게 읽힘
   return { from, to, time: tm ? `${tm[1].padStart(2, '0')}:${tm[2]}` : '' };
 }
+// 발표일: 같은 본문의 '■서류심사 대상자 발표 : ‘26. 11. 11. (수) 17:00 예정' 줄 → [{ label, date }] (enrich 의 eventsFor 가 날짜로 바꿈)
+export function parseAnnounce(text) {
+  return String(text).split('\n').map(l => l.match(/^■?\s*([^:：■]*발표[^:：]*?)\s*[:：]\s*(.*\d{1,2}\s*\.\s*\d{1,2}.*)$/)).filter(Boolean).slice(0, 3).map(m => ({ label: m[1].trim(), date: m[2].trim() }));
+}
 const YOUTH = 'https://soco.seoul.go.kr/youth';
 export function parseYouth(data) {
   return (data?.resultList ?? []).filter(r => r?.boardId && r.nttSj).map(r => {
@@ -177,7 +181,7 @@ export async function fetchYouth({ pages = 3 } = {}) {   // 한 쪽 10개 · 신
   const items = [...new Map(out.map(i => [i.feedId, i])).values()], since = todayKst(-30);
   for (const i of items) if (i.to && i.to >= since) {   // 아직 열려 있을 수 있는 것만 상세를 열어 마감일을 읽는다 (실패해도 시작일로 둔다)
     try { await robotsOk(i.url); const r = await polite(i.url, { headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) });
-      const d = r.ok ? parseDue(pageText(await r.text(), i.title), i.to) : null; if (d) Object.assign(i, d, { startOnly: false }); } catch { /* 시작일 그대로 */ }
+      const txt = r.ok ? pageText(await r.text(), i.title) : '', d = txt ? parseDue(txt, i.to) : null; if (d) Object.assign(i, d, { startOnly: false }); i.sch = parseAnnounce(txt); } catch { /* 시작일 그대로 */ }
   }
   return items;
 }
@@ -209,7 +213,7 @@ export function buildFeed(raw, today = todayKst()) {   // today: 검사에서 �
   }
   const cutoff = new Date(Date.parse(today) - NO_PERIOD_DAYS * 864e5).toISOString().slice(0, 10);
   let items = groups.map(g => g.item).filter(i => i.region.startsWith('서울') && (i.to ? i.to >= today : i.posted && i.posted >= cutoff))   // 서울 공고만
-    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, direct: !!i.direct, closed: !!i.closed, danji: i.danji || '', detail: false, dv: '', ev: [], cr: null, ty: [], st: null }))   // dv: 상세 파일 내용 해시 (사이트가 ?v= 로 붙여 예전 캐시를 피함)   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
+    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, direct: !!i.direct, closed: !!i.closed, danji: i.danji || '', sch: i.sch || [], detail: false, dv: '', ev: [], cr: null, ty: [], st: null }))   // dv: 상세 파일 내용 해시 (사이트가 ?v= 로 붙여 예전 캐시를 피함)   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
     .sort((a, b) => (a.to || '9999').localeCompare(b.to || '9999') || b.posted.localeCompare(a.posted));
   // 정정공고: 제목에 정정·변경·재공고가 있고 같은 기관·같은 단지(정정 글자를 뺀 이름)의 더 예전 공고가 있으면 예전 것은 숨긴다 (사이트는 새 공고에 '정정공고' 배지)
   const gone = new Set();

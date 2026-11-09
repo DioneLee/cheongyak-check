@@ -38,7 +38,7 @@ export function eventsFor(item, detail) {
   const fromItem = !!item.to && !item.startOnly;
   if (fromItem) { if (item.from && item.from !== item.to) ev.push({ k: 'start', l: '청약 시작', d: item.from }); ev.push({ k: 'end', l: '청약 마감', d: item.to, ...(item.time ? { t: item.time } : {}) }); }
   else if (item.startOnly && item.to) ev.push({ k: 'start', l: '청약 시작', d: item.to });
-  for (const r of detail?.schedule || []) {
+  for (const r of [...(item.sch || []), ...(detail?.schedule || [])]) {   // item.sch: 게시판 본문의 발표 줄 (청년안심)
     const k = kindOf(r.label || ''), w = parseWhen(r.date, year); if (!k || !w) continue;
     if (k === 'apply') { if (fromItem || ev.some(e => e.k === 'end')) continue;
       if (w.d1 !== w.d2 || w.t1) ev.push({ k: 'start', l: r.label, d: w.d1, ...(w.t1 && w.d1 !== w.d2 ? { t: w.t1 } : {}) });
@@ -144,7 +144,7 @@ export async function enrich(items, { dir = DETAIL_DIR, geoFile = GEO_FILE, stat
   const seqFile = `${dir}_seq.json`, seqAll = await readJson(seqFile, {});
   for (const it of items) {
     const f = `${dir}${it.id}.json`, d = it.detail ? await readJson(f, null) : null;
-    it.ev = eventsFor(it, d); it.cr = critsOf(d); it.ty = typesOf(d); it.lm = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(d?.readAt || '') ? d.readAt : '';
+    it.ev = eventsFor(it, d); delete it.sch; it.cr = critsOf(d); it.ty = typesOf(d); it.lm = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(d?.readAt || '') ? d.readAt : '';
     // 역: 본문에 거리가 있으면 그 값 → 없으면 번지까지 찾은 좌표의 직선거리(본문 역이 있으면 그 역까지) → 그것도 없으면 역 이름만
     const near = d?.near || nearFrom(it.title, ''), addr = d?.addr || null; let ll = null; if (addr) usedAddr.add(addr);
     if (addr && Object.keys(stations).length) { const had = !!geo[addr]; ll = await geocode(addr, geo, { fetchFn }); if (!had) ll ? geoNew++ : geoFail++; }
@@ -166,9 +166,9 @@ export async function enrich(items, { dir = DETAIL_DIR, geoFile = GEO_FILE, stat
   log(`꾸미기 · 일정 ${items.filter(i => i.ev.length).length}건 · 자격 기준 ${items.filter(i => i.cr).length}건 · 주택형 ${items.filter(i => i.ty.length).length}건 · 역 ${items.filter(i => i.st).length}건 (본문 거리 ${items.filter(i => i.st?.src === 'text').length} · 좌표 직선거리 ${items.filter(i => i.st?.src === 'geo').length} · 역 이름만 ${items.filter(i => i.st?.src === 'name').length}) · 새 좌표 ${geoNew} · 좌표 실패 ${geoFail}`);
   return items;
 }
-export async function writeCalendar(items, file = CAL_FILE, now = new Date()) {   // 구독용: 청약 시작·마감만 · DTSTAMP = 파일을 만든 시각(UTC) · DTSTAMP 말고 바뀐 게 없으면 다시 쓰지 않음
+export async function writeCalendar(items, file = CAL_FILE, now = new Date()) {   // 구독용: 청약 기간(시작~마감)·발표 · DTSTAMP = 파일을 만든 시각(UTC) · DTSTAMP 말고 바뀐 게 없으면 다시 쓰지 않음
   const body = FT.ics(items.map(i => ({ id: i.id, lm: i.lm, name: i.title.replace(/^\s*(\[[^\]]*\]\s*)+/, '').replace(/\s*(입주자\s*)?(최초|추가|예비|잔여)?\s*(입주자\s*)?모집\s*공고문?.*$/, '').trim() || i.title, url: i.url, ev: i.ev })),
-    { calName: '청약 체크 · 서울 진행중 공고', kinds: ['start', 'end'], refresh: 'PT3H', dtstamp: () => now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '') });
+    { calName: '청약 체크 · 서울 진행중 공고', kinds: ['start', 'end', 'announce'], refresh: 'PT3H', dtstamp: () => now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '') });
   let prev = ''; try { prev = await readFile(file, 'utf8'); } catch { /* 처음 */ }
   const strip = x => x.replace(/^DTSTAMP:.*$/gm, '');
   if (strip(prev) === strip(body)) return false; await writeFile(file, body, 'utf8'); return true;
