@@ -4,7 +4,9 @@
 
 ## 지금 상태
 
-- 배포: https://dionelee.github.io/cheongyak-check/ (저장소 DioneLee/cheongyak-check · Pages = main / root · 서비스 워커 `cheongyak-check-2026-11-09b`)
+- **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
+
+- 배포: https://dionelee.github.io/cheongyak-check/ (저장소 DioneLee/cheongyak-check · Pages = main / root · 서비스 워커 `cheongyak-check-2026-11-09c`)
 - 탭 3개 (2026-11-09, `docs/design/탭과문구.md`): 공고 `#notices`(원문 사이트 4곳 · 공고 목록 · 필터 · 관심 공고 · 캘린더 · 줄마다 '진단 →') · 진단 `#diag`(PDF 올리기 + 질문 + 결과) · 설정 `#settings`(AI 설정 · 데이터 옮기기 · 고급)
 - 판정 문구는 "입력한 조건으로는 … 보여요" + 예비 판정 줄 · 처음 결과 볼 때 이용약관(`terms.html`) 확인 한 번 (키 `cheongyak-check-terms`)
 - 공고 출처: LH·마이홈포털 공공데이터 API + SH 공고 게시판 + 서울 청년안심주택 모집공고 목록 (서울만)

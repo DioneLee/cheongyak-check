@@ -1,0 +1,21 @@
+{
+  "name": "cheongyak-check-app",
+  "private": true,
+  "description": "청약 체크 Android·iOS 앱 (Capacitor) — 화면은 저장소 맨 위 웹 파일을 sync-web 으로 복사해서 쓴다",
+  "scripts": {
+    "sync-web": "node sync-web.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/ios": "^8.6.0",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/share": "^8.0.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0"
+  }
+}

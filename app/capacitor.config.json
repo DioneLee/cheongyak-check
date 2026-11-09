@@ -1,0 +1,7 @@
+{
+  "appId": "io.github.dionelee.cheongyakcheck.dev",
+  "appName": "청약 체크",
+  "webDir": "www",
+  "android": { "allowMixedContent": false },
+  "plugins": { "LocalNotifications": { "smallIcon": "ic_stat_cheongyak", "iconColor": "#1E5E4E" } }
+}

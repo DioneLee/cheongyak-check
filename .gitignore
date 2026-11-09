@@ -10,3 +10,25 @@ worker-cron/.dev.vars
 
 # Playwright 임시 파일
 .playwright-mcp/
+
+# 앱 (app/) — 키·비밀번호는 저장소 밖(~/.cheongyak-app/keys)에 두지만 혹시 몰라 막아 둠
+*.jks
+*.keystore
+*.p12
+*.mobileprovision
+keystore.properties
+*password*
+*.pass
+# 앱: 받은 도구·생성물 (sync-web · 빌드가 다시 만든다)
+app/node_modules/
+app/www/
+app/dist/
+app/jdk*/
+app/android-sdk/
+*.aab
+*.apk
+app/ios/App/build/
+app/ios/DerivedData/
+app/ios/App/App/public/
+app/ios/App/App/capacitor.config.json
+app/ios/App/App/config.xml

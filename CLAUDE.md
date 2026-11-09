@@ -14,3 +14,12 @@
 - `git add -A` 전에 `git status -s` 확인 (`.playwright-mcp/` 같은 임시 파일)
 - **push 전에 항상 `git pull --rebase origin main`** (Actions 가 공고 피드 커밋을 올림)
 - 커밋에 Claude 서명 줄 없음 · 커밋/push 는 확인받고
+
+## 앱 (Android · iOS, `app/` — Capacitor 8)
+
+- 앱 작업은 `docs/work/HANDOFF_app.md` 부터 읽는다 (설계 `docs/design/앱.md` · 스토어 초안 `docs/store/스토어.md`)
+- 앱 ID 는 `app/capacitor.config.json` 의 `appId` **한 곳**에서만 바꾼다 → `node app/sync-web.mjs` 가 Android·iOS 프로젝트에 반영 (`app_bridge_check` 가 확인)
+- 앱 화면은 웹 파일의 복사본(`app/www`, 저장소에 안 올림). 웹을 고치면 `sync-web` → 빌드. 앱 전용 동작은 `app/bridge.js` 에만 두고, 웹 `index.html` 의 앱 분기는 `IS_APP`/`SITE` 뿐 — **웹 동작을 바꾸지 않는다** (판정·계산 그대로)
+- 업로드 키·인증서·비밀번호는 저장소 밖(`~/.cheongyak-app/keys`)에. 비밀번호는 keytool·jarsigner 가 직접 묻게 하고 어디에도 쓰지 않는다 (.gitignore 가 `*.jks` 등을 막음)
+- 앱 검사: `node scripts/verify/app_bridge_check.mjs` · 에뮬레이터 화면 안 JS 는 `node scripts/verify/app_cdp.mjs "<식>"`
+- 커밋 전: `git status -s` · Gemini 키 문자열(check.py 정적 검사가 찾는 것)·storePassword·keyPassword·.jks 가 커밋에 없는지 · **push 전 `git pull --rebase origin main`**
