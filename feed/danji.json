@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09",
+ "updated": "2026-11-10",
  "source": "서울시 청년안심주택 단지 정보 · 모집공고 게시판 (soco.seoul.go.kr)",
  "danji": [
   {
@@ -23,12 +23,12 @@
    "home": "https://maestrosamseong.com",
    "tel": "02-3453-9655",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-08-06",
    "bbs": 4,
    "extra": 4,
-   "lastExtra": "2026-10-01",
-   "base": "공급완료"
+   "lastExtra": "2026-10-01"
   },
   {
    "id": "20000484",
@@ -51,12 +51,12 @@
    "home": "https://first-home.co.kr/",
    "tel": "1522-2067",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-02-10",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000370",
@@ -79,12 +79,12 @@
    "home": "http://www.listgangnam.co.kr/",
    "tel": "02-542-6114",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-02-09",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2026-09-03",
-   "base": "공급완료"
+   "lastExtra": "2026-09-03"
   },
   {
    "id": "20000576",
@@ -107,12 +107,12 @@
    "home": "https://www.dg-summit.co.kr/",
    "tel": "02-823-9542",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-04-11",
    "bbs": 7,
    "extra": 6,
-   "lastExtra": "2026-07-23",
-   "base": "공급완료"
+   "lastExtra": "2026-07-23"
   },
   {
    "id": "20000480",
@@ -135,12 +135,12 @@
    "home": "https://www.theoneys.co.kr/",
    "tel": "031-797-2909",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-01-16",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2026-01-08",
-   "base": "공급완료"
+   "lastExtra": "2026-01-08"
   },
   {
    "id": "20000562",
@@ -163,12 +163,12 @@
    "home": "https://gildonglife.co.kr",
    "tel": "02-553-8387",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-01-13",
    "bbs": 7,
    "extra": 6,
-   "lastExtra": "2026-10-15",
-   "base": "공급완료"
+   "lastExtra": "2026-10-15"
   },
   {
    "id": "20000563",
@@ -191,12 +191,12 @@
    "home": "https://gildonglife.co.kr",
    "tel": "02-553-8387",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-01-13",
    "bbs": 7,
    "extra": 6,
-   "lastExtra": "2026-10-15",
-   "base": "공급완료"
+   "lastExtra": "2026-10-15"
   },
   {
    "id": "20000364",
@@ -219,12 +219,12 @@
    "home": "http://천호역세권청년주택.com",
    "tel": "02-6472-3902",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-02-01",
    "bbs": 0,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000498",
@@ -247,12 +247,12 @@
    "home": "https://www.cheonho2030.com/",
    "tel": "02-488-7980",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-06-28",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2025-06-11",
-   "base": "공급완료"
+   "lastExtra": "2025-06-11"
   },
   {
    "id": "20000354",
@@ -275,12 +275,12 @@
    "home": "https://www.smartlynn.co.kr/villageInfo/4619",
    "tel": "02-3662-1410",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-08-03",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000567",
@@ -303,12 +303,12 @@
    "home": "https://blog.naver.com/fltower",
    "tel": "02-6735-1561",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-03-07",
    "bbs": 0,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000360",
@@ -331,12 +331,12 @@
    "home": "https://blog.naver.com/iam2030house",
    "tel": "02-3663-6000",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-05-18",
    "bbs": 6,
    "extra": 5,
-   "lastExtra": "2026-09-17",
-   "base": "공급완료"
+   "lastExtra": "2026-09-17"
   },
   {
    "id": "20000578",
@@ -359,12 +359,12 @@
    "home": "https://centersquarebs.com/",
    "tel": "02-2659-8883",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-04-18",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2025-07-23",
-   "base": "공급완료"
+   "lastExtra": "2025-07-23"
   },
   {
    "id": "20000415",
@@ -387,12 +387,12 @@
    "home": "https://blog.naver.com/fltower1",
    "tel": "02-6735-1560",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-11-05",
    "bbs": 5,
    "extra": 4,
-   "lastExtra": "2026-08-06",
-   "base": "공급완료"
+   "lastExtra": "2026-08-06"
   },
   {
    "id": "20000616",
@@ -415,12 +415,12 @@
    "home": "https://kjtower.com/",
    "tel": "02-6272-0157",
    "viewAt": "2026-11-09",
-   "status": "청약예정",
+   "base": "청약예정",
+   "status": "청약중",
    "first": "2026-11-03",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "청약예정"
+   "lastExtra": ""
   },
   {
    "id": "20000371",
@@ -443,12 +443,12 @@
    "home": "",
    "tel": "홈페이지 :",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-07-09",
    "bbs": 5,
    "extra": 4,
-   "lastExtra": "2026-09-10",
-   "base": "공급완료"
+   "lastExtra": "2026-09-10"
   },
   {
    "id": "20000356",
@@ -471,12 +471,12 @@
    "home": "https://bonumhaus2030-mo9.imweb.me/",
    "tel": "홈페이지 :",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-10-05",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2025-12-11",
-   "base": "공급완료"
+   "lastExtra": "2025-12-11"
   },
   {
    "id": "20000412",
@@ -499,12 +499,12 @@
    "home": "https://sejee000.cafe24.com/default/",
    "tel": "010-4942-8982",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-12-22",
    "bbs": 7,
    "extra": 6,
-   "lastExtra": "2026-10-15",
-   "base": "공급완료"
+   "lastExtra": "2026-10-15"
   },
   {
    "id": "20000599",
@@ -527,12 +527,12 @@
    "home": "https://www.juventus240.com",
    "tel": "02-855-2401",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-06-02",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2026-10-22",
-   "base": "공급완료"
+   "lastExtra": "2026-10-22"
   },
   {
    "id": "20000550",
@@ -555,12 +555,12 @@
    "home": "https://centersquaresnu.com/",
    "tel": "02-877-0708",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-08-26",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2026-10-08",
-   "base": "공급완료"
+   "lastExtra": "2026-10-08"
   },
   {
    "id": "20000386",
@@ -583,12 +583,12 @@
    "home": "http://www.bx201.co.kr",
    "tel": "02-3285-0201",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-04-01",
    "bbs": 21,
    "extra": 20,
-   "lastExtra": "2026-09-17",
-   "base": "공급완료"
+   "lastExtra": "2026-09-17"
   },
   {
    "id": "20000496",
@@ -611,12 +611,12 @@
    "home": "https://www.최강타워.com",
    "tel": "02-872-8886",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-06-09",
    "bbs": 8,
    "extra": 7,
-   "lastExtra": "2026-10-22",
-   "base": "공급완료"
+   "lastExtra": "2026-10-22"
   },
   {
    "id": "20000606",
@@ -639,12 +639,12 @@
    "home": "https://www.gangbyeonskytower.co.kr/",
    "tel": "02-455-3961",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-07-28",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000418",
@@ -667,12 +667,12 @@
    "home": "https://www.vivahillskb.co.kr/",
    "tel": "010-2314-7380",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-09-03",
    "bbs": 13,
    "extra": 12,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000482",
@@ -695,12 +695,12 @@
    "home": "http://www.centumhills.co.kr/",
    "tel": "02-456-0066",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-01-27",
    "bbs": 3,
    "extra": 2,
-   "lastExtra": "2026-10-01",
-   "base": "공급완료"
+   "lastExtra": "2026-10-01"
   },
   {
    "id": "20000414",
@@ -723,12 +723,12 @@
    "home": "",
    "tel": "홈페이지 :",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2019-08-29",
    "bbs": 0,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000558",
@@ -751,12 +751,12 @@
    "home": "https://Thepodium830.com",
    "tel": "02-6239-0330",
    "viewAt": "2026-11-09",
+   "base": "청약중",
    "status": "청약중",
    "first": "2024-12-20",
    "bbs": 17,
    "extra": 16,
-   "lastExtra": "2026-11-05",
-   "base": "청약중"
+   "lastExtra": "2026-11-05"
   },
   {
    "id": "20000590",
@@ -779,12 +779,12 @@
    "home": "https://www.remarkvillguui.com",
    "tel": "02-446-0246",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-01-27",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000421",
@@ -807,12 +807,12 @@
    "home": "https://remarkvillgunja.com/",
    "tel": "02-552-7741",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-07-13",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000585",
@@ -835,12 +835,12 @@
    "home": "https://whtower643.com",
    "tel": "02-6216-1200",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-10-28",
    "bbs": 6,
    "extra": 5,
-   "lastExtra": "2026-09-03",
-   "base": "공급완료"
+   "lastExtra": "2026-09-03"
   },
   {
    "id": "20000571",
@@ -863,12 +863,12 @@
    "home": "https://seizium-gb.com",
    "tel": "02-6342-9300",
    "viewAt": "2026-11-09",
+   "base": "청약중",
    "status": "청약중",
    "first": "2025-06-20",
    "bbs": 11,
    "extra": 11,
-   "lastExtra": "2026-11-05",
-   "base": "청약중"
+   "lastExtra": "2026-11-05"
   },
   {
    "id": "20000604",
@@ -891,12 +891,12 @@
    "home": "https://www.egaebong.com",
    "tel": "02-2612-1790",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-07-28",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000601",
@@ -919,12 +919,12 @@
    "home": "https://www.cvweston.com",
    "tel": "02-806-0883",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-07-07",
    "bbs": 3,
    "extra": 1,
-   "lastExtra": "2026-10-08",
-   "base": "공급완료"
+   "lastExtra": "2026-10-08"
   },
   {
    "id": "20000591",
@@ -947,12 +947,12 @@
    "home": "https://kws-hdprahills.co.kr",
    "tel": "02-6264-6370",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-01-27",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2026-06-04",
-   "base": "공급완료"
+   "lastExtra": "2026-06-04"
   },
   {
    "id": "20000587",
@@ -975,12 +975,12 @@
    "home": "https://www.harrington495.kr",
    "tel": "02-935-9069",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-12-23",
    "bbs": 5,
    "extra": 4,
-   "lastExtra": "2026-10-08",
-   "base": "공급완료"
+   "lastExtra": "2026-10-08"
   },
   {
    "id": "20000417",
@@ -1003,12 +1003,12 @@
    "home": "https://yntower.qshop.ai",
    "tel": "02-449-7425",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-08-23",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2026-05-14",
-   "base": "공급완료"
+   "lastExtra": "2026-05-14"
   },
   {
    "id": "20000549",
@@ -1031,12 +1031,12 @@
    "home": "https://mhinitium.co.kr",
    "tel": "070-4098-0123",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-08-14",
    "bbs": 9,
    "extra": 8,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000424",
@@ -1059,12 +1059,12 @@
    "home": "",
    "tel": "02-994-4927",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-05-27",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2023-01-27",
-   "base": "공급완료"
+   "lastExtra": "2023-01-27"
   },
   {
    "id": "20000419",
@@ -1087,12 +1087,12 @@
    "home": "http://ghp.kr/",
    "tel": "02-6225-8801",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-02-16",
    "bbs": 7,
    "extra": 6,
-   "lastExtra": "2026-09-10",
-   "base": "공급완료"
+   "lastExtra": "2026-09-10"
   },
   {
    "id": "20000553",
@@ -1115,12 +1115,12 @@
    "home": "https://www.listanam.co.kr",
    "tel": "02-6235-7702",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-09-30",
    "bbs": 3,
    "extra": 2,
-   "lastExtra": "2025-07-09",
-   "base": "공급완료"
+   "lastExtra": "2025-07-09"
   },
   {
    "id": "20000588",
@@ -1143,12 +1143,12 @@
    "home": "https://unit125.shineui.kr",
    "tel": "02-2247-5799",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-12-23",
    "bbs": 7,
    "extra": 6,
-   "lastExtra": "2026-09-10",
-   "base": "공급완료"
+   "lastExtra": "2026-09-10"
   },
   {
    "id": "20000561",
@@ -1171,12 +1171,12 @@
    "home": "https://www.janganheartrium.co.kr",
    "tel": "02-2038-9931",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-12-23",
    "bbs": 9,
    "extra": 8,
-   "lastExtra": "2026-07-09",
-   "base": "공급완료"
+   "lastExtra": "2026-07-09"
   },
   {
    "id": "20000600",
@@ -1199,12 +1199,12 @@
    "home": "https://www.queensw.com",
    "tel": "02-6213-5150",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-06-16",
    "bbs": 5,
    "extra": 4,
-   "lastExtra": "2026-10-22",
-   "base": "공급완료"
+   "lastExtra": "2026-10-22"
   },
   {
    "id": "20000443",
@@ -1227,12 +1227,12 @@
    "home": "https://www.doojin2030.co.kr/",
    "tel": "02-2249-9783",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-09-15",
    "bbs": 5,
    "extra": 4,
-   "lastExtra": "2026-09-17",
-   "base": "공급완료"
+   "lastExtra": "2026-09-17"
   },
   {
    "id": "20000357",
@@ -1255,12 +1255,12 @@
    "home": "https://www.hgjskycity.com",
    "tel": "02-3390-4700",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-11-19",
    "bbs": 12,
    "extra": 11,
-   "lastExtra": "2026-09-10",
-   "base": "공급완료"
+   "lastExtra": "2026-09-10"
   },
   {
    "id": "20000531",
@@ -1283,12 +1283,12 @@
    "home": "https://thesummittower.co.kr/",
    "tel": "02-823-5410",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-02-07",
    "bbs": 17,
    "extra": 16,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000361",
@@ -1311,12 +1311,12 @@
    "home": "https://theclassic2030.co.kr/",
    "tel": "02-823-3300",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-07-20",
    "bbs": 15,
    "extra": 14,
-   "lastExtra": "2026-10-08",
-   "base": "공급완료"
+   "lastExtra": "2026-10-08"
   },
   {
    "id": "20000608",
@@ -1339,12 +1339,12 @@
    "home": "https://thefirsttower.imweb.me",
    "tel": "02-823-3920",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-08-18",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000544",
@@ -1367,12 +1367,12 @@
    "home": "",
    "tel": "02-3453-9686",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-07-23",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000564",
@@ -1395,12 +1395,12 @@
    "home": "http://www.gold-tower.co.kr",
    "tel": "070-4349-2998",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-01-06",
    "bbs": 5,
    "extra": 4,
-   "lastExtra": "2026-07-23",
-   "base": "공급완료"
+   "lastExtra": "2026-07-23"
   },
   {
    "id": "20000526",
@@ -1423,12 +1423,12 @@
    "home": "https://www.db40314.kr/",
    "tel": "070-7609-0100",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-12-11",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2025-11-13",
-   "base": "공급완료"
+   "lastExtra": "2025-11-13"
   },
   {
    "id": "20000592",
@@ -1451,12 +1451,12 @@
    "home": "https://starpalace.ai.kr",
    "tel": "070-5066-2558",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-03-17",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000611",
@@ -1479,12 +1479,12 @@
    "home": "https://eseo314.com",
    "tel": "02-333-3352",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-09-15",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000355",
@@ -1507,12 +1507,12 @@
    "home": "https://elandpeer.com/sinchon",
    "tel": "02-325-9996",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-09-11",
    "bbs": 3,
    "extra": 2,
-   "lastExtra": "2026-09-17",
-   "base": "공급완료"
+   "lastExtra": "2026-09-17"
   },
   {
    "id": "20000612",
@@ -1535,12 +1535,12 @@
    "home": "https://remarkvillmapo.com",
    "tel": "02-3272-6008",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-09-22",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000365",
@@ -1563,12 +1563,12 @@
    "home": "https://www.creaone.kr/kr/index.php",
    "tel": "02-6052-5335",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-02-08",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000353",
@@ -1591,12 +1591,12 @@
    "home": "https://서교효성해링턴타워.kr",
    "tel": "02-335-1800",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2019-11-05",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000436",
@@ -1619,12 +1619,12 @@
    "home": "http://www.stkaja.co.kr/",
    "tel": "02-2039-1143",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-09-23",
    "bbs": 7,
    "extra": 6,
-   "lastExtra": "2026-10-15",
-   "base": "공급완료"
+   "lastExtra": "2026-10-15"
   },
   {
    "id": "20000605",
@@ -1647,12 +1647,12 @@
    "home": "https://elandpeer.com/dmc",
    "tel": "02-303-8970",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-07-28",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000352",
@@ -1675,12 +1675,12 @@
    "home": "https://www.elyes.co.kr/main/stayView.do?pid=10",
    "tel": "02-2653-2800",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2019-08-29",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000610",
@@ -1703,12 +1703,12 @@
    "home": "https://changcheon.mangrove.city",
    "tel": "02-2289-6348",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-09-08",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000363",
@@ -1731,12 +1731,12 @@
    "home": "https://seocho1502.qshop.ai/",
    "tel": "02-6241-1502",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-12-08",
    "bbs": 13,
    "extra": 12,
-   "lastExtra": "2026-10-08",
-   "base": "공급완료"
+   "lastExtra": "2026-10-08"
   },
   {
    "id": "20000479",
@@ -1759,12 +1759,12 @@
    "home": "http://www.conest.co.kr/",
    "tel": "02-583-5250",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-01-16",
    "bbs": 0,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000598",
@@ -1787,12 +1787,12 @@
    "home": "https://hobansummit-yj.co.kr",
    "tel": "02-6204-6380",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-05-26",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000566",
@@ -1815,12 +1815,12 @@
    "home": "https://www.hy-stay.com",
    "tel": "02-2293-8222",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-02-17",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2025-07-02",
-   "base": "공급완료"
+   "lastExtra": "2025-07-02"
   },
   {
    "id": "20000580",
@@ -1843,12 +1843,12 @@
    "home": "https://labomseongdong.com",
    "tel": "02-6459-9200",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-06-12",
    "bbs": 8,
    "extra": 7,
-   "lastExtra": "2026-09-17",
-   "base": "공급완료"
+   "lastExtra": "2026-09-17"
   },
   {
    "id": "20000602",
@@ -1871,12 +1871,12 @@
    "home": "https://caj266.com",
    "tel": "02-6273-0266",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-07-07",
    "bbs": 0,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000358",
@@ -1899,12 +1899,12 @@
    "home": "https://blog.naver.com/sjumc00",
    "tel": "010-5064-0016",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2019-11-05",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000607",
@@ -1927,12 +1927,12 @@
    "home": "https://Heritz-Tower.com",
    "tel": "02-909-4601",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-08-04",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000560",
@@ -1955,12 +1955,12 @@
    "home": "https://felix222.com",
    "tel": "02-6232-0277",
    "viewAt": "2026-11-09",
+   "base": "청약중",
    "status": "청약중",
    "first": "2024-12-23",
    "bbs": 9,
    "extra": 8,
-   "lastExtra": "2026-11-05",
-   "base": "청약중"
+   "lastExtra": "2026-11-05"
   },
   {
    "id": "20000577",
@@ -1983,12 +1983,12 @@
    "home": "https://라온프라이빗종암.com",
    "tel": "02-2135-5966",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-04-14",
    "bbs": 8,
    "extra": 7,
-   "lastExtra": "2026-10-15",
-   "base": "공급완료"
+   "lastExtra": "2026-10-15"
   },
   {
    "id": "20000529",
@@ -2011,12 +2011,12 @@
    "home": "https://maestromunjeong.com",
    "tel": "02-3453-9655",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-08-07",
    "bbs": 5,
    "extra": 3,
-   "lastExtra": "2026-01-22",
-   "base": "공급완료"
+   "lastExtra": "2026-01-22"
   },
   {
    "id": "20000495",
@@ -2039,12 +2039,12 @@
    "home": "",
    "tel": "02-6479-2130",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-06-09",
    "bbs": 2,
    "extra": 1,
-   "lastExtra": "2024-02-22",
-   "base": "공급완료"
+   "lastExtra": "2024-02-22"
   },
   {
    "id": "20000420",
@@ -2067,12 +2067,12 @@
    "home": "",
    "tel": "02-3432-2030",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-06-28",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000613",
@@ -2095,12 +2095,12 @@
    "home": "https://songpaht484.com",
    "tel": "02-6273-0484",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-09-22",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000501",
@@ -2123,12 +2123,12 @@
    "home": "https://juntower.co.kr",
    "tel": "02-835-0888",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-07-17",
    "bbs": 4,
    "extra": 3,
-   "lastExtra": "2026-05-14",
-   "base": "공급완료"
+   "lastExtra": "2026-05-14"
   },
   {
    "id": "20000413",
@@ -2151,12 +2151,12 @@
    "home": "",
    "tel": "02-833-8114",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-12-20",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000541",
@@ -2179,12 +2179,12 @@
    "home": "https://sinpung2030.com",
    "tel": "02-6223-2005",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-05-10",
    "bbs": 11,
    "extra": 10,
-   "lastExtra": "2026-09-17",
-   "base": "공급완료"
+   "lastExtra": "2026-09-17"
   },
   {
    "id": "20000475",
@@ -2207,12 +2207,12 @@
    "home": "http://www.포레나당산.com",
    "tel": "02-2633-2030",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-11-16",
    "bbs": 8,
    "extra": 7,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000574",
@@ -2235,12 +2235,12 @@
    "home": "https://www.elyes.co.kr",
    "tel": "02-3272-2997",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-04-09",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000406",
@@ -2263,12 +2263,12 @@
    "home": "https://www.elyes.co.kr",
    "tel": "02-821-4013",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-02-11",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000362",
@@ -2291,12 +2291,12 @@
    "home": "http://www.ys-vertium-friends.co.kr/main/index.php",
    "tel": "02-3785-3344",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2020-09-29",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000573",
@@ -2319,12 +2319,12 @@
    "home": "https://www.urbanhub25.com",
    "tel": "02-6954-1162",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-04-01",
    "bbs": 8,
    "extra": 7,
-   "lastExtra": "2026-10-01",
-   "base": "공급완료"
+   "lastExtra": "2026-10-01"
   },
   {
    "id": "20000614",
@@ -2347,12 +2347,12 @@
    "home": "https://yongsan2030.com",
    "tel": "02-701-1090",
    "viewAt": "2026-11-09",
-   "status": "청약예정",
+   "base": "청약예정",
+   "status": "청약중",
    "first": "2026-11-03",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "청약예정"
+   "lastExtra": ""
   },
   {
    "id": "20000373",
@@ -2375,12 +2375,12 @@
    "home": "https://duckyoung2016.com/",
    "tel": "홈페이지 :",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-03-10",
    "bbs": 11,
    "extra": 10,
-   "lastExtra": "2026-09-10",
-   "base": "공급완료"
+   "lastExtra": "2026-09-10"
   },
   {
    "id": "20000437",
@@ -2403,12 +2403,12 @@
    "home": "http://호반베르디움스테이원.com",
    "tel": "02-355-2030",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2022-08-12",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000540",
@@ -2431,12 +2431,12 @@
    "home": "http://www.thestudio163.co.kr",
    "tel": "02-564-4866",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-04-03",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000552",
@@ -2459,12 +2459,12 @@
    "home": "https://Lumino816.com",
    "tel": "02-2602-6665",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-09-23",
    "bbs": 11,
    "extra": 10,
-   "lastExtra": "2026-10-29",
-   "base": "공급완료"
+   "lastExtra": "2026-10-29"
   },
   {
    "id": "20000525",
@@ -2487,12 +2487,12 @@
    "home": "https://lucestation.com",
    "tel": "02-356-7108",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-11-17",
    "bbs": 10,
    "extra": 9,
-   "lastExtra": "2026-07-30",
-   "base": "공급완료"
+   "lastExtra": "2026-07-30"
   },
   {
    "id": "20000359",
@@ -2515,12 +2515,12 @@
    "home": "",
    "tel": "02-2231-8800",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2019-11-20",
    "bbs": 3,
    "extra": 2,
-   "lastExtra": "2025-03-31",
-   "base": "공급완료"
+   "lastExtra": "2025-03-31"
   },
   {
    "id": "20000503",
@@ -2543,12 +2543,12 @@
    "home": "https://www.lovenheim.imweb.me",
    "tel": "02-6273-0707",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-07-24",
    "bbs": 14,
    "extra": 13,
-   "lastExtra": "2026-10-01",
-   "base": "공급완료"
+   "lastExtra": "2026-10-01"
   },
   {
    "id": "20000513",
@@ -2571,12 +2571,12 @@
    "home": "https://166tower.modoo.link/",
    "tel": "070-7609-0177",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2023-08-28",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000416",
@@ -2599,12 +2599,12 @@
    "home": "https://carltonterrace2030.qshop.ai/",
    "tel": "02-971-1527",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-11-12",
    "bbs": 3,
    "extra": 2,
-   "lastExtra": "2026-02-12",
-   "base": "공급완료"
+   "lastExtra": "2026-02-12"
   },
   {
    "id": "20000537",
@@ -2627,12 +2627,12 @@
    "home": "https://sbnpart.co.kr/index.php",
    "tel": "02-493-1006",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2024-03-22",
    "bbs": 12,
    "extra": 11,
-   "lastExtra": "2026-10-22",
-   "base": "공급완료"
+   "lastExtra": "2026-10-22"
   },
   {
    "id": "20000603",
@@ -2655,12 +2655,12 @@
    "home": "https://sangbonglife.co.kr",
    "tel": "070-4119-0311",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-07-07",
    "bbs": 3,
    "extra": 2,
-   "lastExtra": "2026-10-15",
-   "base": "공급완료"
+   "lastExtra": "2026-10-15"
   },
   {
    "id": "20000586",
@@ -2683,12 +2683,12 @@
    "home": "https://seizium-sb.com",
    "tel": "070-4139-4885",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-11-04",
    "bbs": 12,
    "extra": 11,
-   "lastExtra": "2026-10-01",
-   "base": "공급완료"
+   "lastExtra": "2026-10-01"
   },
   {
    "id": "20000583",
@@ -2711,12 +2711,12 @@
    "home": "https://ycentralcity.com",
    "tel": "02-6451-0220",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2025-09-30",
    "bbs": 10,
    "extra": 9,
-   "lastExtra": "2026-10-08",
-   "base": "공급완료"
+   "lastExtra": "2026-10-08"
   },
   {
    "id": "20000366",
@@ -2739,12 +2739,12 @@
    "home": "https://jstar2030.modoo.at",
    "tel": "02-537-4102",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2021-03-08",
    "bbs": 10,
    "extra": 9,
-   "lastExtra": "2026-04-02",
-   "base": "공급완료"
+   "lastExtra": "2026-04-02"
   },
   {
    "id": "20000609",
@@ -2767,12 +2767,12 @@
    "home": "https://seizium-tr.com",
    "tel": "02-6272-0927",
    "viewAt": "2026-11-09",
+   "base": "공급완료",
    "status": "공급완료",
    "first": "2026-09-01",
    "bbs": 1,
    "extra": 0,
-   "lastExtra": "",
-   "base": "공급완료"
+   "lastExtra": ""
   },
   {
    "id": "20000597",
@@ -2795,12 +2795,12 @@
    "home": "https://8-place.com/",
    "tel": "02-3296-3598",
    "viewAt": "2026-11-09",
+   "base": "청약중",
    "status": "청약중",
    "first": "2026-05-26",
    "bbs": 5,
    "extra": 4,
-   "lastExtra": "2026-11-05",
-   "base": "청약중"
+   "lastExtra": "2026-11-05"
   }
  ],
  "other": [
