@@ -140,13 +140,13 @@ export async function geocode(addr, cache, { fetchFn = fetch, now = Date.now() }
 // ---------- 모두 붙이기 + 구독 캘린더 ----------
 export async function enrich(items, { dir = DETAIL_DIR, geoFile = GEO_FILE, stationsFile = STATIONS_FILE, fetchFn = fetch, log = console.log } = {}) {
   const geo = await readJson(geoFile, {}), stations = (await readJson(stationsFile, {})).stations || {};
-  let geoNew = 0, geoFail = 0;
+  let geoNew = 0, geoFail = 0; const usedAddr = new Set();
   const seqFile = `${dir}_seq.json`, seqAll = await readJson(seqFile, {});
   for (const it of items) {
     const f = `${dir}${it.id}.json`, d = it.detail ? await readJson(f, null) : null;
     it.ev = eventsFor(it, d); it.cr = critsOf(d); it.ty = typesOf(d); it.lm = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(d?.readAt || '') ? d.readAt : '';
     // 역: 본문에 거리가 있으면 그 값 → 없으면 번지까지 찾은 좌표의 직선거리(본문 역이 있으면 그 역까지) → 그것도 없으면 역 이름만
-    const near = d?.near || nearFrom(it.title, ''), addr = d?.addr || null; let ll = null;
+    const near = d?.near || nearFrom(it.title, ''), addr = d?.addr || null; let ll = null; if (addr) usedAddr.add(addr);
     if (addr && Object.keys(stations).length) { const had = !!geo[addr]; ll = await geocode(addr, geo, { fetchFn }); if (!had) ll ? geoNew++ : geoFail++; }
     const tag = near ? { ...(near.pre ? { pre: true } : {}), ...(near.exit ? { exit: near.exit } : {}), ...(near.alt ? { alt: near.alt } : {}) } : {};
     if (near && (near.w || near.m)) it.st = { n: near.n, m: near.m ?? null, w: near.w ?? Math.max(1, Math.round(near.m / 67 * 1.3)), src: 'text', ...tag };
@@ -161,6 +161,7 @@ export async function enrich(items, { dir = DETAIL_DIR, geoFile = GEO_FILE, stat
   }
   for (const id of Object.keys(seqAll)) if (!items.some(i => i.id === id)) delete seqAll[id];
   await writeFile(seqFile, JSON.stringify(seqAll, null, 1) + '\n', 'utf8');
+  for (const a of Object.keys(geo)) if (!usedAddr.has(a)) delete geo[a];   // 지금 목록에 없는 주소는 지움 (게시판 본문에서 읽었던 주소가 남지 않게)
   await writeFile(geoFile, JSON.stringify(geo, null, 1) + '\n', 'utf8');
   log(`꾸미기 · 일정 ${items.filter(i => i.ev.length).length}건 · 자격 기준 ${items.filter(i => i.cr).length}건 · 주택형 ${items.filter(i => i.ty.length).length}건 · 역 ${items.filter(i => i.st).length}건 (본문 거리 ${items.filter(i => i.st?.src === 'text').length} · 좌표 직선거리 ${items.filter(i => i.st?.src === 'geo').length} · 역 이름만 ${items.filter(i => i.st?.src === 'name').length}) · 새 좌표 ${geoNew} · 좌표 실패 ${geoFail}`);
   return items;

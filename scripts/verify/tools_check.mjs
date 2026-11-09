@@ -4,12 +4,14 @@ import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
 const FT = createRequire(import.meta.url)('../../lib/feed-tools.js');
 const E = await import('../enrich.mjs');
 let ok = 0; const t = async (n, f) => { await f(); ok++; console.log('OK', n); };
 
 // 더포디엄830: 실제 상세 파일 + 목록 값(청약 11.9~11.10 23:00)
-const D6720 = JSON.parse(await readFile(new URL('../../feed/detail/youth-6720.json', import.meta.url), 'utf8'));
+// 게시판 공고 상세는 2026-11-09 부터 만들지 않아 저장소에서 지웠다 → 지우기 전 커밋의 파일을 git 기록에서 읽는다 (저장소에 다시 두지 않음)
+const D6720 = JSON.parse(execFileSync('git', ['show', 'fa56eb2:feed/detail/youth-6720.json'], { cwd: new URL('../..', import.meta.url), encoding: 'utf8' }));
 const I6720 = { id: 'youth-6720', title: '[민간임대] 건대입구역 더포디엄830 추가모집공고', url: 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6720&menuNo=400008', posted: '2026-11-05', from: '2026-11-09', to: '2026-11-10', time: '23:00', startOnly: false, detail: true };
 const ev = E.eventsFor(I6720, D6720), ty = E.typesOf(D6720), cr = E.critsOf(D6720);
 

@@ -1,8 +1,9 @@
 // 공고 피드 스크립트 검사 (인터넷·진짜 키 없이 가짜 응답으로): node scripts/verify/feed_check.mjs
 import assert from 'node:assert/strict';
 process.env.DATA_GO_KR_KEY = 'TEST%2BKEY%3D%3D-only';   // 가짜 키 (Encoding 키 모양)
+process.env.SCRAPE_GAP_MS = '60';   // 게시판 요청 간격 (실제 3000 · 검사는 짧게)
 const F = await import('../feed.mjs');
-const T = F.todayKst, d = n => T(n).replaceAll('-', ''), seen = [];
+const T = F.todayKst, d = n => T(n).replaceAll('-', ''), seen = [], robotsSeen = [], hitAt = {};
 let ok = 0; const t = (name, fn) => { fn(); ok++; console.log('OK', name); };
 
 const row = (seq, title, day) => `<tr><td>1</td><td class="txtL"><a href="#" onclick="javascript:getDetailView('${seq}');return false;"><span class="icoNew">NEW</span>
@@ -11,7 +12,11 @@ const row = (seq, title, day) => `<tr><td>1</td><td class="txtL"><a href="#" onc
 const SH_HTML = '<table><tbody>' + [row('9001', '[청년형] 특화형 매입임대주택(구로구) 입주자 모집 공고', T(-3)), row('9002', '2026년 마곡 도전숙 예비1차 당첨자 발표', T(-1)),
   row('9003', '고덕강일지구 3단지 토지임대부 분양주택 입주자모집공고', T(-2)), row('9004', '희망돌보미(사무지원) 모집공고', T(-1)), row('9005', '오래된 장기전세 입주자 모집 공고', T(-40))].join('') + '</tbody></table>';
 globalThis.fetch = async (url, o) => {
-  const u = new URL(url); u.m = o?.method || 'GET'; u.b = String(o?.body ?? ''); seen.push(u);
+  const u = new URL(url); u.m = o?.method || 'GET'; u.b = String(o?.body ?? '');
+  (hitAt[u.hostname] ??= []).push(Date.now());
+  if (u.pathname === '/robots.txt') { robotsSeen.push(u.hostname);   // SH 는 실제와 같은 모양(AI 봇만 전부 막음) · 청년안심은 실제처럼 403(= 규칙 없음)
+    return u.hostname === 'www.i-sh.co.kr' ? new Response(['User-agent: *', 'Disallow: /admin', 'Disallow: /gcms/brd', 'User-agent: ClaudeBot', 'Disallow: /'].join(String.fromCharCode(10))) : new Response('', { status: 403 }); }
+  seen.push(u);
   if (u.pathname.includes('lhLeaseNoticeInfo1')) {
     const list = u.searchParams.get('UPP_AIS_TP_CD') !== '06' ? [] : [
       { PAN_ID: '1001', PAN_NM: '[정정공고] 서울 행복주택 입주자 모집', CNP_CD_NM: '서울특별시', AIS_TP_CD_NM: '행복주택', PAN_NT_ST_DT: T(-2).replaceAll('-', '.'), CLSG_DT: T(5).replaceAll('-', '.'), DTL_URL: 'https://apply.lh.or.kr/x?PAN_ID:1001', ALL_CNT: 2 },
@@ -65,6 +70,13 @@ t('정정공고: 같은 기관·같은 단지의 예전 공고는 숨김 · 다�
     mk('youth-5', '청년안심', '[민간임대] 화랑대역 에이트플레이스 추가모집공고', T(-2), T(3)), mk('youth-6', '청년안심', '[민간임대] 화랑대역 에이트플레이스 추가모집 변경공고', T(-1), T(4))]);
   assert.deepEqual(g.items.map(i => i.id).sort(), ['lh-4', 'sh-2', 'sh-3', 'youth-6']); });
 t('정정공고 열쇠: 정정 글자·괄호를 빼면 같은 이름', () => { assert.equal(F.fixKey('[정정공고]평택시 10년 공공임대 모집공고'), F.fixKey('평택시 10년 공공임대 모집공고')); assert.notEqual(F.fixKey('A단지 모집'), F.fixKey('B단지 모집')); });
+t('robots.txt: 사이트마다 한 번만 확인 · User-agent: * 규칙만 봄', () => {
+  assert.deepEqual(robotsSeen.sort(), ['soco.seoul.go.kr', 'www.i-sh.co.kr']);
+  const r = ['User-agent: *', 'Disallow: /admin', 'User-agent: ClaudeBot', 'Disallow: /'].join(String.fromCharCode(13, 10));
+  assert.equal(F.robotsAllows(r, '/app/lay2/program/x/list.do'), true); assert.equal(F.robotsAllows(r, '/admin/x'), false);
+  assert.equal(F.robotsAllows('', '/x'), true); assert.equal(F.robotsAllows('User-agent: *' + String.fromCharCode(10) + 'Disallow: /', '/x'), false); });
+t('게시판 요청 사이 간격 (같은 사이트 · SCRAPE_GAP_MS)', () => { for (const h of ['www.i-sh.co.kr', 'soco.seoul.go.kr']) { const a = hitAt[h];
+  assert.ok(a.length >= 2); for (let i = 1; i < a.length; i++) assert.ok(a[i] - a[i - 1] >= 55, `${h} ${a[i] - a[i - 1]}ms`); } });
 let shErr = ''; { const f0 = globalThis.fetch; globalThis.fetch = async () => new Response('<html>점검 중</html>'); try { await F.fetchSH({ pages: 1 }); } catch (e) { shErr = e.message; } globalThis.fetch = f0; }
 t('SH 목록 모양이 바뀌면 SH 만 실패로', () => assert.equal(shErr, 'SH 게시판: 목록 모양이 바뀜'));
 const feed = F.buildFeed([...my, ...lh]);

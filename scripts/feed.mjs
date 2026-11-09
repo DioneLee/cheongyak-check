@@ -15,6 +15,32 @@ const LH = 'https://apis.data.go.kr/B552555/lhLeaseNoticeInfo1/lhLeaseNoticeInfo
 const LH_TYPES = ['06', '13', '39'];   // 임대주택 · 주거복지 · 신혼희망타운
 const NO_PERIOD_DAYS = 21;             // 마감일이 없는 공고(SH 게시판 등)는 게시 후 이 일수까지만
 const SH = 'https://www.i-sh.co.kr/app/lay2/program';
+// 게시판(SH·청년안심주택)은 공식 API 가 아니라서 조심해서 읽는다 (2026-11-09 사용자 결정):
+// · 같은 사이트에 요청 사이 3초 이상 (polite) · 실행마다 robots.txt 확인 (User-agent: * 의 Disallow 에 걸리면 그 출처는 건너뜀)
+// · 저장·표시는 제목·기관·날짜·원문 링크만 — 본문·첨부(공고문 PDF) 내용은 읽어 저장하지 않는다 (상세 AI 요약도 안 만듦, main 의 addDetails 참고)
+// · 청년안심주택 상세 페이지는 마감일(날짜) 한 줄만 읽고 버린다
+export const GAP_MS = Number(process.env.SCRAPE_GAP_MS ?? 3000);
+const lastHit = {}, robots = {};
+export async function polite(url, opt) {
+  const h = new URL(url).host, w = (lastHit[h] || 0) + GAP_MS - Date.now(); if (w > 0) await new Promise(r => setTimeout(r, w));
+  lastHit[h] = Date.now(); return fetch(url, opt);
+}
+// robots.txt 의 'User-agent: *' 묶음 Disallow 만 본다 (없거나 4xx 면 허용 — 표준과 같음 · 5xx·연결 실패면 이번엔 건너뜀)
+export function robotsAllows(txt, path) {
+  let star = false, inGroup = false; const dis = [];
+  for (const raw of String(txt).split(/\r?\n/)) { const l = raw.replace(/#.*/, '').trim(), m = l.match(/^([\w-]+)\s*:\s*(.*)$/); if (!m) continue;
+    const k = m[1].toLowerCase(), v = m[2].trim();
+    if (k === 'user-agent') { if (!inGroup) star = false; inGroup = true; if (v === '*') star = true; continue; }
+    inGroup = false; if (star && k === 'disallow' && v) dis.push(v); }
+  return !dis.some(d => path.startsWith(d));
+}
+async function robotsOk(url) {
+  const u = new URL(url);
+  if (!(u.host in robots)) { try { const r = await polite(`${u.origin}/robots.txt`, { headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) });
+    robots[u.host] = r.ok ? await r.text() : r.status < 500 ? '' : null; } catch { robots[u.host] = null; } }
+  if (robots[u.host] === null) throw new Error(`${u.host}: robots.txt 를 확인하지 못해 이번엔 건너뜀`);
+  if (!robotsAllows(robots[u.host], u.pathname)) throw new Error(`${u.host}: robots.txt 가 ${u.pathname} 를 막아 건너뜀`);
+}
 const SH_BOARDS = [{ path: 'S48T1581C563/www/brd/m_247', seq: '2', kind: '임대' }, { path: 'S48T1581C1617/www/brd/m_244', seq: '1', kind: '분양' }];   // 주택임대 · 주택분양
 
 export function dataKey() {
@@ -122,7 +148,8 @@ export function parseSHList(html, board) {
 export async function fetchSH({ pages = 4 } = {}) {   // 한 쪽 10개 · 4쪽이면 보통 3주 넘게
   const out = [];
   for (const b of SH_BOARDS) for (let page = 1; page <= pages; page++) {
-    let res; try { res = await fetch(`${SH}/${b.path}/list.do`, { method: 'POST', body: new URLSearchParams({ page: String(page), multi_itm_seq: b.seq, seq: '' }),   // 쪽 넘김은 POST 로만 됨
+    await robotsOk(`${SH}/${b.path}/list.do`);
+    let res; try { res = await polite(`${SH}/${b.path}/list.do`, { method: 'POST', body: new URLSearchParams({ page: String(page), multi_itm_seq: b.seq, seq: '' }),   // 쪽 넘김은 POST 로만 됨
       headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) }); }
     catch (e) { throw new Error(`SH 게시판: 연결 실패 (${e?.cause?.code || e?.name || 'network'})`); }
     if (!res.ok) throw new Error(`SH 게시판: HTTP ${res.status}`);
@@ -154,7 +181,8 @@ export function parseYouth(data) {
 export async function fetchYouth({ pages = 3 } = {}) {   // 한 쪽 10개 · 신청일이 지난 것은 buildFeed 가 뺀다
   const out = [];
   for (let page = 1; page <= pages; page++) {
-    let res; try { res = await fetch(`${YOUTH}/pgm/home/yohome/bbsListJson.json`, { method: 'POST', body: new URLSearchParams({ bbsId: 'BMSR00015', pageIndex: String(page) }),
+    await robotsOk(`${YOUTH}/pgm/home/yohome/bbsListJson.json`);
+    let res; try { res = await polite(`${YOUTH}/pgm/home/yohome/bbsListJson.json`, { method: 'POST', body: new URLSearchParams({ bbsId: 'BMSR00015', pageIndex: String(page) }),
       headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)', Accept: 'application/json' }, signal: AbortSignal.timeout(20000) }); }
     catch (e) { throw new Error(`청년안심주택: 연결 실패 (${e?.cause?.code || e?.name || 'network'})`); }
     if (!res.ok) throw new Error(`청년안심주택: HTTP ${res.status}`);
@@ -164,7 +192,7 @@ export async function fetchYouth({ pages = 3 } = {}) {   // 한 쪽 10개 · 신
   }
   const items = [...new Map(out.map(i => [i.feedId, i])).values()], since = todayKst(-30);
   for (const i of items) if (i.to && i.to >= since) {   // 아직 열려 있을 수 있는 것만 상세를 열어 마감일을 읽는다 (실패해도 시작일로 둔다)
-    try { const r = await fetch(i.url, { headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) });
+    try { await robotsOk(i.url); const r = await polite(i.url, { headers: { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' }, signal: AbortSignal.timeout(20000) });
       const d = r.ok ? parseDue(pageText(await r.text(), i.title), i.to) : null; if (d) Object.assign(i, d, { startOnly: false }); } catch { /* 시작일 그대로 */ }
   }
   return items;
@@ -209,7 +237,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   got.forEach((r, i) => r.status === 'fulfilled' ? raw.push(...r.value) : bad.push(`${['LH', '마이홈', 'SH', '청년안심주택'][i]}: ${scrub(r.reason?.message)}`));
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
-  const feed = buildFeed(raw), det = await addDetails(feed.items, { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) });
+  // 게시판(SH·청년안심) 공고는 상세(본문·공고문 PDF 읽기)를 만들지 않음 → 예전 상세 파일은 addDetails 가 지움
+  const feed = buildFeed(raw), det = await addDetails(feed.items.filter(i => !/^(sh|youth)-/.test(i.id)), { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) });
   await enrich(feed.items); const cal = await writeCalendar(feed.items); const wrote = await writeFeed(feed);   // 일정·자격 기준·주택형·역 거리 + 구독 캘린더
   for (const [m, u] of Object.entries(det.use)) console.log(`Gemini 호출 · ${m}: ${u.calls}번 (429 ${u.s429}번 · 503 ${u.s503}번)`);   // 하루 한도 가늠용
   console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · 상세 ${det.have}건 (이번에 ${det.made}건 읽음${det.skipped ? ` · 다시 읽기 ${det.skipped}건 미룸` : ''}${det.stopped ? ` · 멈춤: ${det.stopped}` : ''}) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);

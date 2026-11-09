@@ -4,7 +4,8 @@
   1) 정적 검사: 기존 저장 키에 쓰기 없음 · API 키 없음 · 방문자 분석 도구 없음 · sw.js VERSION
   2) 기능 (PC 1280): 첫 화면 · 2단 · 질문 · 예시 공고 · 아코디언 · 문구 · 저장 · 피드 5개 · AI PDF 읽기 · 내보내기/불러오기
   3) 휴대폰 390: 첫 화면 · 가로 넘침 · 같은 저장 공간 가져오기(원본 그대로) · SUITABLE HOME 파일 불러오기
-  4) 판정 동등성: 같은 내 상황을 SUITABLE HOME(../sjcu)과 이 사이트에 넣고 결과 글자 비교 (시나리오 7 × 신혼부부·청년)
+  4) 판정 동등성: 같은 내 상황을 SUITABLE HOME 마지막 청약 버전(../sjcu/index_v28_backup.html)과 이 사이트에 넣고 결과 글자 비교 (시나리오 7 × 신혼부부·청년)
+     SUITABLE HOME 은 2026-11-09 청약 화면을 뺐다 → 그 직전 백업을 기준으로 판정이 바뀌지 않았는지 본다
   5) 서비스 워커: index.html·피드는 인터넷 먼저 · 아이콘은 저장본 · 서버가 꺼져도 저장본으로 열림
 """
 import os, hashlib, json, re, socket, subprocess, sys, tempfile, time, urllib.parse
@@ -12,7 +13,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 REPO = Path(__file__).resolve().parents[2]
-OLD_REPO = REPO.parent / "sjcu"
+OLD_REPO = REPO.parent / "sjcu"; OLD_PAGE = "/index_v28_backup.html"   # SUITABLE HOME 청약이 있던 마지막 버전
 CHROME = os.environ.get("CHROME") or (r"C:\Program Files\Google\Chrome\Application\chrome.exe" if os.name == "nt" else "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 NEW_PORT = int(os.environ.get("CHECK_PORT", 8766)); OLD_PORT = NEW_PORT + 1   # 포트가 겹치면 CHECK_PORT=8790 처럼 바꿔 실행
 SEED = json.loads((REPO / "scripts/verify/seed_subs.json").read_text(encoding="utf-8"))   # 가짜 값 (SUITABLE HOME seed_v10 과 같은 사람)
@@ -270,7 +271,7 @@ await fetch('/__offline/off?' + Date.now(), { cache: 'no-store' });
 def main():
     swt = REPO / "feed/detail/zz-swtest.json"; swt.parent.mkdir(exist_ok=True); swt.write_text('{"id":"zz-swtest","target":"새 상세","eligibility":["새로"]}', encoding="utf-8")   # 서비스 워커 상세 캐시 검사용 (끝나면 지움)
     procs = [serve(NEW_PORT, REPO)]
-    have_old = (OLD_REPO / "index.html").exists()
+    have_old = (OLD_REPO / OLD_PAGE.lstrip("/")).exists()
     if have_old: procs.append(serve(OLD_PORT, OLD_REPO))
     logs_all = []
     try:
@@ -280,9 +281,9 @@ def main():
             for st, n, g in res: rows.append((st, f"[{label}] {n}", g))
         if have_old:
             sc = COLLECT % json.dumps(SCEN, ensure_ascii=False)
-            a, la = run(sc, OLD_REPO, OLD_PORT, "/index.html", seeds={"suitable-intro": "1", "newlywed-home-v1": old_seed}, hash_="#subs", budget=120000)
+            a, la = run(sc, OLD_REPO, OLD_PORT, OLD_PAGE, seeds={"suitable-intro": "1", "newlywed-home-v1": old_seed}, hash_="#subs", budget=120000)
             b, lb = run(sc, REPO, NEW_PORT, "/index.html", seeds={NEW_KEY: mine}, budget=120000)
-            da, db = run(DEMO, OLD_REPO, OLD_PORT, "/index.html", seeds={"suitable-intro": "1"}, hash_="#subs"), run(DEMO, REPO, NEW_PORT, "/index.html")
+            da, db = run(DEMO, OLD_REPO, OLD_PORT, OLD_PAGE, seeds={"suitable-intro": "1"}, hash_="#subs"), run(DEMO, REPO, NEW_PORT, "/index.html")
             logs_all += la + lb + da[1] + db[1]
             data = lambda res: json.loads(next((g for s, n, g in res if s == "DATA"), "{}"))
             ja, jb = {**data(a), **data(da[0])}, {**data(b), **data(db[0])}
@@ -292,7 +293,7 @@ def main():
             for r in a + b + da[0] + db[0]:
                 if r[0] == "NG": rows.append(("NG", "[판정 동등성 실행] " + r[1], r[2]))
         else:
-            ok("판정 동등성 (../sjcu 없음 → 건너뜀)", True)
+            ok("판정 동등성 (../sjcu/index_v28_backup.html 없음 → 건너뜀)", True)
     finally:
         for p in procs: p.terminate()
         swt.unlink(missing_ok=True)

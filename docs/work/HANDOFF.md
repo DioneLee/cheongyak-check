@@ -1,4 +1,4 @@
-# 인수인계 — 청약 체크 (마지막 정리 2026-11-08)
+# 인수인계 — 청약 체크 (마지막 정리 2026-11-09)
 
 새 세션은 이 파일 → [변경기록.md](변경기록.md)(왜 이렇게 됐는지) → `docs/design/분리설계.md`(설계) 순서로 읽는다.
 
@@ -7,15 +7,16 @@
 - 배포: https://dionelee.github.io/cheongyak-check/ (저장소 DioneLee/cheongyak-check · Pages = main / root · 서비스 워커 `cheongyak-check-2026-11-08c`)
 - 첫 화면: 서울 진행중 공고(원문 사이트 4곳 · 공고 목록 · 필터 · 관심 공고 · 캘린더) → 내 청약 순위·점수 진단(PDF 올리기 + 질문)
 - 공고 출처: LH·마이홈포털 공공데이터 API + SH 공고 게시판 + 서울 청년안심주택 모집공고 목록 (서울만)
-- 공고 상세(신청 조건 요약): Actions 가 공고문 PDF 를 Gemini 로 읽음. 2026-11-08 기준 15건 모두 상세 있음 (마이홈 1건은 API 기본 정보)
+  - 게시판(SH·청년안심)은 2026-11-09 부터 제목·기관·날짜·원문 링크만 (본문·공고문은 저장·AI 읽기 안 함) · 같은 사이트 요청 3초 간격 · 실행마다 robots.txt 확인 · 실제 실행 하루 약 4번
+- 공고 상세(신청 조건 요약): 2026-11-09 부터 마이홈 API 기본 정보만 (게시판 공고는 상세 없음 → '공고 원문 보기'). Gemini 자동 읽기 코드(detail.mjs)는 남아 있지만 지금 부르는 출처 없음
 - 검사 (2026-11-08 마지막): `CHECK_PORT=8792 python3 scripts/verify/check.py` 81/81 · `node scripts/verify/tools_check.mjs` 34 · `detail_check.mjs` 57 · `feed_check.mjs` 21 · `cron_check.mjs` 5
-  - SUITABLE HOME 과의 판정 동등성 검사는 `../sjcu` 가 있는 PC 에서만 돈다 (이 Mac 에는 없음)
+  - 판정 동등성 검사는 `../sjcu/index_v28_backup.html`(SUITABLE HOME 마지막 청약 버전)이 있는 PC 에서만 돈다
   - check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 
 ## 구조 (데이터 흐름)
 
 ```
-GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :47 · 최근 100분 안에 실제 갱신했으면 건너뜀)
+GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :47 · 최근 5시간 50분 안에 실제 갱신했으면 건너뜀 = 하루 약 4번)
   scripts/feed.mjs     공고 목록 (LH·마이홈 API, SH 게시판, 청년안심주택 JSON) → 서울만 · 마감 지난 것 빼기 · 정정공고면 예전 것 숨김
   scripts/detail.mjs   공고 상세: PDF + 게시판 본문 → Gemini(첫 모델 하루 18번 · 새 공고는 lite) → feed/detail/{id}.json
   scripts/enrich.mjs   공개 정보 구조화: 일정(ev) · 자격 기준(cr) · 주택형(ty) · 역(st) → notices.json · 구독 캘린더 feed/calendar.ics
@@ -57,7 +58,8 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 공고 JSON 도 읽기) · LH 공고문 PDF 찾기
 - [ ] 신청 가능 배지: '기타 조건'(청약자=계약자 동일인 등)은 판정하지 않음 → 이대로 둘지
 - [ ] 화면 사진 `screenshots/` 는 예전 구성 그대로 (새로 찍기)
-- [ ] 2027-01-20 이후: SUITABLE HOME 청약 탭을 링크로 바꿀지 결정
+- [x] SUITABLE HOME 에서 청약 화면을 뺌 (2026-11-09, SUITABLE HOME v28) · 메뉴 링크 '청약 체크 ↗' 는 2027-01-20 까지 유지
+- [ ] lite↔첫 모델 비교 · 상세 다음 단계는 게시판 상세를 안 만들면서 대상이 거의 없어짐 → 계속할지 결정
 - [ ] GH_TOKEN 만료(2027-11-06) 전에 새 토큰
 
 ## 사고와 교훈 (다시 안 겪게)
