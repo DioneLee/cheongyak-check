@@ -287,6 +287,13 @@ ok('출처 필터: 단지 직접만', qa('#subFeed .flist > li').map(l => l.data
 await setSrc('official');
 ok('출처 필터: 공식만', qa('#subFeed .flist > li').map(l => l.dataset.fid).join() === 'o1');
 q('#subFeed [data-freset]').click(); await W(80);
+{ const ev = [{ k: 'end', l: '청약 마감', d: '2099-02-01', t: '17:00' }], c4 = { ...el1, id: 'elyes-c4', title: '[용산원효루미니] 추가모집공고(접수일 26.11.09)-->마감되었습니다.', closed: true, ev };
+  await mix([fi('o1', '2099-01-01'), { ...el2, ev }, c4, el1]); await W(120);
+  const L = qa('#subFeed .flist > li'), c = q('#subFeed [data-fid="elyes-c4"]');
+  ok("마감 표시 공고: '마감됨' 배지 · '오늘 마감' 아님 · 목록 맨 아래 · 캘린더 버튼 없음", L.at(-1) === c && c.textContent.includes('마감됨') && !c.textContent.includes('오늘 마감') && !c.querySelector('[data-ics]'), L.map(l => l.dataset.fid).join());
+  ok('마감 일시를 읽은 단지 직접 공고: 캘린더에 추가 · 못 읽은 공고만 "일정은 공고 원문에서"', !!q('#subFeed [data-fid="elyes-a2"] [data-ics]') && !q('#subFeed [data-fid="elyes-a1"] [data-ics]') && q('#subFeed [data-fid="elyes-a1"]').textContent.includes('일정은 공고 원문에서'));
+  await mix([fi('o1', '2099-01-01'), el2, el1]); await W(120); }
+ok('공고 출처: 맨 아래 안내에 "롯데건설 엘리스(제목·링크)"', q('footer').textContent.includes('롯데건설 엘리스(제목·링크)'));
 ok('출처 필터: 필터 지우기 → 전체 · 저장값도', qa('#subFeed .flist > li').length === 3 && JSON.parse(fw.localStorage.getItem('cheongyak-check-feed-filter')).src === null);
 ok('관심 단지 띠: ★ 한 뒤에 올라온 공고 → 띠', !q('#danjiNew').hidden && !!q('#danjiNew [data-dnseen="elyes-a1"]'), q('#danjiNew').textContent);
 q('#danjiNew [data-dnseen="elyes-a1"]').click(); await W(80);

@@ -93,6 +93,8 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true }
   ok('알림을 허용 안 했으면 새 공고 알림 없음 · 다음에 다시 (기억 안 함)', !b.log.scheduled.length && !b.local.getItem('cheongyak-check-app-danji-notified')); }
 { const b = boot({ ls: { 'cheongyak-check-v1': '{}', 'cheongyak-check-app-danji': '{"danji":[9]}' }, net: false }); await tick();
   ok('인터넷이 안 되면 기억해 둔 단지 피드', (await (await b.win.fetch('feed/danji.json')).json()).danji[0] === 9); }
+{ const b = boot({ ls: { 'cheongyak-check-v1': '{}' } }); await tick();
+  ok("마감 알림: 사이트가 마감 표시한 공고(closed)는 빼고 · 마감일 읽은 단지 직접 공고는 넣음", b.win.__ccAlarms([{ id: 'x', title: 'x', to: '2099-01-05', closed: true }, { id: 'y', title: 'y', to: '2099-01-05', direct: true }], new Set(['x', 'y']), 0).map(a => a.extra.fid).join() === 'y'); }
 // 4) 파일 받기 · 5) 뒤로 버튼
 { const b = boot({ ls: { 'cheongyak-check-v1': '{}' } }); await tick();
   const a = new b.A(); a.download = 'x.ics'; a.href = 'blob:abc'; b.win.fetch = b.win.fetch; a.click(); await tick();

@@ -466,10 +466,10 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-09d"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-09e"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·필터·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
-  <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a></p>
+  <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a></p>
   <p>본 서비스에서 제공하는 실제 월 부담·대출(LTV) 계산 및 청약 자격 판정은 의사결정을 돕기 위한 참고용 시뮬레이션이며 법적·금융적 효력이 없습니다. 실제 청약 신청 및 부동산 계약 전에는 반드시 모집공고문 원본과 금융기관을 통해 최종 확인하시기 바랍니다.</p>
 </div></footer>
 <script>
@@ -985,7 +985,7 @@ function normFeed(x) {
     ev: (Array.isArray(i.ev) ? i.ev : []).filter(e => /^(start|end|announce|docs|contract)$/.test(e?.k) && isYmd(e.d)).slice(0, 12).map(e => ({ k: e.k, l: str(e.l, 60), d: e.d, ...(isYmd(e.e) ? { e: e.e } : {}), ...(/^\d{2}:\d{2}$/.test(e.t) ? { t: e.t } : {}), ...(Number.isInteger(e.q) && e.q > 0 ? { q: e.q } : {}) })),
     cr: i.cr && Array.isArray(i.cr.c) ? { c: i.cr.c.slice(0, 12), x: +i.cr.x || 0 } : null, ty: (Array.isArray(i.ty) ? i.ty : []).slice(0, 12).map(r => ({ n: str(r?.n, 60), a: isFinite(r?.a) && r?.a != null ? +r.a : null, dep: isFinite(r?.dep) && r?.dep != null ? +r.dep : null, rent: isFinite(r?.rent) && r?.rent != null ? +r.rent : null })),
     st: i.st && i.st.n ? { n: str(i.st.n, 30), m: isFinite(i.st.m) && i.st.m != null ? +i.st.m : null, w: isFinite(i.st.w) && i.st.w != null ? +i.st.w : null, pre: i.st.pre === true, exit: /^\d{1,2}$/.test(i.st.exit) ? i.st.exit : '', alt: str(i.st.alt || '', 30) } : null,
-    lm: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(i.lm) ? i.lm : '', direct: i.direct === true, danji: /^[\w-]{1,40}$/.test(i.danji) ? i.danji : '' })).filter(i => i.title) };
+    lm: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(i.lm) ? i.lm : '', direct: i.direct === true, closed: i.closed === true, danji: /^[\w-]{1,40}$/.test(i.danji) ? i.danji : '' })).filter(i => i.title) };
 }
 // 브라우저에만 저장: 관심 공고(★) · 필터 (서버로 보내지 않음)
 const FKEY = 'cheongyak-check-feed-filter', SKEY = 'cheongyak-check-stars';
@@ -1000,7 +1000,7 @@ function feedRow(i, t, fr, done) {
   const due = (i.id.startsWith('youth-') || i.direct) && !i.startOnly;   // 청년안심주택·단지 직접: D-day 는 마감일 기준
   const dd = i.to ? ddayOf({ from: due ? i.to : i.from || i.to, to: i.to }, t) : null, isNew = i.posted && daysBetween(i.posted, t) <= 3;
   const when = due && i.to ? `${md2(i.to)}${i.time ? ` ${i.time}` : ''} 마감` : i.startOnly ? `청약신청일 ${md2(i.to)} · 마감일은 공고 원문에서` : i.from && i.to ? `접수 ${md2(i.from)}~${md2(i.to)}` : i.to ? `청약신청일 ${md2(i.to)}` : i.posted ? `게시 ${md2(i.posted)} · 마감일은 공고 원문에서` : '';
-  const tag = i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : isNew ? '<span class="dd new">새 공고</span>' : '';
+  const tag = i.closed ? '<span class="dd mute">마감됨</span>' : i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : isNew ? '<span class="dd new">새 공고</span>' : '';
   let org = ORG_KO[i.org] || i.org, kind = i.kind.startsWith(org) ? i.kind.slice(org.length).replace(/^\((.*)\)$/, '$1') : i.kind;   // 청년안심주택(민간) → 민간
   if (i.direct) { org = `단지 직접 · ${org}${i.kind === '민간임대' ? ' · 민간임대' : ''}`; if (i.kind === '민간임대') kind = ''; }   // 단지 운영사 사이트에만 올라온 공고
   const st = feedTitle(i), nm = i.url ? `<a class="nm" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer" title="${esc(i.title)}">${esc(st)} ↗</a>` : `<span class="nm" title="${esc(i.title)}">${esc(st)}</span>`;
@@ -1009,7 +1009,7 @@ function feedRow(i, t, fr, done) {
   const fix = /정정|변경|재공고/.test(i.title) ? '<span class="dd fix">정정공고</span>' : '';   // 예전 공고는 피드 만들 때 숨김 (scripts/feed.mjs buildFeed)
   const jr = done && window.FeedTools ? FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }) : null, wo = whyOpen.has(i.id);
   const jb = jr ? `<button type="button" class="jb ${JB[jr.st][0]}" data-why="${esc(i.id)}" aria-expanded="${wo}">${JB[jr.st][1]}</button>` : '';
-  const cal = i.ev.length ? `<button type="button" class="cbtn" data-ics="${esc(i.id)}">캘린더에 추가</button>` : '<span class="nocal">일정은 공고 원문에서</span>';
+  const cal = i.ev.length && !i.closed ? `<button type="button" class="cbtn" data-ics="${esc(i.id)}">캘린더에 추가</button>` : '<span class="nocal">일정은 공고 원문에서</span>';
   const stn = i.st ? `${i.st.n}${i.st.pre ? '(개통 예정)' : ''}${i.st.w != null ? ` 약 ${i.st.w}분` : `${i.st.exit ? ` ${i.st.exit}번 출구` : ''} (거리 정보 없음)`}${i.st.alt ? ` · ${i.st.alt} 개통 예정` : ''}` : '';
   const whyP = jr ? `<div class="fwhy" data-whyp="${esc(i.id)}"${wo ? '' : ' hidden'}><ul>${jr.why.map(w => `<li class="${w.ok === true ? 'y' : w.ok === false ? 'n' : 'q'}"><b>${w.ok === true ? '✔' : w.ok === false ? '✘' : '?'}</b> ${esc(w.t)}: ${esc(w.v)}</li>`).join('')}</ul><p class="hint">내가 입력한 조건으로 이 브라우저에서만 계산한 참고용이에요. 공고문의 자격을 다 담지 못할 수 있어요.</p></div>` : '';
   return `<li data-fid="${esc(i.id)}"><div class="frow"><span class="nmrow">${nm}${star}</span><span class="sub"><span class="finfo"><span class="org">${esc(org)}</span>${fix}${tag}${jb}<span>${[kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', stn, when].filter(Boolean).map(esc).join(' · ')}</span></span><span class="fbtns">${cal}${btn || '<span></span>'}<button type="button" class="dbtn" data-diag="${esc(i.id)}">진단 →</button></span></span></div>${whyP}${i.detail ? `<div class="fdet" data-det="${esc(i.id)}"${open ? '' : ' hidden'}>${open ? detBody(i, fr ? new Set(fr.hits) : undefined) : ''}</div>` : ''}</li>`;
@@ -1017,7 +1017,7 @@ function feedRow(i, t, fr, done) {
 let feedHits = new Map();   // 공고 id → 필터에 맞는 주택형 번호 (상세 강조용)
 function renderFeed() {
   const box = $('#subFeed'), t = todayYmd(), f = subFeed, done = !!state.subs.wizard.done;
-  const all = (f?.items || []).filter(i => i.region.startsWith('서울') && (!i.to || i.to >= t) && (!feedF.src || (feedF.src === 'direct') === i.direct)).sort((a, b) => (a.to || '9').localeCompare(b.to || '9'));   // 마감 안 지난 것 · 마감 가까운 순
+  const all = (f?.items || []).filter(i => i.region.startsWith('서울') && (!i.to || i.to >= t) && (!feedF.src || (feedF.src === 'direct') === i.direct)).sort((a, b) => a.closed - b.closed || (a.to || '9').localeCompare(b.to || '9'));   // 마감 안 지난 것 · 마감 가까운 순 · 사이트가 마감 표시한 단지 직접 공고는 맨 아래
   box.hidden = !all.length && !feedF.src; if (box.hidden) return;   // 출처 필터로 0개면 필터는 보여야 지울 수 있다
   const on = ['src', 'dep', 'rent', 'area', 'walk'].filter(k => feedF[k] != null && feedF[k] !== ''), fr = new Map(all.map(i => [i.id, FeedTools.filterItem(i, feedF)]));
   feedHits = new Map([...fr].map(([id, r]) => [id, new Set(r.hits)]));
@@ -1091,7 +1091,7 @@ function normDanji(x) {
   return { updated: s(x.updated, 10), danji: x.danji.map(d => one(d, false)).filter(d => d.id && d.name), other: (Array.isArray(x.other) ? x.other : []).map(d => one(d, true)).filter(d => d.id && d.name) };
 }
 const selfOnly = (d, t) => !!d.first && d.extra === 0 && daysBetween(d.first, t) > 365;   // scripts/danji.mjs selfOnly 와 같은 규칙
-const openOf = (id, t) => (subFeed?.items || []).filter(i => i.danji === id && (!i.to || i.to >= t));
+const openOf = (id, t) => (subFeed?.items || []).filter(i => i.danji === id && !i.closed && (!i.to || i.to >= t));
 // 배지는 청약중·청약예정만 (공급완료 등은 숨김) · 접수 중 공고가 있으면 청약중
 const dStatus = (d, t) => openOf(d.id, t).length || d.status === '청약중' ? '청약중' : d.status === '청약예정' ? '청약예정' : '';
 const range = ([a, b], f) => a == null ? '' : b == null || a === b ? f(a) : `${f(a)}~${f(b)}`;
@@ -1126,7 +1126,7 @@ function renderDanji() {
   renderDanjiList();
 }
 // 관심 단지 새 공고: 관심 단지로 고를 때 그 단지의 지금 공고는 '본 것'으로 → 그 뒤에 새로 올라온 것만
-function danjiNew() { const t = todayYmd(); return (subFeed?.items || []).filter(i => i.danji && dStars.has(i.danji) && !dSeen.has(i.id) && (!i.to || i.to >= t)); }
+function danjiNew() { const t = todayYmd(); return (subFeed?.items || []).filter(i => i.danji && !i.closed && dStars.has(i.danji) && !dSeen.has(i.id) && (!i.to || i.to >= t)); }
 const danjiName = id => [...(danji?.danji || []), ...(danji?.other || [])].find(d => d.id === id)?.name || '';
 function renderDanjiNew() {
   const box = $('#danjiNew'), L = danjiNew(); box.hidden = !L.length; if (!L.length) return;

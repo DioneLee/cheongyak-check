@@ -11,7 +11,7 @@ import * as elyes from './sources/elyes.mjs';
 import { DANJI_OUT, matchDanji, refreshDanji } from './danji.mjs';
 
 export const FEED_OUT = fileURLToPath(new URL('../feed/notices.json', import.meta.url));
-const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 단지 직접(엘리스)';
+const SOURCE_LABEL = '마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)';
 // 단지 직접 공고 출처 (출처 하나 = scripts/sources/ 파일 하나 · SOURCE · parse · fetchList)
 export const SOURCES = [elyes];
 const MYHOME = 'https://apis.data.go.kr/1613000/HWSPR02/rsdtRcritNtcList';
@@ -209,7 +209,7 @@ export function buildFeed(raw, today = todayKst()) {   // today: 검사에서 �
   }
   const cutoff = new Date(Date.parse(today) - NO_PERIOD_DAYS * 864e5).toISOString().slice(0, 10);
   let items = groups.map(g => g.item).filter(i => i.region.startsWith('서울') && (i.to ? i.to >= today : i.posted && i.posted >= cutoff))   // 서울 공고만
-    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, direct: !!i.direct, danji: i.danji || '', detail: false, dv: '', ev: [], cr: null, ty: [], st: null }))   // dv: 상세 파일 내용 해시 (사이트가 ?v= 로 붙여 예전 캐시를 피함)   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
+    .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, direct: !!i.direct, closed: !!i.closed, danji: i.danji || '', detail: false, dv: '', ev: [], cr: null, ty: [], st: null }))   // dv: 상세 파일 내용 해시 (사이트가 ?v= 로 붙여 예전 캐시를 피함)   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
     .sort((a, b) => (a.to || '9999').localeCompare(b.to || '9999') || b.posted.localeCompare(a.posted));
   // 정정공고: 제목에 정정·변경·재공고가 있고 같은 기관·같은 단지(정정 글자를 뺀 이름)의 더 예전 공고가 있으면 예전 것은 숨긴다 (사이트는 새 공고에 '정정공고' 배지)
   const gone = new Set();
@@ -236,7 +236,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const feed = buildFeed(raw), det = await addDetails(feed.items.filter(i => !/^(sh|youth|elyes)-/.test(i.id)), { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) });
   await enrich(feed.items); const cal = await writeCalendar(feed.items); const wrote = await writeFeed(feed);   // 일정·자격 기준·주택형·역 거리 + 구독 캘린더
   // 단지 정보는 하루 1번 (지금 접수 중인 공고가 있는 단지 = 청약중) · 실패해도 공고 피드는 그대로
-  try { const r = await refreshDanji({ openIds: new Set(feed.items.filter(i => i.danji && i.to && i.to >= todayKst()).map(i => i.danji)) }); console.log('단지 ·', r.note); }
+  try { const r = await refreshDanji({ openIds: new Set(feed.items.filter(i => i.danji && !i.closed && i.to && i.to >= todayKst()).map(i => i.danji)) }); console.log('단지 ·', r.note); }
   catch (e) { console.error('단지 · 실패 (이전 것 그대로):', scrub(e.message)); }
   for (const [m, u] of Object.entries(det.use)) console.log(`Gemini 호출 · ${m}: ${u.calls}번 (429 ${u.s429}번 · 503 ${u.s503}번)`);   // 하루 한도 가늠용
   console.log(`공고 ${feed.items.length}건 (${raw.length}건 합침) · 상세 ${det.have}건 (이번에 ${det.made}건 읽음${det.skipped ? ` · 다시 읽기 ${det.skipped}건 미룸` : ''}${det.stopped ? ` · 멈춤: ${det.stopped}` : ''}) · ${wrote ? '새로 씀' : '바뀐 것 없음'}`);

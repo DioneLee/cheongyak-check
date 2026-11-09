@@ -56,7 +56,7 @@
   const idOf = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return (Math.abs(h) % 2000000000) + 1; };   // 알림 번호 = 공고 id 해시 (같은 공고는 같은 번호)
   const nameOf = t => (typeof shortTitle === 'function' ? shortTitle(t) : t);   // 화면 쪽 짧은 이름 함수 (있으면)
   // 알림 목록 만들기 (순수 함수 · check.py 가 window.__ccAlarms 로 확인)
-  const alarms = (items, starred, now) => items.filter(i => starred.has(i.id) && !i.startOnly && /^\d{4}-\d\d-\d\d$/.test(i.to || '')).map(i => {
+  const alarms = (items, starred, now) => items.filter(i => starred.has(i.id) && !i.startOnly && !i.closed && /^\d{4}-\d\d-\d\d$/.test(i.to || '')).map(i => {
     const [y, m, d] = i.to.split('-').map(Number);
     return { id: idOf(i.id), title: '내일 마감 · 청약 체크', body: `${nameOf(i.title)} — 내일${i.time ? ` ${i.time}` : ''} 마감이에요. 공고 원문에서 확인하세요.`, schedule: { at: new Date(y, m - 1, d - 1, 9, 0, 0), allowWhileIdle: true }, isExactNotification: false, extra: { cc: 1, fid: i.id } };
   }).filter(a => a.schedule.at.getTime() > now);

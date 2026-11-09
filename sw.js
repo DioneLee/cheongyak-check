@@ -3,7 +3,7 @@
 // - 아이콘 · 예시 공고 · manifest: 저장본 먼저 (없으면 받아서 저장)
 // - 다른 주소(AI·지도·글꼴)는 건드리지 않는다
 // 배포할 때 VERSION 을 바꾸면 새 저장소를 만들고 예전 것은 지운다 (scripts/verify/check.py 가 index.html·아이콘이 바뀌었는데 그대로면 알려 준다)
-const VERSION = 'cheongyak-check-2026-11-09d';
+const VERSION = 'cheongyak-check-2026-11-09e';
 const CORE = ['./', 'index.html', 'terms.html', 'privacy.html', 'lib/feed-tools.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'samples/notice_yongsan.json', 'feed/notices.json', 'feed/danji.json'];
 
 self.addEventListener('install', e => e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting())));

@@ -62,7 +62,7 @@ export function parse(data, { unknown = new Set() } = {}) {
     const dt = titleDates(title, posted); if (CLOSED.test(title) && !dt) continue;
     out.push({ feedId: `elyes-${idx.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}`, org: '엘리스', title, region: '서울', kind: d.other ? '민간임대' : '청년안심주택(민간)',
       posted, from: dt?.from || '', to: dt?.to || '', time: dt?.time || '', url: `${DETAIL}?i_sNtCode=BHCT&nt_idx=${encodeURIComponent(idx)}`,
-      direct: true, danjiName: d.name || '', danji: d.other?.id || '' });
+      direct: true, closed: CLOSED.test(title), danjiName: d.name || '', danji: d.other?.id || '' });   // closed: 사이트가 '마감되었습니다'를 붙임 → 화면은 '마감됨' · 목록 아래
   }
   return out;
 }
