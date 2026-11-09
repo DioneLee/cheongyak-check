@@ -14,6 +14,7 @@ SUITABLE HOME(https://dionelee.github.io/suitable-home/)의 청약 화면을 따
 | 파일 | 하는 일 |
 |---|---|
 | `index.html` | 화면 전체 (디자인 토큰은 맨 위 `:root`) |
+| `terms.html` | 이용약관 (처음 결과 볼 때 확인 · 바꾸면 index.html 의 `TERMS_V` 도) |
 | `manifest.webmanifest`, `icons/` | 홈 화면에 추가(PWA). 아이콘은 임시본 — 디자인 담당이 교체 |
 | `sw.js` | index.html·공고 피드는 인터넷 먼저, 실패할 때만 저장본. 배포 때 `VERSION` 을 바꾼다 |
 | `feed/notices.json` | 새로 올라온 공고 (GitHub Actions 가 갱신) |

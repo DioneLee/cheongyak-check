@@ -74,13 +74,31 @@ def serve(port, root):
     raise SystemExit(f"서버 {port} 를 띄우지 못했어요 (이미 쓰는 중?)")
 
 NEW_KEY = "cheongyak-check-v1"
+TERMS = {"cheongyak-check-terms": "2026-11-09"}   # 이용약관 확인함 (확인 카드 검사는 PC 에서)
 mine = json.dumps({"subs": SEED["subs"], "settings": SEED["settings"]}, ensure_ascii=False)
 old_seed = json.dumps({**SEED, "listings": []}, ensure_ascii=False)   # 가짜 SUITABLE HOME 데이터 (매물 없이 청약만)
 
 PC = r"""
 const q = s => d.querySelector(s), qa = s => [...d.querySelectorAll(s)];
-ok('기존 데이터 없으면 가져오기 숨김', q('#importBanner').hidden);
-ok('맨 위는 서울 진행중 공고 (원문 사이트 4곳)', q('h1').textContent.includes('진행중 공고') && qa('#linksSec .src-grid a[target="_blank"]').length === 4 && q('#linksSec').getBoundingClientRect().top < q('#subsSec').getBoundingClientRect().top);
+ok('기존 데이터 없으면 가져오기 숨김 (진단 배너 · 공고 탭 한 줄)', q('#importBanner').hidden && q('#importHint').hidden);
+ok('맨 위는 서울 진행중 공고 (원문 사이트 4곳)', q('h1').textContent.includes('진행중 공고') && qa('#linksSec .src-grid a[target="_blank"]').length === 4);
+// 탭 3개 (#notices · #diag · #settings)
+const vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join(), cur = () => qa('[aria-current="page"]').map(a => a.dataset.tabLink).join();
+const foot = () => q('footer').offsetHeight > 0 && q('footer').textContent.includes('참고용');
+ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/진단/설정" · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/진단/설정' && foot(), vis() + ' ' + cur());
+fw.scrollTo(0, 400); q('[data-tab-link="diag"]').click(); await W(150);
+ok('탭: 진단 링크 → 진단 탭만 · 맨 위로 · 제목에 포커스 · 맨 아래 안내 그대로', vis() === 'diag' && cur() === 'diag' && fw.scrollY === 0 && d.activeElement === q('#h-diag') && foot(), vis() + ' ' + fw.scrollY + ' ' + d.activeElement?.id);
+q('[data-tab-link="settings"]').click(); await W(150);
+ok('탭: 설정 → AI 설정·데이터 옮기기·고급(공고 JSON) 접힘 칸 · 제목 포커스', vis() === 'settings' && ['#aiSet', '#ioSet', '#subAdv'].every(s => q(s).tagName === 'DETAILS' && !q(s).open && !q(s).closest('[data-tab]').hidden) && d.activeElement === q('#h-set') && foot());
+fw.history.back(); await W(200);
+ok('탭: 뒤로가기 → 진단', vis() === 'diag' && fw.location.hash === '#diag', fw.location.hash);
+fw.history.back(); await W(200);
+ok('탭: 뒤로가기 한 번 더 → 공고', vis() === 'notices' && fw.location.hash === '#notices', fw.location.hash);
+fw.location.hash = 'abc'; await W(150);
+ok('탭: 이상한 주소 #abc → #notices', fw.location.hash === '#notices' && vis() === 'notices', fw.location.hash);
+fw.location.hash = 'subsSec'; await W(150);
+ok('탭: 예전 주소 #subsSec → #notices', fw.location.hash === '#notices' && vis() === 'notices', fw.location.hash);
+fw.location.hash = 'diag'; await W(150);
 ok('PC 한 줄 기둥 (880px)', getComputedStyle(q('#subsSec')).maxWidth === '880px' && getComputedStyle(q('#linksSec')).maxWidth === '880px');
 ok('자체검사 함수가 실행됨(판정 코드 옮김)', typeof fw.eval('elig') === 'function' && typeof fw.eval('pickOption') === 'function');
 ok('진단 제목 바로 밑에 PDF 올리기 + 질문 (안내 카드 없음)', q('#h-diag').textContent.includes('순위·점수') && !q('#subAdd').hidden && !!q('#subAdd #subPdf') && !q('.init-steps') && q('#subAdd').getBoundingClientRect().top < q('#subWiz').getBoundingClientRect().top);
@@ -89,10 +107,25 @@ ok('유형 고르기에 준비 중 칸', q('.wiz-pick button.soon')?.disabled ==
 ok('1단계에서는 다음 버튼 숨김', q('#wizNext').hidden);
 q('[data-wtier="newlywed"]').click(); await W(80);
 ok('유형 카드 누르면 바로 2단계', q('#wizCount').textContent.startsWith('2 / 7') && !q('#wizNext').hidden, q('#wizCount').textContent);
+fw.location.hash = 'notices'; await W(120); fw.location.hash = 'diag'; await W(120);
+ok('탭을 바꿔도 질문 진행(2단계) 유지', q('#wizCount').textContent.startsWith('2 / 7') && !q('#subWiz').hidden, q('#wizCount').textContent);
 for (let i = 0; i < 6; i++) { q('#wizNext').click(); await W(80); }
 ok('질문 끝 → 요약 바 + 공고 안내', !q('#meBar').hidden && q('#subWiz').hidden && q('#subJudge').textContent.includes('공고를 고르면'), q('#meBar').textContent);
 ok('질문을 "다음"으로 지나가면 그 단계 기본값(자동차 없음·세대 구분)을 확인한 것으로 기록', fw.eval('state.subs.seen.hasCar === true && state.subs.seen["yt.house"] === true'));
 q('#subJudge [data-sample]').click(); await W(900);
+ok('약관: 내 조건 결과를 처음 볼 때 확인 카드 먼저 (결과·목록 신호등 숨김)', !!q('#subJudge .terms-card a[href="terms.html"]') && !q('#subJudge .sub-main .sig') && !q('#subList .sig-mini') && fw.localStorage.getItem('cheongyak-check-terms') === null);
+q('#subJudge [data-terms-ok]').click(); await W(150);
+ok('약관: "확인했어요" → 결과 · 이 기기에 기억 (판정 데이터와 다른 키)', !q('.terms-card') && !!q('#subJudge .sub-main .sig') && fw.localStorage.getItem('cheongyak-check-terms') === '2026-11-09' && !('terms' in JSON.parse(fw.localStorage.getItem('cheongyak-check-v1'))));
+{ const m = q('#subJudge .sub-main'), sg = m.querySelector('.sig').textContent, bs = m.querySelector('.basis');
+  ok('문구: 신호등은 "입력한 조건으로는 …" (단정 안 함)', /^입력한 조건(으로는 신청 가능해 보여요|만으로는 아직 판단하기 어려워요|으로는 어려워 보여요)/.test(sg), sg);
+  ok('문구: 신호등 바로 아래 "예비 판정 · {공고명} 공고문 p.{쪽} 기준 · 최종 자격은 사업 주체 심사로 정해져요" + 원문 링크', m.querySelector('.sig').nextElementSibling === bs && /^예비 판정 · .+ 공고문 p\.10 기준 · 최종 자격은 사업 주체 심사로 정해져요 · 공고문 원문 ↗$/.test(bs.textContent) && bs.querySelector('a[target="_blank"]')?.href === 'https://soco.seoul.go.kr/youth/main/main.do', bs.textContent);
+  ok('문구: 손으로 넣은 공고는 AI 안내 없음', !m.querySelector('.basis.ai')); }
+fw.eval(`state.subs.me.hasCar = true; state.subs.me.car = 99999; render()`); await W(80);
+{ const m = q('#subJudge .sub-main'), co = m.querySelector('.callout');
+  ok('문구: 어려워 보여요 → "포기하지 말고" 콜센터 안내 (LH·SH 번호 · 청년안심주택은 공고문 문의처) + 원문 링크', m.querySelector('.sig').textContent === '입력한 조건으로는 어려워 보여요' && /포기하지 말고 공고문이나 콜센터\(LH 1600-1004, SH 1600-3456 등 · 청년안심주택은 공고문의 문의처\)에서 확인하세요/.test(co?.textContent) && !!co.querySelector('a[target="_blank"]'), co?.textContent);
+  ok('문구: 이유·배지도 같은 톤 ("어려워 보여요" · "어려워 보임")', [...m.querySelectorAll('.why li')].some(li => li.textContent.includes('어려워 보여요.')) && [...m.querySelectorAll('.sub-judge .badge')].some(b => b.textContent === '어려워 보임')); }
+fw.eval(`state.subs.me.hasCar = false; state.subs.me.car = null; render()`); await W(80);
+ok('문구: 가능·확인 필요일 때는 콜센터 안내 없음', q('#subJudge .sub-main .sig').textContent !== '입력한 조건으로는 어려워 보여요' && !q('#subJudge .callout'));
 ok('예시 공고 → 내 조건으로 판정(체험 아님)', !!q('#subJudge .sig') && !q('#subJudge').classList.contains('is-demo'), q('#subJudge .sig')?.textContent);
 ok('내 공고 목록', qa('#subList .sub-pick').length === 1 && q('#subList .sig-mini'), qa('#subList .sub-pick').length);
 ok('유형 탭 옆 준비 중 배지', q('#subJudge .sub-tabs .soon-tag')?.textContent.includes('준비 중'));
@@ -103,6 +136,8 @@ ok('매물 연결 버튼 없음', !d.body.textContent.includes('매물로 비교
 ok('누구나 쓰는 말 (우리 부부·예시 가족·우리 상황 없음)', !/우리 부부|예시 가족|우리 상황|우리에게|우리 세대/.test(d.body.innerText + q('#subWiz').textContent));
 const mc = q('[data-set="myCash"]'); mc.value = '3000'; mc.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(100);
 ok('돈 조건 → 요약 문구', q('#moneySum').textContent.includes('3,000만원'), q('#moneySum').textContent);
+fw.location.hash = 'settings'; await W(120); fw.location.hash = 'diag'; await W(120);
+ok('탭을 바꿔도 입력값 유지', q('[data-set="myCash"]').value === '3000' && q('#moneySum').textContent.includes('3,000만원'));
 const sv = JSON.parse(fw.localStorage.getItem('cheongyak-check-v1'));
 ok('이 사이트 키에 저장', sv.subs.notices.length === 1 && sv.settings.myCash === 3000 && sv.subs.wizard.done);
 ok('기존 사이트 키는 만들지 않음', fw.localStorage.getItem('newlywed-home-v1') === null);
@@ -115,7 +150,7 @@ ok('피드 8개 + 더 보기 · 줄 전체가 링크', qa('#subFeed .flist > li'
 const rf = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/lh-d1.json') ? new fw.Response(JSON.stringify({ id: 'lh-d1', read: '2026-11-07', target: '<b>청년</b>', eligibility: ['무주택'], special: ['한부모 가점'], supply: [{ type: '25A 1510호', area: '20.17㎡', units: '1', price: '보증금 9,300만원' }] })) : rf(u, o);
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('lh-d1', '2099-01-01'), detail: true }, fi('f2', '2099-01-02'), { ...fi('f3', '2099-01-03'), id: '../x', detail: true }] }); await W(50);
 q('#subFeed [data-detail="lh-d1"]').click(); await W(300); fw.fetch = rf; const dt1 = q('#subFeed [data-det="lh-d1"]');
-ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 · 글자 그대로)', qa('#subFeed button.dbtn').length === 1 && !dt1.hidden && dt1.textContent.includes('<b>청년</b>') && dt1.textContent.includes('한부모 가점') && dt1.textContent.includes('AI가 공고문에서') && dt1.textContent.includes('20.17㎡ · 1세대 · 보증금'), dt1?.textContent.slice(0, 80));
+ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 · 글자 그대로)', qa('#subFeed button.dbtn[data-detail]').length === 1 && !dt1.hidden && dt1.textContent.includes('<b>청년</b>') && dt1.textContent.includes('한부모 가점') && dt1.textContent.includes('AI가 공고문에서') && dt1.textContent.includes('20.17㎡ · 1세대 · 보증금'), dt1?.textContent.slice(0, 80));
 q('#subFeed [data-detail="lh-d1"]').click(); await W(50);
 ok('상세보기 다시 누르면 접힘', dt1.hidden && q('#subFeed [data-detail="lh-d1"]').getAttribute('aria-expanded') === 'false');
 ok('상세 없는 공고는 [공고 원문 보기] 링크', qa('#subFeed a.dlink[target="_blank"]').length === 2 && qa('#subFeed a.dlink').every(a => a.textContent.includes('공고 원문 보기')));
@@ -134,13 +169,13 @@ const LHX = { ...fi('lh-77', '2026-11-20'), title: 'LH 서울 행복주택 모�
 fw.__today = '2026-11-08';
 fw.eval(`state.subs.tab = 'youth'; Object.assign(state.subs.me, { a: { ...state.subs.me.a, birth: '1997-03-01', income: 300 }, hasCar: false, car: null }); state.subs.me.yt.homeless = true; state.subs.seen = { hasCar: true }; state.subs.wizard.done = true; render()`);
 fw.eval('setFeed')({ updated: '', source: '', items: [PODIUM, LHX] }); await W(80);
-ok('신청 가능 배지: 입력·확인한 값으로 기본 조건 충족 · 누르면 항목별 이유', q('#subFeed [data-why="youth-6720"]')?.textContent === '기본 조건 충족' && q('#subFeed [data-whyp="youth-6720"]').hidden, q('#subFeed [data-why="youth-6720"]')?.textContent);
+ok('신청 가능 배지: 입력·확인한 값으로 기본 조건 맞아 보임 · 누르면 항목별 이유', q('#subFeed [data-why="youth-6720"]')?.textContent === '기본 조건 맞아 보임' && q('#subFeed [data-whyp="youth-6720"]').hidden, q('#subFeed [data-why="youth-6720"]')?.textContent);
 q('#subFeed [data-why="youth-6720"]').click(); await W(50);
 const why = q('#subFeed [data-whyp="youth-6720"]');
 ok('이유: 나이 만 19~39세 ✔ · 자동차 ✔ · 기타 조건은 원문에서', !why.hidden && /✔ 나이 만 19~39세: 만 29세/.test(why.textContent) && /✔ 자동차가액 4,542만원 이하: 자동차 없음/.test(why.textContent) && /기타 조건 1개/.test(why.textContent), why.textContent.slice(0, 160));
 ok('자격 기준 없는 공고는 확인 필요', q('#subFeed [data-why="lh-77"]')?.textContent === '확인 필요');
 fw.eval(`state.subs.me.a.birth = '1980-01-01'; render()`); await W(50);
-ok('나이 초과로 바꾸면 어려움', q('#subFeed [data-why="youth-6720"]')?.textContent === '어려움');
+ok('나이 초과로 바꾸면 어려워 보임', q('#subFeed [data-why="youth-6720"]')?.textContent === '어려워 보임');
 fw.eval(`state.subs.me.a.birth = '1997-03-01'; state.subs.seen = {}; render()`); await W(50);
 ok('자동차 없음(기본값)을 확인하지 않았으면 확인 필요', q('#subFeed [data-why="youth-6720"]')?.textContent === '확인 필요');
 fw.eval(`state.subs.seen = { hasCar: true }; render()`); await W(50);
@@ -162,6 +197,8 @@ ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공
   const sel = q('#subFeed select[data-f="dep"]'); sel.value = '10000'; sel.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(50);
   const okIds = qa('#subFeed .flist:not(.funk) > li').map(li => li.dataset.fid), unkIds = qa('#subFeed .funk > li').map(li => li.dataset.fid);
   ok('필터 보증금 1억 이하: 더포디엄830 남음 · 상세 없는 공고는 "정보 없음" 묶음 · 필터는 브라우저에 저장', okIds.join() === 'youth-6720' && unkIds.join() === 'lh-77' && q('#subFeed .fgroup')?.textContent.includes('정보 없음') && JSON.parse(fw.localStorage.getItem('cheongyak-check-feed-filter')).dep === 10000, okIds + ' / ' + unkIds);
+  fw.location.hash = 'diag'; await W(120); fw.location.hash = 'notices'; await W(120);
+  ok('탭을 바꿔도 필터 유지', q('#subFeed select[data-f="dep"]').value === '10000' && qa('#subFeed .flist:not(.funk) > li').length === 1);
   q('#subFeed [data-detail="youth-6720"]').click(); for (let n = 0; n < 20 && !q('#subFeed [data-det="youth-6720"] li.hit'); n++) await W(50);
   ok('필터에 맞는 주택형 강조: 25A·25B 만', qa('#subFeed [data-det="youth-6720"] li.hit').map(li => li.querySelector('b').textContent).join() === '25A 1510호,25B 529호', qa('#subFeed [data-det="youth-6720"] li.hit').length);
   const s5 = q('#subFeed select[data-f="dep"]'); s5.value = '5000'; s5.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(50);
@@ -170,6 +207,17 @@ ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공
   ok('필터 지우기 → 모두 보임', qa('#subFeed .flist > li').length === 2 && !q('#subFeed .funk'));
   fw.fetch = rf2; fw.URL.createObjectURL = ou; fw.HTMLAnchorElement.prototype.click = oc; }
 delete fw.__today;
+{ const yn = fw.eval('state.subs.notices[0]');
+  fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('m1', '2099-01-01'), title: '[정정공고] ' + yn.name, posted: '2026-11-05' }, { ...fi('x1', '2099-01-02'), title: '[SH] 아무개 행복주택 입주자모집공고', url: 'https://www.i-sh.co.kr/x?seq=1' }] }); await W(80);
+  const fx = q('#subJudge .sub-main .fixnote');
+  ok('정정공고: 공고일 뒤 정정 글이 있으면 결과 위에 "판정 기준일 이후 정정공고가 있어요 · 원문 확인"', !!fx && fx.textContent.startsWith('판정 기준일 이후 정정공고가 있어요 · 원문 확인') && fx.querySelector('a').href === 'https://apply.lh.or.kr/' && fx.compareDocumentPosition(q('#subJudge .sub-main .sig')) === 4, fx?.textContent);
+  fw.location.hash = 'notices'; await W(120); q('#subFeed [data-diag="m1"]').click(); await W(200);
+  ok('공고 목록 "진단 →" (내 공고에 있는 공고) → 그 공고가 고른 상태로 진단 탭', fw.location.hash === '#diag' && vis() === 'diag' && fw.eval('state.subs.sel') === yn.id && q('#diagFrom').hidden);
+  fw.location.hash = 'notices'; await W(120); q('#subFeed [data-diag="x1"]').click(); await W(200);
+  const df = q('#diagFrom');
+  ok('공고 목록 "진단 →" (내 공고에 없는 공고) → 진단 탭 맨 위 "{공고 이름} · 공고문 PDF를 올리면 판정해요" + 원문 + PDF 올리기', fw.location.hash === '#diag' && !df.hidden && df.querySelector('p').textContent === '아무개 행복주택 · 공고문 PDF를 올리면 판정해요' && df.querySelector('[data-from-url]').href === 'https://www.i-sh.co.kr/x?seq=1' && df.querySelector('label[for="subPdf"]')?.textContent === '공고문 PDF 올리기' && df.compareDocumentPosition(q('#subAdd')) === 4, df.textContent);
+  fw.location.hash = 'notices'; await W(120); fw.location.hash = 'diag'; await W(120);
+  ok('다른 탭에 갔다 오면 그 안내는 사라짐', q('#diagFrom').hidden); }
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];
 const pdf = await (await fetch('samples/notice_example.pdf')).blob(), dt = new fw.DataTransfer(); dt.items.add(new fw.File([pdf], 'notice_example.pdf', { type: 'application/pdf' }));
@@ -180,8 +228,10 @@ q('#subSend [data-go]').click(); for (let n = 0; n < 60 && fw.eval('state.subs.n
 ok('AI 붐빔(503) → 2초 뒤 한 번 더 → 공고 추가 · PDF만 보냄', fw.eval('state.subs.notices.length') === 2 && calls.length === 2 && calls.every(c => c[0].endsWith('/notice') && c[1] === 'JVBER'), JSON.stringify(calls));
 const yb = yong.notice ?? yong; fw.eval('addNotice')({ ...yb, id: 'gg', name: '경기 공고', short: '경기 공고', city: '경기', addr: '경기도 성남시 분당구 1', region: '분당구' }, '테스트'); await W(50);
 ok('서울 밖 공고는 넣지 않음', fw.eval('state.subs.notices.length') === 2 && q('#subMsg').textContent.includes('서울 공고만'), q('#subMsg').textContent);
-q('[data-jump="ai"]').click(); await W(100);
-ok('위 칩 AI 설정 → 펼침', q('#aiSet').open);
+fw.eval(`state.subs.sel = 'ai-test'; render()`); await W(80);
+ok('문구: AI로 읽은 공고는 "AI가 공고문을 읽어 만든 값이에요. 소득·자산 기준은 원문과 맞춰 보세요."', fw.eval("state.subs.notices.find(n => n.id === 'ai-test').src") === 'ai' && q('#subJudge .sub-main .basis.ai')?.textContent === 'AI가 공고문을 읽어 만든 값이에요. 소득·자산 기준은 원문과 맞춰 보세요.', q('#subJudge .sub-main .basis.ai')?.textContent);
+q('#subAiOff a').click(); await W(150);
+ok('진단의 "AI 설정" 링크 → 설정 탭 · AI 설정 펼침', fw.location.hash === '#settings' && vis() === 'settings' && q('#aiSet').open, fw.location.hash);
 let blob = null; const ou = fw.URL.createObjectURL; fw.URL.createObjectURL = b => { blob = b; return 'blob:x'; };
 q('#exportBtn').click(); fw.URL.createObjectURL = ou; const ex = JSON.parse(await blob.text());
 ok('내보내기: 청약·돈 조건만 (AI 키 없음)', ex.app === 'cheongyak-check' && ex.data.subs.notices.length === 2 && !JSON.stringify(ex).includes('suitable-gemini-key') && !('geo' in ex.data), Object.keys(ex.data));
@@ -194,9 +244,14 @@ ok('확인하면 불러온 내용으로', fw.eval('state.subs.notices.length') =
 
 MOBILE = r"""
 const q = s => d.querySelector(s), before = localStorage.getItem('newlywed-home-v1');
-ok('390 첫 화면은 공고 바로가기부터', q('h1').getBoundingClientRect().bottom <= fw.innerHeight && q('#linksSec').getBoundingClientRect().top < q('#subsSec').getBoundingClientRect().top);
+const qa = s => [...d.querySelectorAll(s)], vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join();
+ok('390 첫 화면은 공고 탭 (다른 탭 숨김)', q('h1').getBoundingClientRect().bottom <= fw.innerHeight && vis() === 'notices');
+{ const ls = qa('[data-tab-link]'), nav = q('.chips');
+  ok('390 메뉴 3개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 3 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
-ok('기존 사이트 입력 발견 → 배너', !q('#importBanner').hidden);
+ok('기존 사이트 입력 발견 → 진단 탭 맨 위 배너 + 공고 탭 위 한 줄', !q('#importBanner').hidden && q('#h-diag').nextElementSibling === q('#importBanner') && !q('#importHint').hidden && q('#importHint').textContent.includes('SUITABLE HOME 조건 가져오기 → 진단') && q('#importHint').getAttribute('href') === '#diag');
+q('#importHint').click(); await W(150);
+ok('공고 탭 한 줄 → 진단 탭', vis() === 'diag' && fw.location.hash === '#diag');
 q('#importGo').click(); await W(600);
 ok('가져오기 문구: 조사가 받침에 맞음 ("공고 1개를")', /공고 \d+개(를| · 내 조건을) 가져왔어요/.test(q('#subMsg').textContent) && !/개을 |\(를\)/.test(q('#subMsg').textContent), q('#subMsg').textContent);
 ok('조사 고르기: 받침 · 숫자 · 괄호 · 영문', [['자동차가액', '을'], ['결혼 여부', '를'], ['공고 1개', '를'], ['공고 3', '을'], ['공고 2', '를'], ['규제지역 (서울 등)', '을'], ['2억원', '을'], ['LH', '를']].every(([w, j]) => fw.eval('jo')(w, '을', '를') === j));
@@ -204,10 +259,12 @@ const S = fw.eval('state.subs'), O = JSON.parse(before).subs;
 ok('가져오기: 공고·내 상황 그대로', S.notices.length === O.notices.length && JSON.stringify(S.me) === JSON.stringify(O.me) && S.tab === O.tab, S.notices.length);
 ok('가져오기: 돈 조건', fw.eval('state.settings.depMax') === JSON.parse(before).settings.depMax);
 ok('기존 사이트 데이터는 그대로 (글자 하나 안 바뀜)', localStorage.getItem('newlywed-home-v1') === before);
-ok('가져온 뒤 배너 숨김 · 결과 보임', q('#importBanner').hidden && !!q('#subJudge .sig'));
+ok('가져온 뒤 배너·공고 탭 한 줄 숨김 · 결과 보임', q('#importBanner').hidden && q('#importHint').hidden && !!q('#subJudge .sig'));
 for (const x of d.querySelectorAll('details')) x.open = true; await W(100);
-ok('390 가로 넘침 없음 (결과·접힌 칸 모두 펼침)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
-ok('휴대폰: 공고 바로가기 → 내 공고 → 진단 순서', q('#linksSec').getBoundingClientRect().top < q('#subListBox').getBoundingClientRect().top && q('#subListBox').getBoundingClientRect().top < q('#subJudge').getBoundingClientRect().top);
+for (const tb of ['diag', 'notices', 'settings']) { fw.location.hash = tb; await W(150);
+  ok(`390 가로 넘침 없음 (${tb} 탭 · 접힌 칸 모두 펼침)`, vis() === tb && d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth); }
+fw.location.hash = 'diag'; await W(150);
+ok('휴대폰 진단 탭: 내 공고 → 결과 순서', q('#subListBox').getBoundingClientRect().top < q('#subJudge').getBoundingClientRect().top);
 await open('');
 ok('다시 열어도 유지 · 배너 안 뜸', fw.eval('state.subs.notices.length') === O.notices.length && d.querySelector('#importBanner').hidden);
 localStorage.removeItem('cheongyak-check-v1'); await open('');
@@ -249,6 +306,12 @@ const res = {}; for (const tab of ['newlywed', 'youth']) { fw.eval(`state.subs.t
 out.push(['DATA', 'demo', JSON.stringify(res)]);
 """
 
+DEMO_NEW = r"""
+const q = s => d.querySelector(s);
+q('#subSample').click(); await W(1200);
+ok('예시 체험은 약관 카드 없이 결과 + "예시 상황 … 저장되지 않아요" 표시', !q('.terms-card') && !!q('#subJudge .sub-main .sig') && q('#subDemo').textContent.includes('저장되지 않아요') && fw.localStorage.getItem('cheongyak-check-terms') === null);
+"""
+
 SW = r"""
 const hits = async () => (await (await fetch('/__hits?' + Math.random(), { cache: 'no-store' })).json());   // 물음표: 서비스 워커 저장본을 피함
 await fw.navigator.serviceWorker.ready; await W(500); await open(''); await W(500);
@@ -280,6 +343,17 @@ def josa_fixed(x):
     if isinstance(x, dict): return {k: josa_fixed(v) for k, v in x.items()}
     return x
 
+# 2026-11-09 판정 문구를 단정하지 않게 바꿈 (판정은 그대로) → 기준 쪽 글자를 새 문구로 정확히 바꿔 놓고 비교. 이 밖의 글자 차이는 모두 실패
+SIG_NEW = {"신청할 수 있어요": "입력한 조건으로는 신청 가능해 보여요", "신청은 할 수 있어요 · 예산은 넘어요": "입력한 조건으로는 신청 가능해 보여요 · 예산은 넘어요",
+           "확인이 필요해요": "입력한 조건만으로는 아직 판단하기 어려워요 · 확인이 필요해요", "이 공고는 어려워요": "입력한 조건으로는 어려워 보여요"}
+BADGE_NEW = {"가능": "가능해 보임", "불가": "어려워 보임"}
+def wording_new(r):
+    if not r: return r
+    r = dict(r); r["sig"] = [SIG_NEW.get(s, s) for s in r["sig"]]
+    if "badges" in r: r["badges"] = [BADGE_NEW.get(s, s) for s in r["badges"]]
+    if "why" in r: r["why"] = [re.sub(r"어려워요\.$", "어려워 보여요.", re.sub(r"신청할 수 있어요\.", "신청 가능해 보여요.", s.replace("특별공급을 신청할 수 있어요.", "특별공급은 신청 가능해 보여요."))) for s in r["why"]]
+    return r
+
 def main():
     swt = REPO / "feed/detail/zz-swtest.json"; swt.parent.mkdir(exist_ok=True); swt.write_text('{"id":"zz-swtest","target":"새 상세","eligibility":["새로"]}', encoding="utf-8")   # 서비스 워커 상세 캐시 검사용 (끝나면 지움)
     procs = [serve(NEW_PORT, REPO)]
@@ -288,17 +362,18 @@ def main():
     logs_all = []
     try:
         for label, body, kw in [("PC 1280", PC, {"budget": 120000}),   # 캘린더·배지·필터 검사가 늘어 가상 시간 60초 → 120초
-                               ("휴대폰 390", MOBILE, {"w": 390, "h": 844, "seeds": {"newlywed-home-v1": old_seed}}), ("서비스 워커", SW, {"budget": None})]:
+                               ("휴대폰 390", MOBILE, {"w": 390, "h": 844, "seeds": {"newlywed-home-v1": old_seed, **TERMS}}),
+                               ("예시 체험", DEMO_NEW, {}), ("서비스 워커", SW, {"budget": None})]:
             res, logs = run(body, REPO, NEW_PORT, "/index.html", **kw); logs_all += logs
             for st, n, g in res: rows.append((st, f"[{label}] {n}", g))
         if have_old:
             sc = COLLECT % json.dumps(SCEN, ensure_ascii=False)
             a, la = run(sc, OLD_REPO, OLD_PORT, OLD_PAGE, seeds={"suitable-intro": "1", "newlywed-home-v1": old_seed}, hash_="#subs", budget=120000)
-            b, lb = run(sc, REPO, NEW_PORT, "/index.html", seeds={NEW_KEY: mine}, budget=120000)
+            b, lb = run(sc, REPO, NEW_PORT, "/index.html", seeds={NEW_KEY: mine, **TERMS}, budget=120000)
             da, db = run(DEMO, OLD_REPO, OLD_PORT, OLD_PAGE, seeds={"suitable-intro": "1"}, hash_="#subs"), run(DEMO, REPO, NEW_PORT, "/index.html")
             logs_all += la + lb + da[1] + db[1]
             data = lambda res: json.loads(next((g for s, n, g in res if s == "DATA"), "{}"))
-            ja, jb = josa_fixed({**data(a), **data(da[0])}), {**data(b), **data(db[0])}
+            ja, jb = {k: wording_new(v) for k, v in josa_fixed({**data(a), **data(da[0])}).items()}, {**data(b), **data(db[0])}
             ok("[판정 동등성] 결과를 모음", len(ja) == len(jb) == 2 + len(SCEN) * 2, f"old {len(ja)} · new {len(jb)}")
             for k in ja:
                 ok(f"[판정 동등성] {k}", ja[k] is not None and ja[k] == jb.get(k), "" if ja[k] == jb.get(k) else json.dumps({"old": ja[k], "new": jb.get(k)}, ensure_ascii=False)[:600])

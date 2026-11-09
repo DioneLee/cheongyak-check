@@ -4,12 +4,13 @@
 
 ## 지금 상태
 
-- 배포: https://dionelee.github.io/cheongyak-check/ (저장소 DioneLee/cheongyak-check · Pages = main / root · 서비스 워커 `cheongyak-check-2026-11-08c`)
-- 첫 화면: 서울 진행중 공고(원문 사이트 4곳 · 공고 목록 · 필터 · 관심 공고 · 캘린더) → 내 청약 순위·점수 진단(PDF 올리기 + 질문)
+- 배포: https://dionelee.github.io/cheongyak-check/ (저장소 DioneLee/cheongyak-check · Pages = main / root · 서비스 워커 `cheongyak-check-2026-11-09b`)
+- 탭 3개 (2026-11-09, `docs/design/탭과문구.md`): 공고 `#notices`(원문 사이트 4곳 · 공고 목록 · 필터 · 관심 공고 · 캘린더 · 줄마다 '진단 →') · 진단 `#diag`(PDF 올리기 + 질문 + 결과) · 설정 `#settings`(AI 설정 · 데이터 옮기기 · 고급)
+- 판정 문구는 "입력한 조건으로는 … 보여요" + 예비 판정 줄 · 처음 결과 볼 때 이용약관(`terms.html`) 확인 한 번 (키 `cheongyak-check-terms`)
 - 공고 출처: LH·마이홈포털 공공데이터 API + SH 공고 게시판 + 서울 청년안심주택 모집공고 목록 (서울만)
   - 게시판(SH·청년안심)은 2026-11-09 부터 제목·기관·날짜·원문 링크만 (본문·공고문은 저장·AI 읽기 안 함) · 같은 사이트 요청 3초 간격 · 실행마다 robots.txt 확인 · 실제 실행 하루 약 4번
 - 공고 상세(신청 조건 요약): 2026-11-09 부터 마이홈 API 기본 정보만 (게시판 공고는 상세 없음 → '공고 원문 보기'). Gemini 자동 읽기 코드(detail.mjs)는 남아 있지만 지금 부르는 출처 없음
-- 검사 (2026-11-08 마지막): `CHECK_PORT=8792 python3 scripts/verify/check.py` 81/81 · `node scripts/verify/tools_check.mjs` 34 · `detail_check.mjs` 57 · `feed_check.mjs` 21 · `cron_check.mjs` 5
+- 검사 (2026-11-09 마지막): `python scripts/verify/check.py` 128/128 (판정 동등성 포함) · `node scripts/verify/tools_check.mjs` 34 · `detail_check.mjs` 57 · `feed_check.mjs` 23 · `cron_check.mjs` 5
   - 판정 동등성 검사는 `../sjcu/index_v28_backup.html`(SUITABLE HOME 마지막 청약 버전)이 있는 PC 에서만 돈다
   - check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 
@@ -57,7 +58,7 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
 - [ ] 특이사항 점수: 한부모·부모 밑 세대·부모님 재정 등 공고별 가점을 판정에 넣을지 (실사용자 질문, 2026-11-06)
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 공고 JSON 도 읽기) · LH 공고문 PDF 찾기
 - [ ] 신청 가능 배지: '기타 조건'(청약자=계약자 동일인 등)은 판정하지 않음 → 이대로 둘지
-- [ ] 화면 사진 `screenshots/` 는 예전 구성 그대로 (새로 찍기)
+- [ ] 정정공고 표시는 이름이 겹칠 때만 잡힘 (피드 제목과 공고 이름이 많이 다르면 놓침)
 - [x] SUITABLE HOME 에서 청약 화면을 뺌 (2026-11-09, SUITABLE HOME v28) · 메뉴 링크 '청약 체크 ↗' 는 2027-01-20 까지 유지
 - [ ] lite↔첫 모델 비교 · 상세 다음 단계는 게시판 상세를 안 만들면서 대상이 거의 없어짐 → 계속할지 결정
 - [ ] GH_TOKEN 만료(2027-11-06) 전에 새 토큰
