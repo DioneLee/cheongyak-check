@@ -157,9 +157,14 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 .fdet dl { display: grid; gap: 10px; margin: 8px 0 0; } .fdet dt { font: 700 13px/1.4 var(--sans); } .fdet dd { margin: 2px 0 0; }
 .sub-feed .fdet ul { margin: 0; padding-left: 18px; list-style: disc; } .sub-feed .fdet li + li { border-top: 0; } .fdet .dnote { margin-top: 10px; font-size: 12px; }
 .sub-feed .ftools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 16px 0 12px; border-bottom: 1px solid var(--line); }
-.sub-feed .ffilter summary { cursor: pointer; font: 700 14px/1 var(--sans); min-height: 36px; display: inline-flex; align-items: center; }
-.sub-feed .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; } @media (min-width: 720px) { .sub-feed .fgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-.sub-feed .fgrid select { margin: 0; min-height: 40px; font-size: 14px; padding: 6px 12px; }
+/* 공고 세부 탭 (진행 중 · 예정 · 완료) — 맨 위 메뉴(.chips)와 같은 모양 · 검색 칸은 단지 탭(.dj-tools)과 같은 모양 */
+.sub-feed .ftabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 4px; margin: 0 0 12px; border-radius: var(--pill); background: var(--subtle); }
+.sub-feed .ftabs button { min-height: 40px; margin: 0; padding: 0 8px; border: 0; border-radius: var(--pill); background: transparent; color: var(--muted); font-size: 15px; font-weight: 700; white-space: nowrap; box-shadow: none; }
+.sub-feed .ftabs button[aria-selected="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 2px 6px rgba(0, 27, 55, 0.08); }
+@media (hover: hover) { .sub-feed .ftabs button:not([aria-selected="true"]):hover { background: transparent; color: var(--ink); } }
+.sub-feed .ftabs .n { margin-left: 4px; font-weight: 600; font-size: 13px; }
+.sub-feed .fsearch { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 8px; }
+.sub-feed .fsearch select, .sub-feed .fsearch input { margin: 0; min-height: 40px; font-size: 14px; padding: 6px 12px; }
 .sub-feed .facts { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 .sub-feed .calask { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 12px; padding: 12px 14px; border-radius: 12px; background: var(--accent-soft, #eef4ff); font-size: 14px; }
 .sub-feed .fcalnote { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--muted); }
@@ -184,7 +189,6 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 .sub-feed .cbtn { min-height: 36px; padding: 0 12px; border-radius: var(--r1); font: 600 13px/1 var(--sans); } .sub-feed .nocal { font-size: 12px; color: var(--muted); }
 .fwhy { margin: 0 0 12px; padding: 12px 16px; border-radius: var(--r1); background: var(--bg); font-size: 14px; } .sub-feed .fwhy ul { list-style: none; margin: 0; padding: 0; } .sub-feed .fwhy li + li { border-top: 0; }
 .fwhy li { padding: 2px 0; } .fwhy li.y b { color: var(--pass-ink); } .fwhy li.n b { color: var(--fail-ink); } .fwhy li.q b { color: var(--muted); } .fwhy .hint { margin-top: 6px; font-size: 12px; }
-.sub-feed .fdet li.hit { background: var(--accent-soft); box-shadow: -22px 0 0 var(--accent-soft), 6px 0 0 var(--accent-soft); }   /* 필터에 맞는 주택형 */
 /* 공고 줄: 왼쪽 정보(줄바꿈) · 오른쪽 버튼 3칸(캘린더 · 원문/상세 · 진단) — PC 는 칸 폭 고정이라 모든 줄에서 버튼 위치가 같다 */
 .sub-feed .finfo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; flex: 1 1 0; min-width: 0; }
 .sub-feed .fbtns { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex-basis: 100%; margin-top: 8px; }
@@ -481,9 +485,9 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-10c"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-10d"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
-  <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·필터·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
+  <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a></p>
   <p>본 서비스에서 제공하는 실제 월 부담·대출(LTV) 계산 및 청약 자격 판정은 의사결정을 돕기 위한 참고용 시뮬레이션이며 법적·금융적 효력이 없습니다. 실제 청약 신청 및 부동산 계약 전에는 반드시 모집공고문 원본과 금융기관을 통해 최종 확인하시기 바랍니다.</p>
 </div></footer>
@@ -1008,20 +1012,22 @@ function normFeed(x) {
     st: i.st && i.st.n ? { n: str(i.st.n, 30), m: isFinite(i.st.m) && i.st.m != null ? +i.st.m : null, w: isFinite(i.st.w) && i.st.w != null ? +i.st.w : null, pre: i.st.pre === true, exit: /^\d{1,2}$/.test(i.st.exit) ? i.st.exit : '', alt: str(i.st.alt || '', 30) } : null,
     lm: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(i.lm) ? i.lm : '', direct: i.direct === true, closed: i.closed === true, danji: /^[\w-]{1,40}$/.test(i.danji) ? i.danji : '' })).filter(i => i.title) };
 }
-// 브라우저에만 저장: 관심 공고(★) · 필터 (서버로 보내지 않음)
-const FKEY = 'cheongyak-check-feed-filter', SKEY = 'cheongyak-check-stars';
+// 브라우저에만 저장: 관심 공고(★) (서버로 보내지 않음)
+const SKEY = 'cheongyak-check-stars';
 const lget = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch (e) { return d; } }, lset = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-let feedF = { dep: null, rent: null, area: null, walk: null, src: null, ...lget(FKEY, {}) }, stars = new Set(lget(SKEY, [])); const whyOpen = new Set();
-const FOPT = { src: [['', '출처: 전체'], ['official', '출처: 공식'], ['direct', '출처: 단지 직접']], dep: [['', '보증금 제한 없음'], [5000, '5천만원 이하'], [10000, '1억 이하'], [15000, '1억 5천 이하'], [20000, '2억 이하'], [30000, '3억 이하']],
-  rent: [['', '월세 제한 없음'], [30, '30만원 이하'], [50, '50만원 이하'], [70, '70만원 이하'], [100, '100만원 이하']],
-  area: [['', '면적 제한 없음'], [16, '16㎡ 이상'], [20, '20㎡ 이상'], [30, '30㎡ 이상'], [40, '40㎡ 이상']], walk: [['', '역 거리 제한 없음'], [5, '역 도보 약 5분'], [10, '역 도보 약 10분'], [15, '역 도보 약 15분']] };
+let stars = new Set(lget(SKEY, [])); const whyOpen = new Set();
+// 공고 세부 탭: 진행 중(지금 모집) · 예정(모집 시작 전) · 완료(모집 끝남 · Actions 가 마감 후 30일까지 남김) · 검색(이름·역·구 글자 + 구 선택, 저장 안 함)
+let feedTab = 'now', feedQ = { q: '', gu: '' };
+const FTABS = [['now', '진행 중'], ['plan', '예정'], ['done', '완료']];
+const phaseOf = (i, t) => i.closed || (i.to && !i.startOnly && i.to < t) ? 'done' : ((i.startOnly ? i.to : i.from) || '') > t ? 'plan' : 'now';   // 모집일을 모르면 진행 중 ('모집일은 공고 원문에서')
+const guOf = i => i.region.match(/서울\S*\s+(\S+구)/)?.[1] || (i.danji && [...(danji?.danji || []), ...(danji?.other || [])].find(d => d.id === i.danji)?.gu) || SEOUL_GU.find(g => i.title.includes(g)) || '';
 const JB = { ok: ['ok', '기본 조건 맞아 보임'], unk: ['unk', '확인 필요'], no: ['no', '어려워 보임'] };   // '가능'이 아니라 기본 조건(나이·무주택·소득·자산 등)만 본 결과
 const calUrl = () => `webcal://${SITE ? SITE.replace(/^https:\/\//, '') : location.host + location.pathname.replace(/[^/]*$/, '')}feed/calendar.ics`;
-function feedRow(i, t, fr, done) {
+function feedRow(i, t, done, ph = phaseOf(i, t)) {
   const due = (i.id.startsWith('youth-') || i.direct) && !i.startOnly;   // 청년안심주택·단지 직접: D-day 는 마감일 기준
   const dd = i.to ? ddayOf({ from: due ? i.to : i.from || i.to, to: i.to }, t) : null, isNew = i.posted && daysBetween(i.posted, t) <= 3;
   const when = due && i.to ? `${md2(i.to)}${i.time ? ` ${i.time}` : ''} 마감` : i.startOnly ? `청약신청일 ${md2(i.to)} · 마감일은 공고 원문에서` : i.from && i.to ? `접수 ${md2(i.from)}~${md2(i.to)}` : i.to ? `청약신청일 ${md2(i.to)}` : i.posted ? `게시 ${md2(i.posted)} · 마감일은 공고 원문에서` : '';
-  const tag = i.closed ? '<span class="dd mute">마감됨</span>' : i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : isNew ? '<span class="dd new">새 공고</span>' : '';
+  const start = i.startOnly ? i.to : i.from, tag = ph === 'done' ? '<span class="dd mute">마감됨</span>' : ph === 'plan' ? `<span class="dd">시작 D-${daysBetween(t, start)}</span>` : i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : isNew ? '<span class="dd new">새 공고</span>' : '';
   let org = ORG_KO[i.org] || i.org, kind = i.kind.startsWith(org) ? i.kind.slice(org.length).replace(/^\((.*)\)$/, '$1') : i.kind;   // 청년안심주택(민간) → 민간
   if (i.direct) { org = `단지 직접 · ${org}${i.kind === '민간임대' ? ' · 민간임대' : ''}`; if (i.kind === '민간임대') kind = ''; }   // 단지 운영사 사이트에만 올라온 공고
   const st = feedTitle(i), nm = i.url ? `<a class="nm" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer" title="${esc(i.title)}">${esc(st)} ↗</a>` : `<span class="nm" title="${esc(i.title)}">${esc(st)}</span>`;
@@ -1030,34 +1036,43 @@ function feedRow(i, t, fr, done) {
   const fix = /정정|변경|재공고/.test(i.title) ? '<span class="dd fix">정정공고</span>' : '';   // 예전 공고는 피드 만들 때 숨김 (scripts/feed.mjs buildFeed)
   const jr = done && window.FeedTools ? FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }) : null, wo = whyOpen.has(i.id);
   const jb = jr ? `<button type="button" class="jb ${JB[jr.st][0]}" data-why="${esc(i.id)}" aria-expanded="${wo}">${JB[jr.st][1]}</button>` : '';
-  const cal = i.ev.length && !i.closed ? `<button type="button" class="cbtn" data-ics="${esc(i.id)}">캘린더에 추가</button>` : '<span class="nocal">일정은 공고 원문에서</span>';
+  const cal = ph === 'done' ? '<span></span>' : i.ev.length && !i.closed ? `<button type="button" class="cbtn" data-ics="${esc(i.id)}">캘린더에 추가</button>` : '<span class="nocal">일정은 공고 원문에서</span>';
   const stn = i.st ? `${i.st.n}${i.st.pre ? '(개통 예정)' : ''}${i.st.w != null ? ` 약 ${i.st.w}분` : `${i.st.exit ? ` ${i.st.exit}번 출구` : ''} (거리 정보 없음)`}${i.st.alt ? ` · ${i.st.alt} 개통 예정` : ''}` : '';
   const whyP = jr ? `<div class="fwhy" data-whyp="${esc(i.id)}"${wo ? '' : ' hidden'}><ul>${jr.why.map(w => `<li class="${w.ok === true ? 'y' : w.ok === false ? 'n' : 'q'}"><b>${w.ok === true ? '✔' : w.ok === false ? '✘' : '?'}</b> ${esc(w.t)}: ${esc(w.v)}</li>`).join('')}</ul><p class="hint">내가 입력한 조건으로 이 브라우저에서만 계산한 참고용이에요. 공고문의 자격을 다 담지 못할 수 있어요.</p></div>` : '';
-  return `<li data-fid="${esc(i.id)}"><div class="frow"><span class="nmrow">${nm}${star}</span><span class="sub"><span class="finfo"><span class="org">${esc(org)}</span>${fix}${tag}${jb}<span>${[kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', stn, when].filter(Boolean).map(esc).join(' · ')}</span></span><span class="fbtns">${cal}${btn || '<span></span>'}<button type="button" class="dbtn" data-diag="${esc(i.id)}">진단 →</button></span></span></div>${whyP}${i.detail ? `<div class="fdet" data-det="${esc(i.id)}"${open ? '' : ' hidden'}>${open ? detBody(i, fr ? new Set(fr.hits) : undefined) : ''}</div>` : ''}</li>`;
+  return `<li data-fid="${esc(i.id)}"><div class="frow"><span class="nmrow">${nm}${star}</span><span class="sub"><span class="finfo"><span class="org">${esc(org)}</span>${fix}${tag}${jb}<span>${[kind, i.region !== '서울' ? i.region.replace(/^서울 /, '') : '', stn, when].filter(Boolean).map(esc).join(' · ')}</span></span><span class="fbtns">${cal}${btn || '<span></span>'}<button type="button" class="dbtn" data-diag="${esc(i.id)}">진단 →</button></span></span></div>${whyP}${i.detail ? `<div class="fdet" data-det="${esc(i.id)}"${open ? '' : ' hidden'}>${open ? detBody(i) : ''}</div>` : ''}</li>`;
 }
-let feedHits = new Map();   // 공고 id → 필터에 맞는 주택형 번호 (상세 강조용)
 function renderFeed() {
   const box = $('#subFeed'), t = todayYmd(), f = subFeed, done = !!state.subs.wizard.done;
-  const all = (f?.items || []).filter(i => i.region.startsWith('서울') && (!i.to || i.to >= t) && (!feedF.src || (feedF.src === 'direct') === i.direct)).sort((a, b) => a.closed - b.closed || (a.to || '9').localeCompare(b.to || '9'));   // 마감 안 지난 것 · 마감 가까운 순 · 사이트가 마감 표시한 단지 직접 공고는 맨 아래
-  box.hidden = !all.length && !feedF.src; if (box.hidden) return;   // 출처 필터로 0개면 필터는 보여야 지울 수 있다
-  const on = ['src', 'dep', 'rent', 'area', 'walk'].filter(k => feedF[k] != null && feedF[k] !== ''), fr = new Map(all.map(i => [i.id, FeedTools.filterItem(i, feedF)]));
-  feedHits = new Map([...fr].map(([id, r]) => [id, new Set(r.hits)]));
-  const okL = all.filter(i => ['all', 'ok'].includes(fr.get(i.id).st)), unkL = all.filter(i => fr.get(i.id).st === 'unk'), noN = all.filter(i => fr.get(i.id).st === 'no').length;
-  const items = feedAll ? okL : okL.slice(0, 8), more = okL.length - items.length, sel = k => `<select data-f="${k}" aria-label="${k}">${FOPT[k].map(([v, l]) => `<option value="${v}"${String(feedF[k] ?? '') === String(v) ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
-  const starN = all.filter(i => stars.has(i.id) && i.ev.length).length;
-  const askL = Array.isArray(calAsk) ? all.filter(i => calAsk.includes(i.id) && i.ev.length && !i.closed) : [];
-  const ask = calAsk === 'sub' ? `<div class="calask"><span>카카오톡에서 넘어왔어요. 여기서 구독하면 캘린더 앱에 들어가요.</span><a class="small linkbtn" href="${esc(calUrl())}" data-askdone>캘린더 구독</a></div>`
+  const seoul = (f?.items || []).filter(i => i.region.startsWith('서울'));
+  box.hidden = !seoul.length; if (box.hidden) return;
+  if (!box.querySelector('#feedSearch')) {   // 검색 칸은 한 번만 (한글 입력 중에 다시 그리면 글자가 끊김)
+    box.innerHTML = `<div id="feedAsk"></div><div class="ftabs" role="tablist" aria-label="공고 상태" id="feedTabs"></div>
+      <div class="fsearch" id="feedSearch"><select data-fq="gu" aria-label="구"></select><input type="search" data-fq="q" aria-label="공고 이름·역·구 검색" placeholder="공고 이름·역·구 검색"></div><div id="feedBody"></div>`;
+  }
+  const q = feedQ.q.trim().replace(/\s+/g, '').toLowerCase(), gus = SEOUL_GU.filter(g => seoul.some(i => guOf(i) === g));
+  if (feedQ.gu && !gus.includes(feedQ.gu)) feedQ.gu = '';
+  const gs = box.querySelector('[data-fq="gu"]'), gopt = `<option value="">구 전체</option>${gus.map(g => `<option value="${g}">${g}</option>`).join('')}`; if (gs.innerHTML !== gopt) gs.innerHTML = gopt; gs.value = feedQ.gu;
+  const hit = i => (!feedQ.gu || guOf(i) === feedQ.gu) && (!q || [i.title, i.region, guOf(i), i.org, ORG_KO[i.org] || '', i.kind, i.st?.n || '', i.st?.alt || ''].join('').replace(/\s+/g, '').toLowerCase().includes(q));
+  const by = { now: [], plan: [], done: [] }; for (const i of seoul) if (hit(i)) by[phaseOf(i, t)].push(i);
+  by.now.sort((a, b) => (a.to || '9').localeCompare(b.to || '9') || b.posted.localeCompare(a.posted));   // 마감 가까운 순
+  by.plan.sort((a, b) => ((a.startOnly ? a.to : a.from) || '').localeCompare((b.startOnly ? b.to : b.from) || ''));   // 시작 가까운 순
+  by.done.sort((a, b) => (b.to || b.posted).localeCompare(a.to || a.posted));   // 최근에 끝난 순
+  box.querySelector('#feedTabs').innerHTML = FTABS.map(([k, l]) => `<button type="button" role="tab" data-ftab="${k}" aria-selected="${k === feedTab}">${l}<span class="n">${by[k].length}</span></button>`).join('');
+  const L = by[feedTab], items = feedAll ? L : L.slice(0, 8), more = L.length - items.length;
+  const open = seoul.filter(i => phaseOf(i, t) !== 'done'), starN = open.filter(i => stars.has(i.id) && i.ev.length).length;
+  const askL = Array.isArray(calAsk) ? open.filter(i => calAsk.includes(i.id) && i.ev.length && !i.closed) : [];
+  box.querySelector('#feedAsk').innerHTML = calAsk === 'sub' ? `<div class="calask"><span>카카오톡에서 넘어왔어요. 여기서 구독하면 캘린더 앱에 들어가요.</span><a class="small linkbtn" href="${esc(calUrl())}" data-askdone>캘린더 구독</a></div>`
     : askL.length ? `<div class="calask"><span>카카오톡에서 고른 공고 ${askL.length}개</span><button type="button" class="small" data-askics>캘린더에 추가</button></div>` : '';
-  box.innerHTML = `${ask}<div class="ftools"><details class="ffilter"${on.length ? ' open' : ''}><summary>필터${on.length ? ` ${on.length}개 켜짐` : ''}</summary><div class="fgrid">${sel('src')}${sel('dep')}${sel('rent')}${sel('area')}${sel('walk')}</div>${on.length ? '<button type="button" class="linkbtn" data-freset>필터 지우기</button>' : ''}</details>
-    <span class="facts"><button type="button" class="small ghost" data-starics${starN ? '' : ' disabled'}>★ 관심 공고 캘린더로 받기${starN ? ` (${starN})` : ''}</button><a class="small linkbtn" href="${esc(calUrl())}" title="새 공고의 청약 기간(시작~마감)·발표일이 캘린더 앱에 자동으로 들어와요">캘린더 구독</a></span>
+  const none = { now: '지금 모집 중인 공고가 없어요.', plan: '모집 예정인 공고가 없어요.', done: '최근 30일 안에 끝난 공고가 없어요.' }[feedTab];
+  box.querySelector('#feedBody').innerHTML = `<div class="ftools"><span class="facts"><button type="button" class="small ghost" data-starics${starN ? '' : ' disabled'}>★ 관심 공고 캘린더로 받기${starN ? ` (${starN})` : ''}</button><a class="small linkbtn" href="${esc(calUrl())}" title="새 공고의 청약 기간(시작~마감)·발표일이 캘린더 앱에 자동으로 들어와요">캘린더 구독</a></span>
     <p class="fcalnote">구글 캘린더는 구독 갱신이 하루까지 늦고 알림을 적용하지 않아요. 마감 알림은 공고별 '캘린더에 추가'를 쓰세요.</p></div>
     ${done ? '' : '<p class="fhint">내 조건 넣고 가능 여부 보기 → <a href="#diag">순위·점수 진단</a></p>'}
-    <ul class="flist">${items.map(i => feedRow(i, t, fr.get(i.id), done)).join('')}</ul>
-    ${on.length && !okL.length ? '<p class="hint fnone">조건에 맞는 공고가 없어요.</p>' : ''}
-    ${on.length && unkL.length ? `<h4 class="fgroup">정보 없음 · 조건을 확인할 수 없는 공고 ${unkL.length}개</h4><ul class="flist funk">${unkL.map(i => feedRow(i, t, fr.get(i.id), done)).join('')}</ul>` : ''}
-    <div class="foot"><span>${f.updated ? `${esc(md2(f.updated.slice(0, 10)))} 확인 · ` : ''}${esc(f.source || '')}${on.length && noN ? ` · 조건에 안 맞는 ${noN}개 숨김` : ''}</span>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}</div>`;
+    <ul class="flist">${items.map(i => feedRow(i, t, done, feedTab)).join('')}</ul>
+    ${L.length ? '' : `<p class="hint fnone">${q || feedQ.gu ? '검색에 맞는 공고가 없어요.' : none}</p>`}
+    <div class="foot"><span>${f.updated ? `${esc(md2(f.updated.slice(0, 10)))} 확인 · ` : ''}${esc(f.source || '')}</span>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}</div>`;
   const mb = box.querySelector('[data-feedmore]'); if (mb) mb.onclick = () => { feedAll = true; renderFeed(); };
 }
+$('#subFeed').addEventListener('input', e => { const s = e.target.closest('[data-fq]'); if (!s) return; feedQ[s.dataset.fq] = s.value; feedAll = false; renderFeed(); });
 // 상세보기: feed/detail/{id}.json (GitHub Actions 가 공고문 PDF 를 Gemini 로 읽어 둔 신청 조건 요약 · scripts/detail.mjs)
 const detOpen = new Set(), detCache = new Map();
 function normDet(x) {
@@ -1068,11 +1083,11 @@ function normDet(x) {
 }
 // 글 속 http(s) 주소만 링크로 (나머지는 글자 그대로)
 const linkify = v => String(v || '').split(/(https?:\/\/[^\s<>"'),]+)/).map((p, k) => k % 2 && safeUrl(p) ? `<a href="${esc(p)}" target="_blank" rel="noopener noreferrer">${esc(p)} ↗</a>` : esc(p)).join('');
-function detBody(i, hits = feedHits.get(i.id)) {
+function detBody(i) {
   const d = detCache.get(i.id + '@' + i.dv); if (d === undefined) return '<p class="hint">불러오는 중…</p>'; if (!d) return '<p class="hint">상세를 불러오지 못했어요. 공고 원문에서 확인해 주세요.</p>';
   const ul = a => a.length ? `<ul>${a.map(x => `<li>${x}</li>`).join('')}</ul>` : '', row = (k, v) => v ? `<div><dt>${k}</dt><dd>${v}</dd></div>` : '';
   return `${d.target ? `<p class="dtgt">${esc(d.target)}</p>` : ''}<dl>${row('신청 자격', ul(d.eligibility.map(esc)))}${row('소득', esc(d.income))}${row('자산', esc(d.asset))}${row('자동차', esc(d.car))}
-    ${row('주택형·가격', d.supply.length ? `<ul>${d.supply.map((r, k) => `<li${hits?.has(k) ? ' class="hit" title="필터 조건에 맞는 주택형"' : ''}>${r.type ? `<b>${esc(r.type)}</b> ` : ''}${[r.area, /^\d+$/.test(r.units) ? `${r.units}세대` : r.units, r.price, r.movein && `입주 ${r.movein}`].filter(Boolean).map(esc).join(' · ')}</li>`).join('')}</ul>` : '')}
+    ${row('주택형·가격', d.supply.length ? `<ul>${d.supply.map((r, k) => `<li>${r.type ? `<b>${esc(r.type)}</b> ` : ''}${[r.area, /^\d+$/.test(r.units) ? `${r.units}세대` : r.units, r.price, r.movein && `입주 ${r.movein}`].filter(Boolean).map(esc).join(' · ')}</li>`).join('')}</ul>` : '')}
     ${row('일정', ul(d.schedule.map(r => esc([r.label, r.date].filter(Boolean).join(' ')))))}${row('주소', esc(d.addr))}${row('신청 방법', linkify(d.apply))}${row('내가 낼 비용', ul(d.costs.map(esc)))}${row('특이사항', ul(d.special.map(esc)))}${row('문의', esc(d.contact))}</dl>
     <p class="hint dnote">${d.api ? '마이홈포털 공공데이터의 기본 정보예요. 신청 자격·소득 기준은' : `AI가 공고문에서 읽은 내용이에요${d.read ? ` (${esc(md2(d.read))} 읽음)` : ''}. 틀릴 수 있으니 신청 전에`} ${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">공고 원문 ↗</a>` : '공고 원문'}${d.api ? '에서 확인하세요.' : '을 꼭 확인하세요.'}</p>`;
 }
@@ -1088,9 +1103,6 @@ async function icsDownload(list, file) {
   const blob = new Blob([FeedTools.ics(ns, { calName: list.length > 1 ? '청약 체크 · 관심 공고' : `청약 · ${ns[0].name}` })], { type: 'text/calendar;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
-$('#subFeed').addEventListener('change', e => {
-  const s = e.target.closest('[data-f]'); if (!s) return; feedF[s.dataset.f] = s.value === '' ? null : s.dataset.f === 'src' ? s.value : Number(s.value); lset(FKEY, feedF); feedAll = false; renderFeed();
-});
 $('#subFeed').addEventListener('click', async e => {
   const it = id => subFeed?.items.find(x => x.id === id);
   const st = e.target.closest('[data-star]'); if (st) { const id = st.dataset.star; stars.has(id) ? stars.delete(id) : stars.add(id); lset(SKEY, [...stars]); renderFeed(); return; }
@@ -1098,14 +1110,14 @@ $('#subFeed').addEventListener('click', async e => {
   if (IN_KAKAO) {   // 카카오톡 안: 캘린더 버튼은 기본 브라우저로 넘김
     const k = e.target.closest('[data-ics]'), ks = e.target.closest('[data-starics]'), kw = e.target.closest('a[href^="webcal:"]');
     if (k) { openOutside(k.dataset.ics); return; }
-    if (ks) { const t = todayYmd(), ids = (subFeed?.items || []).filter(i => stars.has(i.id) && i.ev.length && (!i.to || i.to >= t)).map(i => i.id); if (ids.length) openOutside(ids.join(',')); return; }
+    if (ks) { const t = todayYmd(), ids = (subFeed?.items || []).filter(i => stars.has(i.id) && i.ev.length && phaseOf(i, t) !== 'done').map(i => i.id); if (ids.length) openOutside(ids.join(',')); return; }
     if (kw) { e.preventDefault(); openOutside('sub'); return; }
   }
-  if (e.target.closest('[data-askics]')) { const L = (subFeed?.items || []).filter(i => Array.isArray(calAsk) && calAsk.includes(i.id) && i.ev.length && !i.closed); if (L.length) await icsDownload(L, L.length > 1 ? '청약-관심공고.ics' : `청약-${shortTitle(L[0].title).replace(/[\\/:*?"<>|]/g, '')}.ics`); calAskDone(); renderFeed(); return; }
+  if (e.target.closest('[data-askics]')) { const t = todayYmd(), L = (subFeed?.items || []).filter(i => Array.isArray(calAsk) && calAsk.includes(i.id) && i.ev.length && phaseOf(i, t) !== 'done'); if (L.length) await icsDownload(L, L.length > 1 ? '청약-관심공고.ics' : `청약-${shortTitle(L[0].title).replace(/[\\/:*?"<>|]/g, '')}.ics`); calAskDone(); renderFeed(); return; }
   if (e.target.closest('[data-askdone]')) { calAskDone(); setTimeout(renderFeed, 500); return; }
   const c = e.target.closest('[data-ics]'); if (c) { const i = it(c.dataset.ics); if (i?.ev.length) icsDownload([i], `청약-${shortTitle(i.title).replace(/[\\/:*?"<>|]/g, '')}.ics`); return; }
-  if (e.target.closest('[data-starics]')) { const t = todayYmd(), L = (subFeed?.items || []).filter(i => stars.has(i.id) && i.ev.length && (!i.to || i.to >= t)); if (L.length) icsDownload(L, '청약-관심공고.ics'); return; }
-  if (e.target.closest('[data-freset]')) { feedF = { dep: null, rent: null, area: null, walk: null, src: null }; lset(FKEY, feedF); renderFeed(); return; }
+  if (e.target.closest('[data-starics]')) { const t = todayYmd(), L = (subFeed?.items || []).filter(i => stars.has(i.id) && i.ev.length && phaseOf(i, t) !== 'done'); if (L.length) icsDownload(L, '청약-관심공고.ics'); return; }
+  const tb = e.target.closest('[data-ftab]'); if (tb) { feedTab = tb.dataset.ftab; feedAll = false; renderFeed(); return; }
   const b = e.target.closest('[data-detail]'); if (!b) return; const id = b.dataset.detail, i = it(id), box = $(`#subFeed [data-det="${CSS.escape(id)}"]`); if (!i || !box) return;
   if (detOpen.delete(id)) { box.hidden = true; b.setAttribute('aria-expanded', 'false'); return; }
   detOpen.add(id); b.setAttribute('aria-expanded', 'true'); box.hidden = false; box.innerHTML = detBody(i);
@@ -1180,7 +1192,7 @@ $('#danjiBox').addEventListener('click', e => {
 $('#danjiBox').addEventListener('input', e => { const s = e.target.closest('[data-df]'); if (!s) return; dF[s.dataset.df] = s.value; renderDanjiList(); });
 const loadFeeds = () => Promise.all([
   fetch(`${SITE}feed/notices.json`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(setFeed).catch(() => {}),
-  fetch(`${SITE}feed/danji.json`, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(x => { danji = normDanji(x); renderDanji(); }).catch(() => {})]);
+  fetch(`${SITE}feed/danji.json`, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(x => { danji = normDanji(x); renderDanji(); if (subFeed) renderFeed(); }).catch(() => {})]);
 window.ccRefreshFeed = loadFeeds;   // 앱을 다시 볼 때 (bridge.js)
 loadFeeds();
 // ==== AI_SPEC 시작 (worker/src/spec.js 와 같아야 함 · 고친 뒤 python scripts/sync_ai_spec.py) ====

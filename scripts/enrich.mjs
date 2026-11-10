@@ -167,7 +167,8 @@ export async function enrich(items, { dir = DETAIL_DIR, geoFile = GEO_FILE, stat
   return items;
 }
 export async function writeCalendar(items, file = CAL_FILE, now = new Date()) {   // 구독용: 청약 기간(시작~마감)·발표 · DTSTAMP = 파일을 만든 시각(UTC) · DTSTAMP 말고 바뀐 게 없으면 다시 쓰지 않음
-  const body = FT.ics(items.filter(i => !i.closed).map(i => ({ id: i.id, lm: i.lm, name: FT.calName(i.title, i.direct), url: i.url, ev: i.ev })),   // 사이트가 '마감되었습니다' 표시한 단지 직접 공고는 뺌
+  const today = new Date(now.getTime() + 9 * 3600e3).toISOString().slice(0, 10);
+  const body = FT.ics(items.filter(i => !i.closed && !(i.to && !i.startOnly && i.to < today)).map(i => ({ id: i.id, lm: i.lm, name: FT.calName(i.title, i.direct), url: i.url, ev: i.ev })),   // 사이트가 '마감되었습니다' 표시한 단지 직접 공고는 뺌
     { calName: '청약 체크 · 서울 진행중 공고', kinds: ['start', 'end', 'announce'], refresh: 'PT3H', dtstamp: () => now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '') });
   let prev = ''; try { prev = await readFile(file, 'utf8'); } catch { /* 처음 */ }
   const strip = x => x.replace(/^DTSTAMP:.*$/gm, '');

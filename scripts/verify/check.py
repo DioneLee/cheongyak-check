@@ -154,9 +154,12 @@ ok('상세보기 → 신청 조건 펼침 (상세 있는 공고만 · AI 안내 
 q('#subFeed [data-detail="lh-d1"]').click(); await W(50);
 ok('상세보기 다시 누르면 접힘', dt1.hidden && q('#subFeed [data-detail="lh-d1"]').getAttribute('aria-expanded') === 'false');
 ok('상세 없는 공고는 [공고 원문 보기] 링크', qa('#subFeed a.dlink[target="_blank"]').length === 2 && qa('#subFeed a.dlink').every(a => a.textContent.includes('공고 원문 보기')));
-fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('youth-d2', '2026-11-10'), org: '청년안심', from: '2026-11-09', time: '23:00' }, { ...fi('youth-d3', '2026-11-12'), org: '청년안심', startOnly: true }] }); await W(50);
+fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('youth-d2', '2026-11-10'), org: '청년안심', from: '2026-11-07', time: '23:00' }, { ...fi('youth-d3', '2026-11-12'), org: '청년안심', startOnly: true }] }); await W(50);
 const r2 = qa('#subFeed .flist > li').map(li => li.textContent.replace(/\s+/g, ' '));
-ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3) · 마감일 모르면 시작일 표시', r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감') && r2[1].includes('청약신청일 11.12(목) · 마감일은 공고 원문에서'), r2.join(' / '));
+ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3)', r2.length === 1 && r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감'), r2.join(' / '));
+q('#subFeed [data-ftab="plan"]').click(); await W(50); const r3 = qa('#subFeed .flist > li').map(li => li.textContent.replace(/\s+/g, ' '));
+ok('예정 탭: 시작 전 공고 · "시작 D-5" · 마감일 모르면 시작일 표시', r3.length === 1 && r3[0].includes('시작 D-5') && r3[0].includes('청약신청일 11.12(목) · 마감일은 공고 원문에서'), r3.join(' / '));
+q('#subFeed [data-ftab="now"]').click(); await W(50);
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('sh-f1', '2099-01-01'), org: 'SH', title: '[정정] 고덕강일 3단지 입주자모집공고' }] }); await W(50);
 ok('정정공고는 배지', q('#subFeed .dd.fix')?.textContent === '정정공고' && q('#subFeed .nm').textContent.startsWith('고덕강일 3단지'));
 // 캘린더 · 신청 가능 배지 · 필터 (공개 정보 ev·cr·ty·st 는 Actions 가 notices.json 에 넣음 · 판정·필터·.ics 는 브라우저에서)
@@ -166,7 +169,7 @@ const PODIUM = { ...fi('youth-6720', '2026-11-10'), org: '청년안심', title: 
   cr: { c: [{ k: 'age', min: 19, max: 39 }, { k: 'homeless', scope: '세대' }, { k: 'car', max: 4542 }], x: 1 },
   ty: [{ n: '25A 1510호', a: 20.17, dep: 9300, rent: 64.72 }, { n: '25B 529호', a: 20.4, dep: 9300, rent: 64.92 }, { n: '52A 2007호', a: 42.17, dep: 17300, rent: 121.45 }], st: { n: '건대입구역', m: 150, w: 3 } };
 const LHX = { ...fi('lh-77', '2026-11-20'), title: 'LH 서울 행복주택 모집공고' };
-fw.__today = '2026-11-08';
+fw.__today = '2026-11-09';
 fw.eval(`state.subs.tab = 'youth'; Object.assign(state.subs.me, { a: { ...state.subs.me.a, birth: '1997-03-01', income: 300 }, hasCar: false, car: null }); state.subs.me.yt.homeless = true; state.subs.seen = { hasCar: true }; state.subs.wizard.done = true; render()`);
 fw.eval('setFeed')({ updated: '', source: '', items: [PODIUM, LHX] }); await W(80);
 ok('신청 가능 배지: 입력·확인한 값으로 기본 조건 맞아 보임 · 누르면 항목별 이유', q('#subFeed [data-why="youth-6720"]')?.textContent === '기본 조건 맞아 보임' && q('#subFeed [data-whyp="youth-6720"]').hidden, q('#subFeed [data-why="youth-6720"]')?.textContent);
@@ -193,19 +196,26 @@ ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공
   ok('★ 관심 공고: 이 브라우저에만 저장 · 관심 공고 캘린더 버튼 켜짐', JSON.parse(fw.localStorage.getItem('cheongyak-check-stars')).includes('youth-6720') && !q('#subFeed [data-starics]').disabled && q('#subFeed [data-star="youth-6720"]').textContent === '★');
   blob = null; q('#subFeed [data-starics]').click(); for (let n = 0; n < 20 && !blob; n++) await W(50);
   ok('관심 공고 전체 캘린더로 받기', !!blob && (await blob.text()).includes('X-WR-CALNAME:청약 체크 · 관심 공고') || (blob && (await blob.text()).includes('UID:youth-6720-end@')));
-  // 필터: 보증금 1억 이하
-  const sel = q('#subFeed select[data-f="dep"]'); sel.value = '10000'; sel.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(50);
-  const okIds = qa('#subFeed .flist:not(.funk) > li').map(li => li.dataset.fid), unkIds = qa('#subFeed .funk > li').map(li => li.dataset.fid);
-  ok('필터 보증금 1억 이하: 더포디엄830 남음 · 상세 없는 공고는 "정보 없음" 묶음 · 필터는 브라우저에 저장', okIds.join() === 'youth-6720' && unkIds.join() === 'lh-77' && q('#subFeed .fgroup')?.textContent.includes('정보 없음') && JSON.parse(fw.localStorage.getItem('cheongyak-check-feed-filter')).dep === 10000, okIds + ' / ' + unkIds);
-  fw.location.hash = 'diag'; await W(120); fw.location.hash = 'notices'; await W(120);
-  ok('탭을 바꿔도 필터 유지', q('#subFeed select[data-f="dep"]').value === '10000' && qa('#subFeed .flist:not(.funk) > li').length === 1);
-  q('#subFeed [data-detail="youth-6720"]').click(); for (let n = 0; n < 20 && !q('#subFeed [data-det="youth-6720"] li.hit'); n++) await W(50);
-  ok('필터에 맞는 주택형 강조: 25A·25B 만', qa('#subFeed [data-det="youth-6720"] li.hit').map(li => li.querySelector('b').textContent).join() === '25A 1510호,25B 529호', qa('#subFeed [data-det="youth-6720"] li.hit').length);
-  const s5 = q('#subFeed select[data-f="dep"]'); s5.value = '5000'; s5.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(50);
-  ok('보증금 5천 이하: 더포디엄830 숨김(몇 개 숨겼는지 표시) · LH 는 정보 없음에 남음', !q('#subFeed [data-fid="youth-6720"]') && !!q('#subFeed .funk [data-fid="lh-77"]') && /안 맞는 1개 숨김/.test(q('#subFeed .foot').textContent));
-  q('#subFeed [data-freset]').click(); await W(50);
-  ok('필터 지우기 → 모두 보임', qa('#subFeed .flist > li').length === 2 && !q('#subFeed .funk'));
   fw.fetch = rf2; fw.URL.createObjectURL = ou; fw.HTMLAnchorElement.prototype.click = oc; }
+// 공고 세부 탭 (진행 중 · 예정 · 완료) · 검색 (이름·역·구 + 구 선택) — 오늘 11.9
+{ const P = { ...PODIUM, region: '서울 광진구' }, PL = { ...fi('youth-p1', '2026-11-25'), org: '청년안심', title: '[민간임대] 송정역 케이제이타워 최초모집공고', from: '2026-11-20', region: '서울 강서구' },
+    DN = { ...fi('lh-d9', '2026-11-05'), title: 'LH 마포구 행복주택 모집공고', ev: [{ k: 'end', l: '청약 마감', d: '2026-11-05' }] }, CL = { ...fi('elyes-c9', '2026-11-30'), org: '엘리스', title: '[어바니엘 염창] 공실세대 모집공고 -->마감되었습니다.', direct: true, closed: true, region: '서울 강서구' };
+  fw.eval('setFeed')({ updated: '', source: '', items: [P, LHX, PL, DN, CL] }); await W(80);
+  const tabs = () => qa('#subFeed [data-ftab]').map(b => b.textContent + (b.getAttribute('aria-selected') === 'true' ? '*' : '')).join(), ids = () => qa('#subFeed .flist > li').map(l => l.dataset.fid).join();
+  ok('세부 탭 3개 · 개수 · 처음은 진행 중 · 예전 필터 없음', tabs() === '진행 중2*,예정1,완료2' && ids() === 'youth-6720,lh-77' && !q('#subFeed .ffilter') && !q('#subFeed select[data-f]'), tabs() + ' / ' + ids());
+  q('#subFeed [data-ftab="plan"]').click(); await W(50);
+  ok('예정 탭: 모집 시작 전 공고 · 시작 D-11', ids() === 'youth-p1' && q('#subFeed [data-fid="youth-p1"]').textContent.includes('시작 D-11'), ids());
+  q('#subFeed [data-ftab="done"]').click(); await W(50);
+  ok("완료 탭: 마감 지난 공고 + '마감되었습니다' 공고 · '마감됨' · 캘린더 버튼 없음", ids() === 'elyes-c9,lh-d9' && qa('#subFeed .flist > li').every(l => l.textContent.includes('마감됨') && !l.querySelector('[data-ics]')), ids());
+  q('#subFeed [data-ftab="now"]').click(); await W(50);
+  const inp = q('#subFeed input[data-fq="q"]'); inp.value = '건대'; inp.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50);
+  ok('검색 "건대" → 더포디엄830 만 · 탭 개수도 검색 결과 · 검색 칸은 다시 안 그림(한글 입력 유지)', ids() === 'youth-6720' && tabs() === '진행 중1*,예정0,완료0' && q('#subFeed input[data-fq="q"]') === inp, ids() + ' / ' + tabs());
+  inp.value = ''; inp.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50);
+  const gs = q('#subFeed select[data-fq="gu"]');
+  ok('구 선택: 공고에 있는 구만 (지역·제목에서)', [...gs.options].map(o => o.value).join() === ',강서구,광진구,마포구', [...gs.options].map(o => o.value).join());
+  gs.value = '강서구'; gs.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50);
+  ok('구 "강서구" → 진행 중 0 · 예정 1 · 완료 1 · 없을 때 안내', tabs() === '진행 중0*,예정1,완료1' && q('#subFeed .fnone')?.textContent === '검색에 맞는 공고가 없어요.', tabs());
+  gs.value = ''; gs.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50); }
 delete fw.__today;
 { const yn = fw.eval('state.subs.notices[0]');
   fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('m1', '2099-01-01'), title: '[정정공고] ' + yn.name, posted: '2026-11-05' }, { ...fi('x1', '2099-01-02'), title: '[SH] 아무개 행복주택 입주자모집공고', url: 'https://www.i-sh.co.kr/x?seq=1' }] }); await W(80);
@@ -275,32 +285,26 @@ fw.history.back(); await W(200);
 ok('단지 탭: 뒤로가기 → 공고', vis() === 'notices' && fw.location.hash === '#notices', fw.location.hash);
 // 단지 직접 공고가 섞인 공고 목록 (가짜 피드)
 const T = fw.eval('todayYmd()'), el1 = { id: 'elyes-a1', org: '엘리스', title: '[어바니엘 염창] 공실세대 모집공고 (접수기간: 11/6~11/8)', region: '서울 강서구', kind: '민간임대', posted: T, from: T, to: T, time: '17:00', url: 'https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=a1', direct: true, danji: 'x-elyes-yeomchang' };
-const el2 = { ...el1, id: 'elyes-a2', title: '[용산원효루미니] 추가모집공고', region: '서울 용산구', kind: '청년안심주택(민간)', to: '2099-02-01', from: '2099-01-30', danji: '20000406' };
+const el2 = { ...el1, id: 'elyes-a2', title: '[용산원효루미니] 추가모집공고', region: '서울 용산구', kind: '청년안심주택(민간)', to: '2099-02-01', from: T, danji: '20000406' };
 const mix = items => fw.eval('setFeed')({ updated: '', source: '', items }); await mix([fi('o1', '2099-01-01'), el2, el1]); await W(120);
 { const L = qa('#subFeed .flist > li'), b1 = q('#subFeed [data-fid="elyes-a1"] .org')?.textContent, b2 = q('#subFeed [data-fid="elyes-a2"] .org')?.textContent;
   ok('공고 탭: 단지 직접 공고가 섞임 · 오늘 마감이 맨 위', L.length === 3 && L[0].dataset.fid === 'elyes-a1' && L[0].textContent.includes('오늘 마감'), L.map(l => l.dataset.fid).join());
   ok("배지: '단지 직접 · 엘리스 · 민간임대' · 101개 단지는 '단지 직접 · 엘리스'", b1 === '단지 직접 · 엘리스 · 민간임대' && b2 === '단지 직접 · 엘리스', b1 + ' / ' + b2);
   ok('단지 직접 공고 이름은 [단지 이름] 을 살림 · D-day 는 마감일 기준', q('#subFeed [data-fid="elyes-a1"] .nm').textContent.startsWith('어바니엘 염창') && /마감/.test(q('#subFeed [data-fid="elyes-a2"]').textContent), q('#subFeed [data-fid="elyes-a1"] .nm').textContent); }
-const setSrc = async v => { const s = q('#subFeed [data-f="src"]'); s.value = v; s.dispatchEvent(new fw.Event('change', { bubbles: true })); await W(80); };
-await setSrc('direct');
-ok('출처 필터: 단지 직접만', qa('#subFeed .flist > li').map(l => l.dataset.fid).sort().join() === 'elyes-a1,elyes-a2' && /필터 1개 켜짐/.test(q('#subFeed .ffilter summary').textContent));
-await setSrc('official');
-ok('출처 필터: 공식만', qa('#subFeed .flist > li').map(l => l.dataset.fid).join() === 'o1');
-q('#subFeed [data-freset]').click(); await W(80);
 { const ev = [{ k: 'end', l: '청약 마감', d: '2099-02-01', t: '17:00' }], c4 = { ...el1, id: 'elyes-c4', title: '[용산원효루미니] 추가모집공고(접수일 26.11.09)-->마감되었습니다.', closed: true, ev };
   await mix([fi('o1', '2099-01-01'), { ...el2, ev }, c4, el1]); await W(120);
-  const L = qa('#subFeed .flist > li'), c = q('#subFeed [data-fid="elyes-c4"]');
-  ok("마감 표시 공고: '마감됨' 배지 · '오늘 마감' 아님 · 목록 맨 아래 · 캘린더 버튼 없음", L.at(-1) === c && c.textContent.includes('마감됨') && !c.textContent.includes('오늘 마감') && !c.querySelector('[data-ics]'), L.map(l => l.dataset.fid).join());
+  const L = qa('#subFeed .flist > li'); q('#subFeed [data-ftab="done"]').click(); await W(50); const c = q('#subFeed [data-fid="elyes-c4"]');
+  ok("마감 표시 공고: 진행 중에서 빠지고 완료 탭 · '마감됨' 배지 · '오늘 마감' 아님 · 캘린더 버튼 없음", !L.some(l => l.dataset.fid === 'elyes-c4') && !!c && c.textContent.includes('마감됨') && !c.textContent.includes('오늘 마감') && !c.querySelector('[data-ics]'), L.map(l => l.dataset.fid).join());
+  q('#subFeed [data-ftab="now"]').click(); await W(50);
   ok('마감 일시를 읽은 단지 직접 공고: 캘린더에 추가 · 못 읽은 공고만 "일정은 공고 원문에서"', !!q('#subFeed [data-fid="elyes-a2"] [data-ics]') && !q('#subFeed [data-fid="elyes-a1"] [data-ics]') && q('#subFeed [data-fid="elyes-a1"]').textContent.includes('일정은 공고 원문에서'));
   await mix([fi('o1', '2099-01-01'), el2, el1]); await W(120); }
 ok('공고 출처: 맨 아래 안내에 "롯데건설 엘리스(제목·링크)"', q('footer').textContent.includes('롯데건설 엘리스(제목·링크)'));
-ok('출처 필터: 필터 지우기 → 전체 · 저장값도', qa('#subFeed .flist > li').length === 3 && JSON.parse(fw.localStorage.getItem('cheongyak-check-feed-filter')).src === null);
 ok('관심 단지 띠: ★ 한 뒤에 올라온 공고 → 띠', !q('#danjiNew').hidden && !!q('#danjiNew [data-dnseen="elyes-a1"]'), q('#danjiNew').textContent);
 q('#danjiNew [data-dnseen="elyes-a1"]').click(); await W(80);
 q('[data-tab-link="danji"]').click(); await W(150); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); q('[data-tab-link="notices"]').click(); await W(150);
 ok('관심 단지 띠: ★ 다시 눌러도 이미 본 공고는 그대로 숨김', q('#danjiNew').hidden);
 const evs = []; fw.addEventListener('cc-danji-new', e => evs.push(e.detail));
-const el3 = { ...el1, id: 'elyes-a3', title: '[어바니엘 염창] 재임대 모집공고 (접수기간: 12/1~12/3)', to: '2099-03-03', from: '2099-03-01' }; await mix([fi('o1', '2099-01-01'), el2, el1, el3]); await W(120);
+const el3 = { ...el1, id: 'elyes-a3', title: '[어바니엘 염창] 재임대 모집공고 (접수기간: 12/1~12/3)', to: '2099-03-03', from: T }; await mix([fi('o1', '2099-01-01'), el2, el1, el3]); await W(120);
 { const nb = q('#danjiNew'), btn = nb.querySelector('[data-dnstar="elyes-a3"]');
   ok('관심 단지 띠: 공고 탭 맨 위 "관심 단지 새 공고" · 새 공고만 · "이 공고 마감 알림도 받기"', !nb.hidden && nb.querySelector('h2').textContent === '관심 단지 새 공고' && nb.compareDocumentPosition(q('#h-links')) & 4 && nb.querySelectorAll('li').length === 1 && btn?.textContent === '이 공고 마감 알림도 받기', nb.textContent);
   ok('앱 알림용 이벤트 cc-danji-new (공고 id · 단지 이름)', evs.length >= 1 && evs.at(-1)[0].id === 'elyes-a3' && evs.at(-1)[0].danji === '어바니엘 염창', JSON.stringify(evs.at(-1)));

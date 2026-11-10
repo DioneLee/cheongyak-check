@@ -20,7 +20,7 @@ globalThis.fetch = async (url, o) => {
   if (u.pathname.includes('lhLeaseNoticeInfo1')) {
     const list = u.searchParams.get('UPP_AIS_TP_CD') !== '06' ? [] : [
       { PAN_ID: '1001', PAN_NM: '[정정공고] 서울 행복주택 입주자 모집', CNP_CD_NM: '서울특별시', AIS_TP_CD_NM: '행복주택', PAN_NT_ST_DT: T(-2).replaceAll('-', '.'), CLSG_DT: T(5).replaceAll('-', '.'), DTL_URL: 'https://apply.lh.or.kr/x?PAN_ID:1001', ALL_CNT: 2 },
-      { PAN_ID: '1002', PAN_NM: '지난 공고', CLSG_DT: T(-1).replaceAll('-', '.'), ALL_CNT: 2 }];
+      { PAN_ID: '1002', PAN_NM: '지난 공고', CLSG_DT: T(-1).replaceAll('-', '.'), ALL_CNT: 3 }, { PAN_ID: '1003', PAN_NM: '한참 지난 공고', CLSG_DT: T(-31).replaceAll('-', '.'), ALL_CNT: 3 }];
     return new Response(JSON.stringify([{ dsSch: [] }, { dsList: list, resHeader: [] }]));
   }
   if (u.pathname.includes('rsdtRcritNtcList')) return new Response(JSON.stringify({ header: { resultCode: '00' }, body: { totalCount: 3, item: [
@@ -38,7 +38,7 @@ globalThis.fetch = async (url, o) => {
 };
 
 const lh = await F.fetchLH(), my = await F.fetchMyHome(), sh = await F.fetchSH({ pages: 1 }), yo = await F.fetchYouth();
-t('LH: 마감 지난 공고 빼고 날짜·지역 정리', () => { assert.equal(lh.length, 1); assert.equal(lh[0].region, '서울'); assert.equal(lh[0].to, T(5)); assert.equal(lh[0].from, ''); });
+t('LH: 마감 지나고 30일 넘은 공고만 빼고(완료 탭) 날짜·지역 정리', () => { assert.deepEqual(lh.map(i => i.feedId), ['lh-1001', 'lh-1002']); assert.equal(lh[0].region, '서울'); assert.equal(lh[0].to, T(5)); assert.equal(lh[0].from, ''); });
 t('마이홈: 같은 pblancId 는 한 공고 · 구 목록', () => { assert.equal(my.length, 2); assert.equal(my[0].region, '서울 마포구 외 1곳'); assert.equal(my[0].org, 'LH'); assert.equal(my[1].org, 'SH'); });
 t('키는 Decoding 해서 serviceKey 로만 보냄 · SH 에는 안 보냄', () => { const api = seen.filter(u => u.hostname === 'apis.data.go.kr'), sh = seen.filter(u => u.hostname === 'www.i-sh.co.kr');
   assert.ok(api.length && api.every(u => u.searchParams.get('serviceKey') === 'TEST+KEY==-only')); assert.ok(sh.length && sh.every(u => !u.search && !u.b.includes('TEST'))); });
@@ -50,7 +50,8 @@ t('SH: 마감일 없는 공고는 게시 21일까지만', () => { const g = F.bu
 t('청년안심주택: 상세 본문에서 마감일·시각 · 못 읽으면 시작일(startOnly) · 공공/민간 · 상세 링크 · 빈 제목 뺌', () => { assert.equal(yo.length, 2); const a = yo[0];
   assert.equal(a.title, '[민간임대] 개봉역 세이지움 & 개봉 추가모집공고'); assert.equal(a.from, T(3)); assert.equal(a.to, T(4)); assert.equal(a.time, '23:00'); assert.equal(a.startOnly, false);
   assert.equal(yo[1].to, T(-2)); assert.equal(yo[1].startOnly, true); assert.equal(a.kind, '청년안심주택(민간)'); assert.equal(a.region, '서울');
-  assert.equal(a.url, 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=7001&menuNo=400008'); assert.equal(F.buildFeed(yo).items.length, 1); });
+  assert.equal(a.url, 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=7001&menuNo=400008'); assert.equal(F.buildFeed(yo).items.length, 2);
+  assert.deepEqual(F.buildFeed(yo, T(5)).items.map(i => i.id).sort(), ['youth-7001', 'youth-7002']); assert.deepEqual(F.buildFeed(yo, T(6)).items.map(i => i.id), ['youth-7001']); });   // 시작일만 아는 공고(7002, 시작 T(-2))는 시작 후 7일까지 · 마감 T(4) 인 7001 은 30일까지
 t('청년안심주택은 POST · 키 안 보냄', () => { const y = seen.filter(u => u.hostname === 'soco.seoul.go.kr' && u.m === 'POST'); assert.equal(y.length, 1); assert.ok(y[0].m === 'POST' && y[0].b.includes('bbsId=BMSR00015') && !y[0].b.includes('TEST')); });
 t('마감일 읽기: 더포디엄830 본문 → 11.10 23:00', () => assert.deepEqual(F.parseDue('[공급일정]\n■모집공고 : ‘26. 11. 05. (목)\n■청약신청 : ‘26. 11. 09. (월) ~ 11. 10. (화) 00:00 ~ 23:00\n■서류심사 대상자 발표 : ‘26. 11. 11. (수) 17:00 예정', '2026-11-09'), { from: '2026-11-09', to: '2026-11-10', time: '23:00' }));
 t('마감일 읽기: 시작 시각 있음 · 하루짜리 · 24:00 · 해 넘김 · 못 읽음', () => {
@@ -82,11 +83,13 @@ t('게시판 요청 사이 간격 (같은 사이트 · SCRAPE_GAP_MS)', () => { 
   assert.ok(a.length >= 2); for (let i = 1; i < a.length; i++) assert.ok(a[i] - a[i - 1] >= 55, `${h} ${a[i] - a[i - 1]}ms`); } });
 let shErr = ''; { const f0 = globalThis.fetch; globalThis.fetch = async () => new Response('<html>점검 중</html>'); try { await F.fetchSH({ pages: 1 }); } catch (e) { shErr = e.message; } globalThis.fetch = f0; }
 t('SH 목록 모양이 바뀌면 SH 만 실패로', () => assert.equal(shErr, 'SH 게시판: 목록 모양이 바뀜'));
-const feed = F.buildFeed([...my, ...lh]);
+const feed = F.buildFeed([...my, ...lh.filter(i => i.feedId !== 'lh-1002')]);   // 1002 는 마감 지난 공고 (위에서 따로 확인)
 t('같은 공고(머리말·공고 글자 차이) 합침 · LH 우선 · 빈 칸 채움', () => {
   assert.equal(feed.items.length, 2); const a = feed.items[0];
   assert.equal(a.id, 'lh-1001'); assert.equal(a.from, T(3)); assert.equal(a.region, '서울 마포구 외 1곳'); });
 t('마감 가까운 순 · http(s) 링크만', () => { assert.equal(feed.items[1].id, 'myhome-B2'); assert.equal(feed.items[1].url, ''); });
+t('마감 지난 공고는 30일까지 남김 (사이트 완료 탭) · 31일째 빠짐', () => { const mk = (id, to) => ({ feedId: id, org: 'LH', title: '공고 ' + id, region: '서울', kind: '', posted: T(-40), from: '', to, url: '' });
+  assert.deepEqual(F.buildFeed([mk('lh-a', T(-30)), mk('lh-b', T(-31)), mk('lh-c', T(0))]).items.map(i => i.id), ['lh-a', 'lh-c']); });
 t('서울 밖 공고는 뺌', () => { const g = F.buildFeed([{ feedId: 'lh-9', org: 'LH', title: '경기 행복주택', region: '경기', kind: '', posted: T(-1), from: '', to: T(3), url: '' }]); assert.equal(g.items.length, 0); });
 t('최상위 형식 · 출처 이름', () => { assert.deepEqual(Object.keys(feed), ['updated', 'source', 'items']); assert.equal(feed.source, '마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)'); assert.match(feed.updated, /\+09:00$/); });
 t('항목 필드 20개 + sch(발표 줄 · enrich 가 일정으로 바꾸고 지움) (사이트 normFeed 와 같은 모양)', () => assert.deepEqual(Object.keys(feed.items[0]), ['id', 'org', 'title', 'region', 'kind', 'posted', 'from', 'to', 'url', 'time', 'startOnly', 'direct', 'closed', 'danji', 'sch', 'detail', 'dv', 'ev', 'cr', 'ty', 'st']));

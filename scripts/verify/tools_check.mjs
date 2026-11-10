@@ -1,4 +1,4 @@
-// 캘린더(.ics) · 신청 가능 배지 · 필터 · 공고 글 구조화 검사: node scripts/verify/tools_check.mjs (인터넷 안 씀)
+// 캘린더(.ics) · 신청 가능 배지 · 공고 글 구조화 검사: node scripts/verify/tools_check.mjs (인터넷 안 씀)
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -91,15 +91,6 @@ await t('배지: 자격 기준이 구조화돼 있지 않은 공고 → 확인 �
 await t('배지: 조건부 기준(소득 50% 이하만 해당 등)을 넘으면 어려움이 아니라 확인 필요', async () => {
   assert.equal(FT.judge({ ...me, yt: { ...me.yt, asset: 30000 } }, { c: [{ k: 'asset', max: 24500, cond: true }], x: 0 }, { tier: 'youth', today, seen: SEEN }).st, 'unk');
   assert.equal(FT.judge({ ...me, yt: { ...me.yt, asset: 30000 } }, { c: [{ k: 'asset', max: 24500 }], x: 0 }, { tier: 'youth', today, seen: SEEN }).st, 'no'); });
-
-// 필터
-const it6720 = { ...I6720, ty, st: { n: '건대입구역', m: 150, w: 3 } }, noDet = { id: 'lh-1', title: 'LH 공고', ty: [], st: null };
-await t('필터: 보증금 1억 이하 → 더포디엄830 남음 · 25A·25B 만 강조', async () => { const r = FT.filterItem(it6720, { dep: 10000 }); assert.equal(r.st, 'ok'); assert.deepEqual(r.hits.map(k => D6720.supply[k].type), ['25A 1510호', '25B 529호']); });
-await t('필터: 상세 없는 공고(LH 등) → 정보 없음 (숨기지 않음)', async () => { assert.equal(FT.filterItem(noDet, { dep: 10000 }).st, 'unk'); assert.equal(FT.filterItem(noDet, { walk: 10 }).st, 'unk'); });
-await t('필터: 역 거리 좌표 없음 → 정보 없음 · 거리 넘음 → 숨김 · 조건 없음 → 전부', async () => {
-  assert.equal(FT.filterItem({ ...it6720, st: null }, { walk: 10 }).st, 'unk'); assert.equal(FT.filterItem({ ...it6720, st: { w: 12 } }, { walk: 10 }).st, 'no'); assert.equal(FT.filterItem(it6720, {}).st, 'all'); });
-await t('필터: 보증금 5천 이하·면적 40㎡ 이상 → 안 맞음 · 월세 70 이하 + 면적 20 이상 → 25A·25B', async () => {
-  assert.equal(FT.filterItem(it6720, { dep: 5000 }).st, 'no'); assert.deepEqual(FT.filterItem(it6720, { rent: 70, area: 20 }).hits, [0, 1]); });
 await t('주택형 읽기: 보증금·월세 만원 · 면적 (범위는 아래 값)', async () => {
   assert.deepEqual(ty.slice(0, 2), [{ n: '25A 1510호', a: 20.17, dep: 9300, rent: 64.72 }, { n: '25B 529호', a: 20.4, dep: 9300, rent: 64.92 }]);
   assert.deepEqual(E.typesOf({ supply: [{ type: '25형', area: '22.53㎡', price: '보증금 6,200만~10,400만 원 / 월세 41만~58만 원' }] })[0], { n: '25형', a: 22.53, dep: 6200, rent: 41 }); });
@@ -134,7 +125,6 @@ await t('좌표 찾기: 번지까지 찾은 결과만 저장 · 도로·동 수�
     assert.deepEqual(L[0].st, { n: '효창공원앞역', m: 280, w: 4, src: 'text', exit: '3' });
     assert.deepEqual(L[1].st, { n: '미아사거리역', m: null, w: null, src: 'name', exit: '3', alt: '숭곡초교역' });
     assert.deepEqual(L[2].st, { n: '숭곡초교역', m: null, w: null, src: 'name', pre: true }); });
-  await t('필터: 역 이름만(거리 없음)이면 정보 없음', async () => assert.equal(FT.filterItem({ ty: [], st: L[1].st }, { walk: 10 }).st, 'unk'));
   const cf = dd + 'cal.ics', it1 = [{ ...I6720, ev, lm: '' }];
   await t('구독 캘린더: DTSTAMP = 만든 시각 · 일정이 그대로면 다시 쓰지 않음 · 바뀌면 씀', async () => {
     assert.equal(await E.writeCalendar(it1, cf, new Date('2026-11-08T12:00:00Z')), true); assert.match(await readFile(cf, 'utf8'), /DTSTAMP:20261108T120000Z/);

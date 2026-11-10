@@ -17,7 +17,9 @@ export const SOURCES = [elyes];
 const MYHOME = 'https://apis.data.go.kr/1613000/HWSPR02/rsdtRcritNtcList';
 const LH = 'https://apis.data.go.kr/B552555/lhLeaseNoticeInfo1/lhLeaseNoticeInfo1';
 const LH_TYPES = ['06', '13', '39'];   // 임대주택 · 주거복지 · 신혼희망타운
-const NO_PERIOD_DAYS = 21;             // 마감일이 없는 공고(SH 게시판 등)는 게시 후 이 일수까지만
+const DONE_KEEP_DAYS = 30;            // 마감이 지난 공고도 이 일수까지 남김 (사이트 '완료' 탭)
+const NO_PERIOD_DAYS = 21;
+const START_ONLY_DAYS = 7;             // 마감일을 못 읽은 공고(시작일만)는 시작 후 이 일수까지 (그동안 사이트 '진행 중')             // 마감일이 없는 공고(SH 게시판 등)는 게시 후 이 일수까지만
 const SH = 'https://www.i-sh.co.kr/app/lay2/program';
 // 게시판(SH·청년안심주택)은 공식 API 가 아니라서 조심해서 읽는다 (2026-11-09 사용자 결정):
 // · 같은 사이트에 요청 사이 3초 이상 (polite) · 실행마다 robots.txt 확인 (User-agent: * 의 Disallow 에 걸리면 그 출처는 건너뜀)
@@ -74,11 +76,11 @@ export async function fetchMyHome({ brtcCode = '11', months = 3 } = {}) {
   }
   const by = new Map();
   for (const r of rows) { if (!r.pblancId) continue; const g = by.get(r.pblancId) ?? { r, gu: new Set(), all: [] }; if (r.signguNm) g.gu.add(r.signguNm); g.all.push(r); by.set(r.pblancId, g); }
-  const today = todayKst();
+  const since = todayKst(-DONE_KEEP_DAYS);
   return [...by].map(([id, { r, gu, all }]) => { const gus = [...gu], city = cityOf(r.brtcNm);
     return { feedId: `myhome-${id}`, org: orgOf(r.suplyInsttNm), title: String(r.pblancNm || '').trim(), region: gus.length ? `${city} ${gus[0]}${gus.length > 1 ? ` 외 ${gus.length - 1}곳` : ''}` : city,
       kind: r.suplyTyNm || r.houseTyNm || '', posted: ymd(r.rcritPblancDe), from: ymd(r.beginDe), to: ymd(r.endDe), url: r.pcUrl || r.url || '', basic: myhomeBasic(all) }; })
-    .filter(i => i.title && (!i.to || i.to >= today));
+    .filter(i => i.title && (!i.to || i.to >= since));
 }
 
 // 마이홈 API 한 줄(단지)마다 들어 있는 기본 정보 → 상세보기용 (자격 조건은 API 에 없다 · 공고문 PDF 는 해외 서버에서 못 받음)
@@ -103,12 +105,12 @@ export async function fetchLH({ cnpCd = '11', daysBack = 90 } = {}) {
     rows.push(...list);
     if (list.length < 100 || page * 100 >= Number(list[0]?.ALL_CNT ?? 0)) break;
   }
-  const seen = new Set(), today = todayKst(), out = [];
+  const seen = new Set(), since = todayKst(-DONE_KEEP_DAYS), out = [];
   for (const r of rows) {
     const id = r.PAN_ID || r.DTL_URL?.match(/PAN_ID:(\d+)/)?.[1]; if (!id || seen.has(id)) continue; seen.add(id);
     const i = { feedId: `lh-${id}`, org: 'LH', title: String(r.PAN_NM || '').trim(), region: cityOf(r.CNP_CD_NM), kind: r.AIS_TP_CD_NM || r.UPP_AIS_TP_NM || '',
       posted: ymd(r.PAN_NT_ST_DT || r.PAN_DT), from: '', to: ymd(r.CLSG_DT), url: r.DTL_URL || 'https://apply.lh.or.kr' };
-    if (i.title && (!i.to || i.to >= today)) out.push(i);
+    if (i.title && (!i.to || i.to >= since)) out.push(i);
   }
   return out;
 }
@@ -211,8 +213,8 @@ export function buildFeed(raw, today = todayKst()) {   // today: 검사에서 �
     for (const f of ['region', 'kind', 'posted', 'from', 'to', 'time', 'url']) if (!g.item[f] && it[f]) g.item[f] = it[f];
     if (g.item.region && it.region && it.region.length > g.item.region.length && it.region.startsWith(g.item.region)) g.item.region = it.region;
   }
-  const cutoff = new Date(Date.parse(today) - NO_PERIOD_DAYS * 864e5).toISOString().slice(0, 10);
-  let items = groups.map(g => g.item).filter(i => i.region.startsWith('서울') && (i.to ? i.to >= today : i.posted && i.posted >= cutoff))   // 서울 공고만
+  const cutoff = new Date(Date.parse(today) - NO_PERIOD_DAYS * 864e5).toISOString().slice(0, 10), done = new Date(Date.parse(today) - DONE_KEEP_DAYS * 864e5).toISOString().slice(0, 10), so = new Date(Date.parse(today) - START_ONLY_DAYS * 864e5).toISOString().slice(0, 10);
+  let items = groups.map(g => g.item).filter(i => i.region.startsWith('서울') && (i.to ? i.to >= (i.startOnly ? so : done) : i.posted && i.posted >= cutoff))   // 서울 공고만 · 마감 지난 것은 30일까지 (완료 탭)
     .map(i => ({ id: i.feedId, org: i.org, title: i.title, region: i.region || '', kind: i.kind || '', posted: i.posted || '', from: i.from || '', to: i.to || '', url: /^https?:\/\//.test(i.url || '') ? i.url : '', time: i.time || '', startOnly: !!i.startOnly, direct: !!i.direct, closed: !!i.closed, danji: i.danji || '', sch: i.sch || [], detail: false, dv: '', ev: [], cr: null, ty: [], st: null }))   // dv: 상세 파일 내용 해시 (사이트가 ?v= 로 붙여 예전 캐시를 피함)   // time: 마감 시각 · startOnly: to 가 사실은 시작일(마감일 모름)   // detail: feed/detail/{id}.json 이 있으면 true (addDetails)
     .sort((a, b) => (a.to || '9999').localeCompare(b.to || '9999') || b.posted.localeCompare(a.posted));
   // 정정공고: 제목에 정정·변경·재공고가 있고 같은 기관·같은 단지(정정 글자를 뺀 이름)의 더 예전 공고가 있으면 예전 것은 숨긴다 (사이트는 새 공고에 '정정공고' 배지)

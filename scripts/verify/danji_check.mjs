@@ -51,9 +51,9 @@ await t("사이트가 '마감되었습니다'를 붙인 공고: closed 표시 (�
 await t('제목에서 마감 일시를 읽은 단지 직접 공고는 캘린더 일정이 생김 (독산역 11/13 15:00) · 못 읽은 공고(남영역)는 없음', () => {
   const L = feedOn('2026-11-09'), by = id => L.find(i => i.id === 'elyes-' + id);
   assert.deepEqual(eventsFor(by('d1'), null), [{ k: 'end', l: '청약 마감', d: '2026-11-13', t: '15:00' }]); assert.deepEqual(eventsFor(by('n1'), null), []); });
-await t('실제 제목 3개: 다음 날 용산원효루미니는 빠짐 · 남영역은 게시 21일까지 · 독산역은 11/13 까지', () => {
-  assert.deepEqual(feedOn('2026-11-10').map(i => i.id).sort(), ['elyes-d1', 'elyes-n1']);
-  assert.deepEqual(feedOn('2026-11-14').map(i => i.id), ['elyes-n1']); assert.deepEqual(feedOn('2026-11-28').map(i => i.id), []); });
+await t('실제 제목 3개: 마감된 공고는 30일까지 남음(완료 탭) · 남영역은 게시 21일까지 · 독산역은 11/13 + 30일까지', () => {
+  assert.deepEqual(feedOn('2026-11-10').map(i => i.id).sort(), ['elyes-d1', 'elyes-n1', 'elyes-y1']);
+  assert.deepEqual(feedOn('2026-12-13').map(i => i.id), ['elyes-d1']); assert.deepEqual(feedOn('2026-12-14').map(i => i.id), []); });
 
 // ---------- 서울시 단지 ----------
 await t('금액 읽기', () => { assert.equal(D.money('2억1천5백50만'), 21550); assert.equal(D.money('4천8백0만'), 4800); assert.equal(D.money('16만'), 16); assert.equal(D.money('-6502'), null); });

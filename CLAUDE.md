@@ -9,7 +9,7 @@
 - index.html·아이콘·예시를 바꾸면 `sw.js` 의 VERSION 도 바꾼다 (check.py 가 알려 줌)
 - `lib/` 를 바꾸면 VERSION 과 index.html 의 `lib/feed-tools.js?v=` 를 같은 값으로 (check.py 가 확인)
 - 로컬에서는 실제 Gemini 를 부르지 않는다 (`scripts/detail.mjs` 가 막음 · 검사는 가짜 응답). 꼭 부르면 `DETAIL_ALLOW_REAL=1` + `_quota.json` 커밋
-- 사용자 입력(생년월일·소득·자산·관심 공고·필터)은 브라우저에만. Actions 는 공고 공개 정보만 계산
+- 사용자 입력(생년월일·소득·자산·관심 공고)은 브라우저에만. Actions 는 공고 공개 정보만 계산
 - 검사: `CHECK_PORT=8792 python3 scripts/verify/check.py` · `node scripts/verify/{tools,detail,feed,cron}_check.mjs` — 검사는 저장소 파일에 쓰지 않게 (임시 폴더)
 - `git add -A` 전에 `git status -s` 확인 (`.playwright-mcp/` 같은 임시 파일)
 - **push 전에 항상 `git pull --rebase origin main`** (Actions 가 공고 피드 커밋을 올림)
