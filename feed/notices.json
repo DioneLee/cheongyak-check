@@ -1,41 +1,7 @@
 {
- "updated": "2026-11-10T21:13:02+09:00",
+ "updated": "2026-11-11T03:49:03+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
-  {
-   "id": "elyes-sgkpE0K_aOKQcVuXHhNQ0w",
-   "org": "엘리스",
-   "title": "[어바니엘 염창] 공실세대 모집공고 (접수기간: 10/9~10/11)",
-   "region": "서울 강서구",
-   "kind": "민간임대",
-   "posted": "2026-10-08",
-   "from": "2026-10-09",
-   "to": "2026-10-11",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=sgkpE0K%2FaOKQcVuXHhNQ0w%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-yeomchang",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-09"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-11"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
   {
    "id": "youth-6693",
    "org": "청년안심",
@@ -80,93 +46,6 @@
     "w": null,
     "src": "name"
    },
-   "lm": ""
-  },
-  {
-   "id": "youth-6694",
-   "org": "청년안심",
-   "title": "[민간임대] 노원역 해링턴플레이스 노원 센트럴 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-08",
-   "from": "2026-10-11",
-   "to": "2026-10-14",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6694&menuNo=400008",
-   "time": "23:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000587",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-11"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-14",
-     "t": "23:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-15",
-     "t": "17:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": {
-    "n": "노원역",
-    "m": null,
-    "w": null,
-    "src": "name"
-   },
-   "lm": ""
-  },
-  {
-   "id": "youth-6695",
-   "org": "청년안심",
-   "title": "[민간임대] 신독산역 센트레빌 웨스트온 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-08",
-   "from": "2026-10-11",
-   "to": "2026-10-15",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6695&menuNo=400008",
-   "time": "23:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000601",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-11"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-15",
-     "t": "23:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-16",
-     "t": "16:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
    "lm": ""
   },
   {
