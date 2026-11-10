@@ -161,6 +161,7 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 .sub-feed .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; } @media (min-width: 720px) { .sub-feed .fgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .sub-feed .fgrid select { margin: 0; min-height: 40px; font-size: 14px; padding: 6px 12px; }
 .sub-feed .facts { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.sub-feed .calask { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 12px; padding: 12px 14px; border-radius: 12px; background: var(--accent-soft, #eef4ff); font-size: 14px; }
 .sub-feed .fcalnote { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--muted); }
 .sub-feed .fhint { margin: 8px 0 0; font-size: 14px; color: var(--muted); } .sub-feed .fhint a { color: var(--accent-ink); font-weight: 600; }
 .sub-feed .fgroup { margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed var(--line); font: 700 13px/1.4 var(--sans); color: var(--muted); }
@@ -480,7 +481,7 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-10b"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-10c"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·필터·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a></p>
@@ -992,6 +993,12 @@ const shortTitle = s => s.replace(/^\s*(\[[^\]]*\]\s*)+/, '').replace(/\s*\((?:�
 const ORG_KO = { 청년안심: '청년안심주택' };
 const feedTitle = i => shortTitle(i.direct ? i.title.replace(/^\s*\[([^\]]+)\]\s*/, '$1 ') : i.title);   // 단지 직접 공고는 [단지 이름] 이 머리말이 아니라 이름
 let subFeed = null, feedAll = false;   // feedAll: '더 보기'를 눌렀으면 전부
+// 카카오톡 안 브라우저(특히 아이폰)는 .ics 내려받기·webcal 링크를 막는다 → 캘린더 버튼을 누르면 기본 브라우저(Safari 등)로 이 페이지를 연다.
+// 관심 공고(★)는 브라우저마다 따로 저장돼서 고른 공고 id 를 주소(?cal=)로 넘기고, 넘어간 쪽은 목록 위에 '캘린더에 추가' 줄을 보여 준다 (누르는 건 사용자)
+const IN_KAKAO = /KAKAOTALK/i.test(navigator.userAgent);
+let calAsk = (() => { try { const v = new URLSearchParams(location.search).get('cal') || ''; return v === 'sub' ? 'sub' : v.split(',').filter(x => /^[\w-]{1,40}$/.test(x)).slice(0, 30); } catch { return null; } })();
+function openOutside(cal) { const u = `${location.origin}${location.pathname}?cal=${encodeURIComponent(cal)}#notices`; location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(u)}`; }
+function calAskDone() { calAsk = null; try { history.replaceState(null, '', location.pathname + location.hash); } catch { /* 그대로 */ } }
 function normFeed(x) {
   if (!x || !Array.isArray(x.items)) return null; const str = (v, n = 120) => String(v ?? '').slice(0, n);
   return { updated: str(x.updated, 40), source: str(x.source), items: x.items.map(i => ({ id: str(i.id, 60), org: str(i.org, 40), title: str(i.title, 160), region: str(i.region, 40), kind: str(i.kind, 30),
@@ -1038,7 +1045,10 @@ function renderFeed() {
   const okL = all.filter(i => ['all', 'ok'].includes(fr.get(i.id).st)), unkL = all.filter(i => fr.get(i.id).st === 'unk'), noN = all.filter(i => fr.get(i.id).st === 'no').length;
   const items = feedAll ? okL : okL.slice(0, 8), more = okL.length - items.length, sel = k => `<select data-f="${k}" aria-label="${k}">${FOPT[k].map(([v, l]) => `<option value="${v}"${String(feedF[k] ?? '') === String(v) ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
   const starN = all.filter(i => stars.has(i.id) && i.ev.length).length;
-  box.innerHTML = `<div class="ftools"><details class="ffilter"${on.length ? ' open' : ''}><summary>필터${on.length ? ` ${on.length}개 켜짐` : ''}</summary><div class="fgrid">${sel('src')}${sel('dep')}${sel('rent')}${sel('area')}${sel('walk')}</div>${on.length ? '<button type="button" class="linkbtn" data-freset>필터 지우기</button>' : ''}</details>
+  const askL = Array.isArray(calAsk) ? all.filter(i => calAsk.includes(i.id) && i.ev.length && !i.closed) : [];
+  const ask = calAsk === 'sub' ? `<div class="calask"><span>카카오톡에서 넘어왔어요. 여기서 구독하면 캘린더 앱에 들어가요.</span><a class="small linkbtn" href="${esc(calUrl())}" data-askdone>캘린더 구독</a></div>`
+    : askL.length ? `<div class="calask"><span>카카오톡에서 고른 공고 ${askL.length}개</span><button type="button" class="small" data-askics>캘린더에 추가</button></div>` : '';
+  box.innerHTML = `${ask}<div class="ftools"><details class="ffilter"${on.length ? ' open' : ''}><summary>필터${on.length ? ` ${on.length}개 켜짐` : ''}</summary><div class="fgrid">${sel('src')}${sel('dep')}${sel('rent')}${sel('area')}${sel('walk')}</div>${on.length ? '<button type="button" class="linkbtn" data-freset>필터 지우기</button>' : ''}</details>
     <span class="facts"><button type="button" class="small ghost" data-starics${starN ? '' : ' disabled'}>★ 관심 공고 캘린더로 받기${starN ? ` (${starN})` : ''}</button><a class="small linkbtn" href="${esc(calUrl())}" title="새 공고의 청약 기간(시작~마감)·발표일이 캘린더 앱에 자동으로 들어와요">캘린더 구독</a></span>
     <p class="fcalnote">구글 캘린더는 구독 갱신이 하루까지 늦고 알림을 적용하지 않아요. 마감 알림은 공고별 '캘린더에 추가'를 쓰세요.</p></div>
     ${done ? '' : '<p class="fhint">내 조건 넣고 가능 여부 보기 → <a href="#diag">순위·점수 진단</a></p>'}
@@ -1085,6 +1095,14 @@ $('#subFeed').addEventListener('click', async e => {
   const it = id => subFeed?.items.find(x => x.id === id);
   const st = e.target.closest('[data-star]'); if (st) { const id = st.dataset.star; stars.has(id) ? stars.delete(id) : stars.add(id); lset(SKEY, [...stars]); renderFeed(); return; }
   const w = e.target.closest('[data-why]'); if (w) { const id = w.dataset.why, p = $(`#subFeed [data-whyp="${CSS.escape(id)}"]`); if (!p) return; const o = whyOpen.has(id); o ? whyOpen.delete(id) : whyOpen.add(id); p.hidden = o; w.setAttribute('aria-expanded', String(!o)); return; }
+  if (IN_KAKAO) {   // 카카오톡 안: 캘린더 버튼은 기본 브라우저로 넘김
+    const k = e.target.closest('[data-ics]'), ks = e.target.closest('[data-starics]'), kw = e.target.closest('a[href^="webcal:"]');
+    if (k) { openOutside(k.dataset.ics); return; }
+    if (ks) { const t = todayYmd(), ids = (subFeed?.items || []).filter(i => stars.has(i.id) && i.ev.length && (!i.to || i.to >= t)).map(i => i.id); if (ids.length) openOutside(ids.join(',')); return; }
+    if (kw) { e.preventDefault(); openOutside('sub'); return; }
+  }
+  if (e.target.closest('[data-askics]')) { const L = (subFeed?.items || []).filter(i => Array.isArray(calAsk) && calAsk.includes(i.id) && i.ev.length && !i.closed); if (L.length) await icsDownload(L, L.length > 1 ? '청약-관심공고.ics' : `청약-${shortTitle(L[0].title).replace(/[\\/:*?"<>|]/g, '')}.ics`); calAskDone(); renderFeed(); return; }
+  if (e.target.closest('[data-askdone]')) { calAskDone(); setTimeout(renderFeed, 500); return; }
   const c = e.target.closest('[data-ics]'); if (c) { const i = it(c.dataset.ics); if (i?.ev.length) icsDownload([i], `청약-${shortTitle(i.title).replace(/[\\/:*?"<>|]/g, '')}.ics`); return; }
   if (e.target.closest('[data-starics]')) { const t = todayYmd(), L = (subFeed?.items || []).filter(i => stars.has(i.id) && i.ev.length && (!i.to || i.to >= t)); if (L.length) icsDownload(L, '청약-관심공고.ics'); return; }
   if (e.target.closest('[data-freset]')) { feedF = { dep: null, rent: null, area: null, walk: null, src: null }; lset(FKEY, feedF); renderFeed(); return; }
@@ -1339,6 +1357,7 @@ $('#subsSec').addEventListener('click', e => {
   if ('wgo' in ds && b.closest('#subJudge')) { wizGo(+ds.wgo); return; }
   if (ds.subtab) { S.tab = ds.subtab; render(); return; }
   if (ds.nics) { const n = S.notices.find(x => x.id === ds.nics); if (!n) return;
+    if (IN_KAKAO) { $('#subMsg').textContent = "카카오톡 안에서는 캘린더 파일을 받을 수 없어요. 오른쪽 아래 메뉴(⋯)에서 '다른 브라우저로 열기'를 누른 뒤, 그 브라우저에서 진단을 다시 해 주세요."; return; }
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([icsOf(n)], { type: 'text/calendar' })); a.download = `${n.id}.ics`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     $('#subMsg').textContent = `일정 ${n.schedule.length}개를 .ics 로 내려받았어요. 휴대폰·구글 캘린더에서 열면 들어가요.`; return; }
   if (ds.nedit) { subEdit = ds.nedit; render(); $('#subEditBox')?.focus(); return; }
