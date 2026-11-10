@@ -253,7 +253,7 @@ ok('단지 탭·설정에 정확히 "' + APP + '"', [...q('#danjiSec').querySele
 ok("단지 카드: '자체 사이트에서만 공고' 배지 (1년 넘음 · 추가모집 0번 단지에만)", qa('#danjiList .dd').some(b => b.textContent === '자체 사이트에서만 공고') && fw.eval(`danji.danji.filter(x => selfOnly(x, todayYmd())).every(x => x.extra === 0 && x.first)`), qa('#danjiList .dd').filter(b => b.textContent === '자체 사이트에서만 공고').length);
 { const rk = li => { const b = [...li.querySelectorAll('.dd')].map(x => x.textContent); return b.includes('청약중') ? 0 : b.includes('청약예정') ? 1 : li.querySelector('[data-dstar]').getAttribute('aria-pressed') === 'true' ? 2 : 3; };
   const main = [...qa('#danjiList .flist')[0].children], rs = main.map(rk), last = main.filter(li => rk(li) === 3);
-  ok('단지 정렬: 청약중 → 청약예정 → 관심 ★ → 나머지(구 가나다) · 공급완료 배지 없음', rs.every((r, k) => !k || rs[k - 1] <= r) && rs[0] === 0 && rs.includes(1) && !qa('#danjiList .dd').some(b => b.textContent === '공급완료') && !q('#danjiList').textContent.includes('공급완료')
+  ok('단지 정렬: 청약중 → 청약예정 → 관심 ★ → 나머지(구 가나다) · 공급완료 배지 없음', rs.every((r, k) => !k || rs[k - 1] <= r) && rs[0] === 0 &&   /* 청약예정 단지가 있는지는 그날 피드에 따라 다름 */ !qa('#danjiList .dd').some(b => b.textContent === '공급완료') && !q('#danjiList').textContent.includes('공급완료')
     && last.every((li, k) => !k || last[k - 1].querySelector('.finfo').textContent.split(' · ').at(-0) !== null), rs.slice(0, 10).join(''));
   const pick = last.at(-1).dataset.did; q(`#danjiList [data-dstar="${pick}"]`).click(); await W(80);
   const rs2 = [...qa('#danjiList .flist')[0].children].map(rk);
