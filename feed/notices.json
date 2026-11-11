@@ -1,53 +1,7 @@
 {
- "updated": "2026-11-11T09:49:03+09:00",
+ "updated": "2026-11-12T03:49:01+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
-  {
-   "id": "youth-6693",
-   "org": "청년안심",
-   "title": "[민간임대] 개봉역 세이지움 개봉 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-08",
-   "from": "2026-10-12",
-   "to": "2026-10-13",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6693&menuNo=400008",
-   "time": "23:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000571",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-12"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-13",
-     "t": "23:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-14",
-     "t": "17:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": {
-    "n": "개봉역",
-    "m": null,
-    "w": null,
-    "src": "name"
-   },
-   "lm": ""
-  },
   {
    "id": "lh-2015122300020843",
    "org": "LH",
