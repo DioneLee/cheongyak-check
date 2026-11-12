@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12T03:49:01+09:00",
+ "updated": "2026-11-12T15:49:00+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -1530,6 +1530,35 @@
     "w": null,
     "src": "name"
    },
+   "lm": ""
+  },
+  {
+   "id": "elyes-J_ewjncH3OguPpR-9KveyA",
+   "org": "엘리스",
+   "title": "[용산원효루미니] 추가모집공고(접수일 '26.11.17)",
+   "region": "서울 용산구",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-17",
+   "to": "2026-11-17",
+   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=J%2FewjncH3OguPpR%2B9KveyA%3D%3D",
+   "time": "",
+   "startOnly": false,
+   "direct": true,
+   "closed": false,
+   "danji": "20000406",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-17"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": null,
    "lm": ""
   },
   {
