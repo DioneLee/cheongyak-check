@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12T15:49:00+09:00",
+ "updated": "2026-11-12T21:49:13+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -112,94 +112,6 @@
    "lm": ""
   },
   {
-   "id": "youth-6699",
-   "org": "청년안심",
-   "title": "[민간임대] 종암경찰서역(예정) 라온프라이빗 종암 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-15",
-   "from": "2026-10-19",
-   "to": "2026-10-19",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6699&menuNo=400008",
-   "time": "16:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000577",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-19",
-     "t": "16:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-20",
-     "t": "16:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": {
-    "n": "종암경찰서역",
-    "m": null,
-    "w": null,
-    "src": "name",
-    "pre": true
-   },
-   "lm": ""
-  },
-  {
-   "id": "youth-6697",
-   "org": "청년안심",
-   "title": "[민간임대] 상봉역 상봉생활 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-15",
-   "from": "2026-10-18",
-   "to": "2026-10-19",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6697&menuNo=400008",
-   "time": "18:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000603",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-18"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-19",
-     "t": "18:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-20",
-     "t": "16:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": {
-    "n": "상봉역",
-    "m": null,
-    "w": null,
-    "src": "name"
-   },
-   "lm": ""
-  },
-  {
    "id": "youth-6702",
    "org": "청년안심",
    "title": "[민간임대] 길동역 길동생활(B동) 추가모집공고",
@@ -285,93 +197,6 @@
    "ty": [],
    "st": {
     "n": "길동역",
-    "m": null,
-    "w": null,
-    "src": "name"
-   },
-   "lm": ""
-  },
-  {
-   "id": "youth-6698",
-   "org": "청년안심",
-   "title": "[민간임대] 가좌역 스타타워 입주자 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-15",
-   "from": "2026-10-19",
-   "to": "2026-10-20",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6698&menuNo=400008",
-   "time": "18:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000436",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-19"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-20",
-     "t": "18:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-22",
-     "t": "10:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
-   "id": "youth-6696",
-   "org": "청년안심",
-   "title": "[민간임대] 동대문역사문화공원역 166타워 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-15",
-   "from": "2026-10-21",
-   "to": "2026-10-22",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6696&menuNo=400008",
-   "time": "23:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-21"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-22",
-     "t": "23:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-23",
-     "t": "12:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": {
-    "n": "동대문역사문화공원역",
     "m": null,
     "w": null,
     "src": "name"
@@ -1533,6 +1358,264 @@
    "lm": ""
   },
   {
+   "id": "youth-6730",
+   "org": "청년안심",
+   "title": "[민간임대] 동묘앞역 청계로벤하임 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-16",
+   "to": "2026-11-16",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6730&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000503",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-16",
+     "t": "23:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-17",
+     "t": "17:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "동묘앞역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
+   "lm": ""
+  },
+  {
+   "id": "youth-6729",
+   "org": "청년안심",
+   "title": "[민간임대] 상봉역 세이지움 상봉 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-16",
+   "to": "2026-11-16",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6729&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000586",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-16",
+     "t": "23:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-23",
+     "t": "17:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "상봉역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
+   "lm": ""
+  },
+  {
+   "id": "youth-6726",
+   "org": "청년안심",
+   "title": "[민간임대] 종암경찰서역(예정) 라온프라이빗 종암 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-16",
+   "to": "2026-11-16",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6726&menuNo=400008",
+   "time": "16:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000577",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-16",
+     "t": "16:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-17",
+     "t": "16:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "종암경찰서역",
+    "m": null,
+    "w": null,
+    "src": "name",
+    "pre": true
+   },
+   "lm": ""
+  },
+  {
+   "id": "youth-6725",
+   "org": "청년안심",
+   "title": "[민간임대] 서울대입구역 BX201 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-16",
+   "to": "2026-11-16",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6725&menuNo=400008",
+   "time": "16:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000386",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-16",
+     "t": "16:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-17",
+     "t": "16:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "서울대입구역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
+   "lm": ""
+  },
+  {
+   "id": "youth-6731",
+   "org": "청년안심",
+   "title": "[민간임대] 상봉역 상봉생활 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-16",
+   "to": "2026-11-17",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6731&menuNo=400008",
+   "time": "18:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000603",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-11-16"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-17",
+     "t": "18:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-18",
+     "t": "16:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "상봉역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
+   "lm": ""
+  },
+  {
+   "id": "youth-6728",
+   "org": "청년안심",
+   "title": "[민간임대] 숭곡초교역(예정) 성북펠릭스 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-16",
+   "to": "2026-11-17",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6728&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000560",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-11-16"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-17",
+     "t": "23:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-18",
+     "t": "17:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "숭곡초교역",
+    "m": null,
+    "w": null,
+    "src": "name",
+    "pre": true
+   },
+   "lm": ""
+  },
+  {
    "id": "elyes-J_ewjncH3OguPpR-9KveyA",
    "org": "엘리스",
    "title": "[용산원효루미니] 추가모집공고(접수일 '26.11.17)",
@@ -1559,6 +1642,98 @@
    "cr": null,
    "ty": [],
    "st": null,
+   "lm": ""
+  },
+  {
+   "id": "youth-6732",
+   "org": "청년안심",
+   "title": "[민간임대] 공덕역 e·seo(이서) 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-16",
+   "to": "2026-11-18",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6732&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000611",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-11-16"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-18",
+     "t": "23:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-19",
+     "t": "17:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "공덕역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
+   "lm": ""
+  },
+  {
+   "id": "youth-6727",
+   "org": "청년안심",
+   "title": "[민간임대] 화곡역 보눔하우스 화곡 추가모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-12",
+   "from": "2026-11-18",
+   "to": "2026-11-19",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6727&menuNo=400008",
+   "time": "18:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "20000356",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-11-18"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-19",
+     "t": "18:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-11-20",
+     "t": "18:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "화곡역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
    "lm": ""
   },
   {
@@ -1714,52 +1889,6 @@
    "from": "",
    "to": "",
    "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312339",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": false,
-   "dv": "",
-   "ev": [],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
-   "id": "sh-311962",
-   "org": "SH",
-   "title": "구로구 도전숙(수요자맞춤형) 잔여세대 입주자 모집 공고",
-   "region": "서울 구로구",
-   "kind": "도전숙",
-   "posted": "2026-10-28",
-   "from": "",
-   "to": "",
-   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311962",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": false,
-   "dv": "",
-   "ev": [],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
-   "id": "sh-311965",
-   "org": "SH",
-   "title": "강북구 신혼부부(수요자맞춤형)주택 1~4차 잔여세대 입주자 모집 공고",
-   "region": "서울 강북구",
-   "kind": "신혼부부",
-   "posted": "2026-10-26",
-   "from": "",
-   "to": "",
-   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=311965",
    "time": "",
    "startOnly": false,
    "direct": false,
