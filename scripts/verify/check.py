@@ -87,11 +87,16 @@ ok('맨 위는 서울 진행중 공고 (원문 사이트 4곳)', q('h1').textCon
 // 탭 4개 (#notices · #danji · #diag · #settings)
 const vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join(), cur = () => qa('[aria-current="page"]').map(a => a.dataset.tabLink).join();
 const foot = () => q('footer').offsetHeight > 0 && q('footer').textContent.includes('참고용');
-ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/단지/진단/설정" · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/단지/진단/설정' && foot(), vis() + ' ' + cur());
+ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/단지/진단" 3개 (설정은 메뉴에 없음) · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/단지/진단' && !q('header a[href="#settings"]') && foot(), vis() + ' ' + cur());
 fw.scrollTo(0, 400); q('[data-tab-link="diag"]').click(); await W(150);
 ok('탭: 진단 링크 → 진단 탭만 · 맨 위로 · 제목에 포커스 · 맨 아래 안내 그대로', vis() === 'diag' && cur() === 'diag' && fw.scrollY === 0 && d.activeElement === q('#h-diag') && foot(), vis() + ' ' + fw.scrollY + ' ' + d.activeElement?.id);
-q('[data-tab-link="settings"]').click(); await W(150);
-ok('탭: 설정 → AI 설정·데이터 옮기기·고급(공고 JSON) 접힘 칸 · 제목 포커스', vis() === 'settings' && ['#aiSet', '#ioSet', '#subAdv'].every(s => q(s).tagName === 'DETAILS' && !q(s).open && !q(s).closest('[data-tab]').hidden) && d.activeElement === q('#h-set') && foot());
+{ const fl = q('footer a[href="#settings"]');
+  ok('맨 아래 안내 줄에 작은 링크 "데이터 백업·옮기기" 하나 (설정으로 가는 길)', fl?.textContent === '데이터 백업·옮기기' && qa('a[href="#settings"]').length === 1);
+  fl.click(); await W(150); }
+ok('설정(#settings): 제목 "데이터 백업·옮기기" · 맨 위 내보내기/불러오기(늘 펼침) · 그 아래 접힌 "고급"(AI 설정 · 공고 JSON 직접 고치기) · 메뉴에 지금 탭 표시 없음 · 제목 포커스',
+  vis() === 'settings' && fw.location.hash === '#settings' && q('#h-set').textContent === '데이터 백업·옮기기' && q('#ioSet').tagName !== 'DETAILS' && !!q('#ioSet #exportBtn') && !!q('#ioSet #importFile')
+  && q('#ioSet').compareDocumentPosition(q('#advSet')) & 4 && q('#advSet').tagName === 'DETAILS' && !q('#advSet').open && q('#advSet').contains(q('#aiSet')) && q('#advSet').contains(q('#subAdv'))
+  && q('#advSet summary').offsetParent !== null && cur() === '' && d.activeElement === q('#h-set') && foot(), cur());
 fw.history.back(); await W(200);
 ok('탭: 뒤로가기 → 진단', vis() === 'diag' && fw.location.hash === '#diag', fw.location.hash);
 fw.history.back(); await W(200);
@@ -243,7 +248,7 @@ ok('서울 밖 공고는 넣지 않음', fw.eval('state.subs.notices.length') ==
 fw.eval(`state.subs.sel = 'ai-test'; render()`); await W(80);
 ok('문구: AI로 읽은 공고는 "AI가 공고문을 읽어 만든 값이에요. 소득·자산 기준은 원문과 맞춰 보세요."', fw.eval("state.subs.notices.find(n => n.id === 'ai-test').src") === 'ai' && q('#subJudge .sub-main .basis.ai')?.textContent === 'AI가 공고문을 읽어 만든 값이에요. 소득·자산 기준은 원문과 맞춰 보세요.', q('#subJudge .sub-main .basis.ai')?.textContent);
 q('#subAiOff a').click(); await W(150);
-ok('진단의 "AI 설정" 링크 → 설정 탭 · AI 설정 펼침', fw.location.hash === '#settings' && vis() === 'settings' && q('#aiSet').open, fw.location.hash);
+ok('진단의 "AI 설정" 링크(#aiSet) → #settings · 고급과 AI 설정 펼침', fw.location.hash === '#settings' && vis() === 'settings' && q('#aiSet').open && q('#advSet').open, fw.location.hash);
 let blob = null; const ou = fw.URL.createObjectURL; fw.URL.createObjectURL = b => { blob = b; return 'blob:x'; };
 q('#exportBtn').click(); fw.URL.createObjectURL = ou; const ex = JSON.parse(await blob.text());
 ok('내보내기: 청약·돈 조건만 (AI 키 없음)', ex.app === 'cheongyak-check' && ex.data.subs.notices.length === 2 && !JSON.stringify(ex).includes('suitable-gemini-key') && !('geo' in ex.data), Object.keys(ex.data));
@@ -275,7 +280,7 @@ const cards = () => qa('#danjiList li[data-did]'), main = () => qa('#danjiList .
 ok('단지 탭: 메뉴 → #danji · 단지 탭만 · 제목 포커스 · 지금 탭 표시', fw.location.hash === '#danji' && vis() === 'danji' && cur() === 'danji' && d.activeElement === q('#h-danji'), vis() + ' ' + d.activeElement?.id);
 ok('단지 탭: 청년안심주택 100곳 + "그 밖의 서울 민간임대" 6곳 (서울 밖 없음 · 단지 아닌 글 없음)', main() === 100 && !/모집공고/.test(qa('#danjiList .flist')[0].textContent) && /그 밖의 서울 민간임대 6곳/.test(q('#danjiList .fgroup')?.textContent) && qa('#danjiList .flist')[1].children.length === 6 && !/부산|양산|김포|화성/.test(q('#danjiList').textContent), main());
 ok('단지 탭: 그 밖의 민간임대 카드마다 "' + OTH + '"', qa('#danjiList .flist')[1].querySelectorAll('.dj-other').length === 6 && [...qa('#danjiList .flist')[1].querySelectorAll('.dj-other')].every(p => p.textContent === OTH) && !qa('#danjiList .flist')[0].querySelector('.dj-other'));
-ok('단지 탭·설정에 정확히 "' + APP + '"', [...q('#danjiSec').querySelectorAll('p')].some(p => p.textContent.trim() === APP) && q('[data-tab="settings"]').textContent.includes(APP));
+ok('단지 탭에만 정확히 "' + APP + '" (설정에서는 뺌)', [...q('#danjiSec').querySelectorAll('p')].some(p => p.textContent.trim() === APP) && !q('[data-tab="settings"]').textContent.includes(APP));
 { const c = q('#danjiList li[data-did="20000413"]') || qa('#danjiList li[data-did]').find(l => l.textContent.includes('마에스트로')), ln = c.querySelector('.dj-links a[href^="http"]');
   ok('단지 카드: 이름 · 구 · 역 · 보증금/월세 · 홈페이지 ↗(새 창) · 전화', !!c.querySelector('.nm') && /구 · .*보증금 .*월세 /.test(c.querySelector('.finfo').textContent) && (!ln || (ln.target === '_blank' && ln.textContent === '홈페이지 ↗')) && qa('#danjiList a[href^="tel:"]').length > 50, c.textContent.slice(0, 120)); }
 ok("단지 카드: '자체 사이트에서만 공고' 배지 (1년 넘음 · 추가모집 0번 단지에만)", qa('#danjiList .dd').some(b => b.textContent === '자체 사이트에서만 공고') && fw.eval(`danji.danji.filter(x => selfOnly(x, todayYmd())).every(x => x.extra === 0 && x.first)`), qa('#danjiList .dd').filter(b => b.textContent === '자체 사이트에서만 공고').length);
@@ -330,6 +335,24 @@ const el3 = { ...el1, id: 'elyes-a3', title: '[어바니엘 염창] 재임대 �
 ok('"이 공고 마감 알림도 받기" → 공고 ★ 바로 켜짐 (목록 ★ 도)', JSON.parse(fw.localStorage.getItem('cheongyak-check-stars')).includes('elyes-a3') && q('#subFeed [data-star="elyes-a3"]')?.getAttribute('aria-pressed') === 'true' && /받는 중/.test(q('#danjiNew').textContent));
 q('#danjiNew [data-dnseen="elyes-a3"]').click(); await W(80);
 ok('관심 단지 띠: 확인 → 숨김 · 이 기기에 기억', q('#danjiNew').hidden && JSON.parse(fw.localStorage.getItem('cheongyak-check-danji-seen')).includes('elyes-a3'));
+// ---------- 백업 안내: 공고 ★ + 단지 ★ 3개 이상이면 ★ 누른 그 탭 맨 위에 한 번만 ----------
+for (const k of ['cheongyak-check-stars', 'cheongyak-check-danji-stars', 'cheongyak-check-backup-tip']) fw.localStorage.removeItem(k);
+await open('#notices'); { const qq = s => d.querySelector(s), tipN = () => qq('[data-backup-tip="notices"]'), tipD = () => qq('[data-backup-tip="danji"]');
+  fw.eval('setFeed')({ updated: '', source: '', items: ['b1', 'b2', 'b3'].map((id, k) => ({ id, org: 'LH', title: '백업 ' + id, region: '서울', kind: '', posted: '2026-11-01', from: '', to: '2099-01-0' + (k + 1), url: 'https://apply.lh.or.kr' })) }); await W(120);
+  qq('#subFeed [data-star="b1"]').click(); await W(60); qq('#subFeed [data-star="b2"]').click(); await W(60);
+  ok('백업 안내: ★ 2개면 안 뜸', tipN().hidden && tipD().hidden);
+  fw.location.hash = 'danji'; await W(250); qq('#danjiList [data-dstar]').click(); await W(80);
+  ok('백업 안내: 3개째 ★ 를 누른 단지 탭 맨 위에만 · "가끔 백업해 두세요 · 백업 받기"', !tipD().hidden && tipN().hidden && tipD().textContent.includes('가끔 백업해 두세요') && !!tipD().querySelector('[data-backup-go]') && qq('#danjiSec').firstElementChild.nextElementSibling === tipD());
+  tipD().querySelector('[data-backup-no]').click(); await W(60);
+  ok('백업 안내: 닫기 → 숨김 · 기억', tipD().hidden && JSON.parse(fw.localStorage.getItem('cheongyak-check-backup-tip')) === 'closed'); }
+await open('#notices'); { const qq = s => d.querySelector(s);
+  fw.eval('setFeed')({ updated: '', source: '', items: [{ id: 'b4', org: 'LH', title: '백업 b4', region: '서울', kind: '', posted: '2026-11-01', from: '', to: '2099-01-09', url: 'https://apply.lh.or.kr' }] }); await W(120);
+  qq('#subFeed [data-star="b4"]').click(); await W(60);
+  ok('백업 안내: 닫은 뒤에는 ★를 더 눌러도 다시 안 뜸', qq('[data-backup-tip="notices"]').hidden);
+  fw.localStorage.removeItem('cheongyak-check-backup-tip'); qq('#subFeed [data-star="b4"]').click(); await W(60); qq('#subFeed [data-star="b4"]').click(); await W(60);
+  const tip = qq('[data-backup-tip="notices"]'); let bl = null; const ou = fw.URL.createObjectURL; fw.URL.createObjectURL = b => { bl = b; return 'blob:x'; };
+  tip.querySelector('[data-backup-go]').click(); fw.URL.createObjectURL = ou;
+  ok('백업 안내: 공고 탭에서 3개째 → 공고 탭 맨 위 · "백업 받기" → 바로 내보내기 파일(★ 포함) · 다시 안 뜨게 기억', !tip.hidden && !!bl && JSON.parse(await bl.text()).data.stars.includes('b4') && /내보냈어요/.test(tip.textContent) && JSON.parse(fw.localStorage.getItem('cheongyak-check-backup-tip')) === 'done'); }
 """
 
 MOBILE = r"""
@@ -337,11 +360,16 @@ const q = s => d.querySelector(s), before = localStorage.getItem('newlywed-home-
 const qa = s => [...d.querySelectorAll(s)], vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join();
 ok('390 첫 화면은 공고 탭 (다른 탭 숨김)', q('h1').getBoundingClientRect().bottom <= fw.innerHeight && vis() === 'notices');
 { const ls = qa('[data-tab-link]'), nav = q('.chips');
-  ok('390 메뉴 4개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 4 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
+  ok('390 메뉴 3개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 3 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
 ok('기존 사이트 입력 발견 → 진단 탭 맨 위 배너 + 공고 탭 위 한 줄', !q('#importBanner').hidden && q('#h-diag').nextElementSibling === q('#importBanner') && !q('#importHint').hidden && q('#importHint').textContent.includes('SUITABLE HOME 조건 가져오기 → 진단') && q('#importHint').getAttribute('href') === '#diag');
 { fw.eval('CAN_READ_SH = false; renderImport()');
-  ok('새 주소(저장 공간이 다름): 1클릭 가져오기 대신 "SUITABLE HOME에서 내보낸 JSON 파일 불러오기" · 공고 탭 한 줄 숨김', !q('#importBanner').hidden && q('#importGo').hidden && !q('#importFileGo').hidden && q('#importFileGo').textContent.includes('SUITABLE HOME에서 내보낸 JSON 파일 불러오기') && q('#importHint').hidden && localStorage.getItem('newlywed-home-v1') === before);
+  const ln = [...q('#importLinks').querySelectorAll('a')];
+  ok('새 주소(저장 공간이 다름): 1클릭 가져오기 대신 작은 링크 "SUITABLE HOME 쓰셨나요? 조건 불러오기 →" · "예전 주소에서 옮기셨나요? 옮긴 파일 불러오기 →" (#ioSet) · 공고 탭 한 줄 숨김', q('#importBanner').hidden && !q('#importLinks').hidden && ln.map(a => a.textContent).join('|') === 'SUITABLE HOME 쓰셨나요? 조건 불러오기 →|예전 주소에서 옮기셨나요? 옮긴 파일 불러오기 →' && ln.every(a => a.getAttribute('href') === '#ioSet') && q('#importHint').hidden && localStorage.getItem('newlywed-home-v1') === before);
+  fw.location.hash = 'diag'; await W(150); ln[1].click(); await W(200);
+  ok('"옮긴 파일 불러오기 →" → #settings 의 불러오기 칸 (#ioSet)', fw.location.hash === '#settings' && vis() === 'settings' && q('#ioSet').getBoundingClientRect().top < fw.innerHeight && q('#ioSet').getBoundingClientRect().bottom > 0, fw.location.hash);
+  fw.history.back(); await W(200);
+  ok('#settings 에서 뒤로가기 → 진단', vis() === 'diag' && fw.location.hash === '#diag', fw.location.hash);
   fw.eval('CAN_READ_SH = true; renderImport()'); }
 q('#importHint').click(); await W(150);
 ok('공고 탭 한 줄 → 진단 탭', vis() === 'diag' && fw.location.hash === '#diag');

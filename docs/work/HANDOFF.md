@@ -6,8 +6,9 @@
 
 - **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
 
-- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-12a`)
+- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-12b`)
 - 단지 탭 `#danji` + 단지 직접 공고(엘리스) (2026-11-09, `docs/design/단지.md`): 메뉴 "공고/단지/진단/설정" · 서울 청년안심주택 100곳 + 그 밖의 서울 민간임대 6곳 · 관심 단지 ★ → 새 공고 띠(앱은 알림)
+- 메뉴는 "공고/단지/진단" 3개 (2026-11-12) · 설정 `#settings` 는 맨 아래 '데이터 백업·옮기기' 링크로만 (백업·옮기기 + 접힌 고급)
 - 탭 (2026-11-09, `docs/design/탭과문구.md`): 공고 `#notices`(원문 사이트 4곳 · 공고 목록 세부 탭 진행 중/예정/완료 · 검색(이름·역·구 + 구 선택) · 관심 공고 · 캘린더 · 줄마다 '진단 →') · 진단 `#diag`(PDF 올리기 + 질문 + 결과) · 설정 `#settings`(AI 설정 · 데이터 옮기기 · 고급)
 - 캘린더 (2026-11-09 sw 09f): 시작·마감을 아는 공고는 '청약 기간' 한 일정(하루 종일 · 마감 시각은 제목 · 알림 2개) · 발표일은 청년안심(본문 발표 줄)·마이홈(API)만 · 구독 캘린더 = 청약 기간 + 발표 (마감됨 공고 빼고 · 단지 직접 공고는 제목에 단지 이름) · 카카오톡 안에서는 캘린더 버튼이 기본 브라우저로 넘김(`?cal=`, 2026-11-10 sw 10c)
 - 판정 문구는 "입력한 조건으로는 … 보여요" + 예비 판정 줄 · 처음 결과 볼 때 이용약관(`terms.html`) 확인 한 번 (키 `cheongyak-check-terms`)
