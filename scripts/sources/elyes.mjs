@@ -4,6 +4,7 @@
 // · 저장은 제목 · 게시일 · 상세 링크만. 응답에 같이 오는 본문(nt_content)·첨부·사진은 쓰지 않고 버린다
 // · 같은 사이트 3초 간격 · robots.txt 확인 (net.mjs) · 하루 약 4번 (공고 피드와 같이)
 import { polite, robotsOk } from '../net.mjs';
+import { httpUrl } from '../url.mjs';
 
 export const SOURCE = { id: 'elyes', label: '엘리스', home: 'https://www.elyes.co.kr' };
 const LIST = 'https://www.elyes.co.kr/post/data/recruit/list', DETAIL = 'https://www.elyes.co.kr/post/recruit/detail';
@@ -61,7 +62,7 @@ export function parse(data, { unknown = new Set() } = {}) {
     if (!d) { if (key) unknown.add(key); continue; }   // 모르는 단지(서울 밖 포함)는 빼고 기록만
     const dt = titleDates(title, posted); if (CLOSED.test(title) && !dt) continue;
     out.push({ feedId: `elyes-${idx.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}`, org: '엘리스', title, region: '서울', kind: d.other ? '민간임대' : '청년안심주택(민간)',
-      posted, from: dt?.from || '', to: dt?.to || '', time: dt?.time || '', url: `${DETAIL}?i_sNtCode=BHCT&nt_idx=${encodeURIComponent(idx)}`,
+      posted, from: dt?.from || '', to: dt?.to || '', time: dt?.time || '', url: httpUrl(`${DETAIL}?i_sNtCode=BHCT&nt_idx=${encodeURIComponent(idx)}`),
       direct: true, closed: CLOSED.test(title), danjiName: d.name || '', danji: d.other?.id || '' });   // closed: 사이트가 '마감되었습니다'를 붙임 → 화면은 '마감됨' · 목록 아래
   }
   return out;

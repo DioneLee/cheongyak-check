@@ -7,6 +7,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { polite, robotsOk } from './net.mjs';
+import { httpUrl } from './url.mjs';
 import { OTHERS } from './sources/elyes.mjs';
 
 export const DANJI_OUT = fileURLToPath(new URL('../feed/danji.json', import.meta.url));
@@ -43,7 +44,7 @@ export function parseView(html) {
   const txt = unHtml(String(html).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, '\n')).split('\n').map(l => l.trim()).filter(Boolean).join('\n');
   const after = k => txt.match(new RegExp(`${k}\\s*:\\s*\\n?([^\\n]+)`))?.[1].trim() || '';
   const home = after('홈페이지'), tel = after('대표전화').match(/[\d-]{7,}/)?.[0] || '';
-  return { dev: after('시행사').slice(0, 60), home: /^https?:\/\//.test(home) ? home.slice(0, 200) : '', tel };
+  return { dev: after('시행사').slice(0, 60), home: home.length <= 200 ? httpUrl(home) : '', tel };
 }
 export const parseBbs = data => (data?.resultList ?? []).filter(r => r?.boardId && r.nttSj).map(r => ({ id: String(r.boardId), t: unHtml(r.nttSj).trim().slice(0, 160), d: String(r.optn1 || '').slice(0, 10) }));
 
@@ -98,7 +99,7 @@ export function buildDanji(prev, { list, views = {}, hist = null, openIds = new 
     // 공급상태: 접수 중 공고가 있으면 '청약중', 아니면 표(CSV) 값 base (지시서 확인 2026-11-09)
     const base = o.base ?? o.status ?? '', status = openIds.has(b.id) ? '청약중' : base;
     // 구: 사용자 표가 서울시 값과 다르면 표 값 (guFix · 2026-11-09 사용자 결정)
-    return { ...b, ...(o.guFix ? { gu: o.guFix, guFix: o.guFix } : {}), dev: v?.dev ?? o.dev ?? '', home: v?.home ?? o.home ?? '', tel: v?.tel ?? o.tel ?? '', viewAt: v ? today : o.viewAt || '',
+    return { ...b, ...(o.guFix ? { gu: o.guFix, guFix: o.guFix } : {}), dev: v?.dev ?? o.dev ?? '', home: httpUrl(v?.home ?? o.home), tel: v?.tel ?? o.tel ?? '', viewAt: v ? today : o.viewAt || '',
       base, status, first: c?.first || o.first || '', bbs: c ? c.bbs : o.bbs ?? 0, extra: c ? c.extra : o.extra ?? 0, lastExtra: c ? c.lastExtra : o.lastExtra || '' };
   }).sort((a, b) => a.gu.localeCompare(b.gu, 'ko') || a.name.localeCompare(b.name, 'ko'));
   return { updated: today, source: '서울시 청년안심주택 단지 정보 · 모집공고 게시판 (soco.seoul.go.kr)', danji, other: OTHERS };
@@ -130,7 +131,7 @@ export function parseCsv(text) {
 export function seed(csvRows, list, today = todayKst()) {
   const byName = new Map(csvRows.map(r => [nk(r['단지']), r])), miss = [];
   const prev = { danji: list.map(b => { const r = byName.get(nk(b.name)); if (!r) { miss.push(b.name); return { id: b.id }; }
-    return { id: b.id, ...(r['구'] && r['구'] !== b.gu ? { guFix: r['구'] } : {}), dev: r['시행사'], home: /^https?:\/\//.test(r['홈페이지']) ? r['홈페이지'] : '', tel: r['대표전화'], status: r['공급상태'], base: r['공급상태'], viewAt: today,
+    return { id: b.id, ...(r['구'] && r['구'] !== b.gu ? { guFix: r['구'] } : {}), dev: r['시행사'], home: httpUrl(r['홈페이지']) || '', tel: r['대표전화'], status: r['공급상태'], base: r['공급상태'], viewAt: today,
       first: r['최초공고'], bbs: +r['서울시게시판 공고수'] || 0, extra: +r['추가모집 수'] || 0, lastExtra: r['최근 추가모집'] || '' }; }) };
   const out = buildDanji(prev, { list, today }); return { out, miss };
 }

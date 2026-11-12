@@ -3,7 +3,7 @@
 // ① 예전 서비스 워커(git HEAD 의 sw.js)로는 약관이 깨지는지(재현) ② 지금 sw.js 로 바뀌면 약관·개인정보·처음 화면이 열리는지
 // ③ 서버가 끊겨도(503) 저장본으로 열리는지 ④ 예전 서비스 워커가 깔린 사람도 다시 열면 새 것으로 바뀌는지
 import { spawn, execFileSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +12,7 @@ const REPO = join(dirname(fileURLToPath(import.meta.url)), '..', '..'), PORT = 8
 const CHROME = process.platform === 'win32' ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const rows = [], ok = (n, c, g = '') => rows.push([c ? 'OK' : 'NG', n, c ? '' : String(g)]), W = ms => new Promise(r => setTimeout(r, ms));
 const tmp = mkdtempSync(join(tmpdir(), 'cc-sw-')), oldSw = join(tmp, 'sw.old.js');
-writeFileSync(oldSw, execFileSync('git', ['-C', REPO, 'show', 'HEAD:sw.js']));
+writeFileSync(oldSw, execFileSync('git', ['-C', REPO, 'show', 'dda33df~1:sw.js']));   // 고치기 전(리다이렉트를 그대로 넘기던) 서비스 워커 — 고친 커밋 dda33df 바로 앞
 const server = spawn(process.platform === 'win32' ? 'python' : 'python3', [join(REPO, 'scripts/verify/serve.py'), String(PORT), REPO], { stdio: 'ignore' });
 const chrome = spawn(CHROME, ['--headless=new', `--user-data-dir=${join(tmp, 'prof')}`, `--remote-debugging-port=${CDP}`, 'about:blank'], { stdio: 'ignore' });
 const get = p => fetch(BASE + p).catch(() => null);
@@ -32,7 +32,8 @@ try {
   await get('/__sw');   // 이제 지금 sw.js
   await go('/', 3000); await go('/', 2500);   // 다시 열면 새 서비스 워커 설치·적용 (skipWaiting · clients.claim)
   const newV = await swVer();
-  ok('④ 예전 서비스 워커가 깔린 사람도 다시 열면 새 버전으로 바뀜 (예전 저장소 지움)', /2026-11-12c/.test(newV) && !newV.includes(oldV), newV);
+  const CUR = readFileSync(join(REPO, 'sw.js'), 'utf8').match(/VERSION = '([^']+)'/)[1];   // 지금 sw.js 의 VERSION (올릴 때마다 고치지 않게)
+  ok('④ 예전 서비스 워커가 깔린 사람도 다시 열면 새 버전으로 바뀜 (예전 저장소 지움)', newV === CUR && newV !== oldV, `${oldV} → ${newV}`);
   for (const [p, t] of [['/terms.html', '이용약관'], ['/privacy.html', '개인정보'], ['/index.html', '청약 체크'], ['/', '청약 체크']]) {
     const err = await go(p), title = await ev('document.title');
     ok(`② ${p} 열림 (Pages 308 따라감)`, !err && title.includes(t), `${err} · ${title}`);

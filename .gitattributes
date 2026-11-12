@@ -1,0 +1,5 @@
+# 배포(Cloudflare Pages)는 git 내용(LF) 그대로 → CSP 해시가 맞게 작업 폴더도 LF (scripts/csp.py)
+*.html text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+_headers text eol=lf

@@ -26,6 +26,8 @@ _site = re.search(r"const NEW_SITE = '([^']+)'", src).group(1)
 ok("새 주소는 상수 NEW_SITE 한 곳 · 공유 미리보기(og:) 두 줄도 같은 값 · 남의 주소(seoul- 없는 이름) 없음", _site == "https://seoul-cheongyak-check.pages.dev/" and f'og:url" content="{_site}"' in src and f'og:image" content="{_site}icons/' in src and not re.search(r"(?<![\w-])cheongyak-check\.pages\.dev", src), _site)
 ok("기존 저장 키(newlywed-home-v1)는 읽기만", src.count("newlywed-home-v1") == 1 and not re.search(r"(setItem|removeItem)\(\s*OLD_KEY", src) and src.count("OLD_KEY") == 2, src.count("OLD_KEY"))
 tracked = [p for p in REPO.rglob("*") if p.is_file() and ".git" not in p.parts and p.suffix in {".html", ".js", ".mjs", ".json", ".yml", ".md", ".py", ".webmanifest"}]
+_csp = subprocess.run([sys.executable, str(REPO / "scripts" / "csp.py")], capture_output=True, text=True, encoding="utf-8")
+ok("CSP: _headers 의 인라인 스크립트 해시가 지금 index.html 과 같음 (다르면 python scripts/csp.py --write)", _csp.returncode == 0, _csp.stdout.strip())
 ok("API 키(AIza…) 없음", not any("AIza" in p.read_text(encoding="utf-8", errors="ignore") for p in tracked if p.name != "check.py"))
 _swv = re.search(r"VERSION = 'cheongyak-check-([\w-]+)'", (REPO / "sw.js").read_text(encoding="utf-8")).group(1)
 ok("lib/feed-tools.js?v= 가 sw.js VERSION 과 같음 (배포 직후 옛 lib 가 섞이지 않게)", f'lib/feed-tools.js?v={_swv}"' in src, _swv)
@@ -46,7 +48,7 @@ async function open(hash) { if (f) f.remove(); f = document.createElement('ifram
  %(body)s
  ok('page errors', !errs.length, errs.join(' | '));
  document.body.innerHTML = '<pre id="r">' + encodeURIComponent(JSON.stringify(out)) + '</pre>';
-})().catch(e => { document.body.innerHTML = '<pre id="r">' + encodeURIComponent(JSON.stringify([['NG', 'script error', e.message + ' ' + e.stack]])) + '</pre>'; }).finally(() => fetch('/__done?' + Date.now()).catch(() => {}));"""
+})().catch(e => { document.body.innerHTML = '<pre id="r">' + encodeURIComponent(JSON.stringify([...out, ['NG', 'script error', e.message + ' ' + e.stack]])) + '</pre>'; }).finally(() => fetch('/__done?' + Date.now()).catch(() => {}));"""
 
 def run(body, root, port, page, w=1280, h=800, seeds=None, hash_="", budget=60000):
     hp = root / ("_check.html" if root == REPO else "screenshots/process/_check_new.html")
@@ -225,16 +227,26 @@ ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공
   gs.value = ''; gs.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50); }
 delete fw.__today;
 { const yn = fw.eval('state.subs.notices[0]');
-  fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('m1', '2099-01-01'), title: '[정정공고] ' + yn.name, posted: '2026-11-05' }, { ...fi('x1', '2099-01-02'), title: '[SH] 아무개 행복주택 입주자모집공고', url: 'https://www.i-sh.co.kr/x?seq=1' }] }); await W(80);
+  fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('m1', '2099-01-01'), title: '[정정공고] ' + yn.name, posted: '2026-11-05' }, { ...fi('x1', '2099-01-02'), title: '[SH] 아무개 행복주택 입주자모집공고', url: 'https://www.i-sh.co.kr/x?seq=1', cr: { c: [{ k: 'age', min: 19, max: 39 }, { k: 'homeless', scope: '세대' }], x: 1 } }, { ...fi('x2', '2099-01-03'), title: '[LH] 기준 없는 공고' }] }); await W(80);
   const fx = q('#subJudge .sub-main .fixnote');
   ok('정정공고: 공고일 뒤 정정 글이 있으면 결과 위에 "판정 기준일 이후 정정공고가 있어요 · 원문 확인"', !!fx && fx.textContent.startsWith('판정 기준일 이후 정정공고가 있어요 · 원문 확인') && fx.querySelector('a').href === 'https://apply.lh.or.kr/' && fx.compareDocumentPosition(q('#subJudge .sub-main .sig')) === 4, fx?.textContent);
   fw.location.hash = 'notices'; await W(120); q('#subFeed [data-diag="m1"]').click(); await W(200);
   ok('공고 목록 "진단 →" (내 공고에 있는 공고) → 그 공고가 고른 상태로 진단 탭', fw.location.hash === '#diag' && vis() === 'diag' && fw.eval('state.subs.sel') === yn.id && q('#diagFrom').hidden);
-  fw.location.hash = 'notices'; await W(120); q('#subFeed [data-diag="x1"]').click(); await W(200);
-  const df = q('#diagFrom');
-  ok('공고 목록 "진단 →" (내 공고에 없는 공고) → 진단 탭 맨 위 "{공고 이름} · 공고문 PDF를 올리면 판정해요" + 원문 + PDF 올리기', fw.location.hash === '#diag' && !df.hidden && df.querySelector('p').textContent === '아무개 행복주택 · 공고문 PDF를 올리면 판정해요' && df.querySelector('[data-from-url]').href === 'https://www.i-sh.co.kr/x?seq=1' && df.querySelector('label[for="subPdf"]')?.textContent === '공고문 PDF 올리기' && df.compareDocumentPosition(q('#subAdd')) === 4, df.textContent);
+  const prevRes = q('#subJudge').innerHTML;
+  ok('진단 탭에 이전 진단 결과가 보이는 상태', !q('#subJudge').hidden && !!q('#subJudge .sub-main'));
+  fw.location.hash = 'notices'; await W(120); const badge = q('#subFeed [data-fid="x1"] .jb')?.textContent, whyN = qa('#subFeed [data-whyp="x1"] li').length; (q('#subFeed [data-diag="x1"]') ?? (() => { throw new Error('x1 진단 버튼 없음: ' + qa('#subFeed [data-diag]').map(b => b.dataset.diag).join() + ' / ' + q('#subFeed [data-ftab][aria-selected="true"], #subFeed [data-ftab][aria-pressed="true"]')?.textContent); })()).click(); await W(200);
+  const df = q('#diagFrom'), dq = s => df.querySelector(s);
+  ok('공고 목록 "진단 →" (내 공고에 없는 공고) → 진단 탭 맨 위 카드: 공고 이름 · 마감 · 원문 링크 · 이전 결과는 숨김', fw.location.hash === '#diag' && !df.hidden && dq('[data-from-name]').textContent === '아무개 행복주택' && /^2099\.01\.02 마감 · D-\d+$/.test(dq('[data-from-due]').textContent)
+    && dq('[data-from-url]').href === 'https://www.i-sh.co.kr/x?seq=1' && q('#subJudge').hidden && df.compareDocumentPosition(q('#subAdd')) === 4, df.textContent);
+  ok('예비 판정: 공고 목록 배지와 같은 기본 조건(cr) · 같은 판정 함수 · 조건별 ✔/✘/?', !!badge && dq('.jb')?.textContent === badge && /예비 판정/.test(dq('[data-from-judge]').textContent) && df.querySelectorAll('.fwhy li').length === whyN && whyN > 0, `${badge} / ${dq('.jb')?.textContent} · 사유 ${df.querySelectorAll('.fwhy li').length}/${whyN}`);
+  ok('"순위·점수·월 부담까지 보려면 이 공고문 PDF를 올려 주세요 [PDF 올리기]"', dq('.df-next').textContent === '순위·점수·월 부담까지 보려면 이 공고문 PDF를 올려 주세요' && dq('label[for="subPdf"]')?.textContent === 'PDF 올리기', dq('.df-next').textContent);
+  ok('이전 진단은 지우지 않음 (내 공고·고른 공고 그대로)', fw.eval('state.subs.notices').some(n => n.id === yn.id) && fw.eval('state.subs.sel') === yn.id && q('#subJudge').innerHTML === prevRes);
+  q(`[data-nsel="${yn.id}"]`)?.click(); await W(150);
+  ok('내 공고에서 다시 고르면 → 카드 닫히고 이전 진단 결과가 그대로 보임', df.hidden && !q('#subJudge').hidden && !!q('#subJudge .sub-main') && fw.eval('state.subs.sel') === yn.id, q(`[data-nsel="${yn.id}"]`) ? '' : 'data-nsel 버튼 없음');
+  fw.location.hash = 'notices'; await W(120); (q('#subFeed [data-diag="x2"]') ?? (() => { throw new Error('x2 진단 버튼 없음: ' + qa('#subFeed [data-diag]').map(b => b.dataset.diag).join() + ' / ' + q('#subFeed [data-ftab][aria-selected="true"], #subFeed [data-ftab][aria-pressed="true"]')?.textContent); })()).click(); await W(200);
+  ok('기본 조건 정보가 없는 공고 → "예비 판정을 못 해요" 안내 · 카드는 그 공고로 바뀜', !df.hidden && dq('[data-from-name]').textContent === '기준 없는 공고' && /기본 조건 정보가 없어 예비 판정을 못 해요/.test(dq('[data-from-judge]').textContent), dq('[data-from-judge]').textContent);
   fw.location.hash = 'notices'; await W(120); fw.location.hash = 'diag'; await W(120);
-  ok('다른 탭에 갔다 오면 그 안내는 사라짐', q('#diagFrom').hidden); }
+  ok('다른 탭에 갔다 오면 그 카드는 사라지고 결과가 다시 보임', q('#diagFrom').hidden && !q('#subJudge').hidden); }
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];
 const pdf = await (await fetch('samples/notice_example.pdf')).blob(), dt = new fw.DataTransfer(); dt.items.add(new fw.File([pdf], 'notice_example.pdf', { type: 'application/pdf' }));
@@ -353,6 +365,23 @@ await open('#notices'); { const qq = s => d.querySelector(s);
   const tip = qq('[data-backup-tip="notices"]'); let bl = null; const ou = fw.URL.createObjectURL; fw.URL.createObjectURL = b => { bl = b; return 'blob:x'; };
   tip.querySelector('[data-backup-go]').click(); fw.URL.createObjectURL = ou;
   ok('백업 안내: 공고 탭에서 3개째 → 공고 탭 맨 위 · "백업 받기" → 바로 내보내기 파일(★ 포함) · 다시 안 뜨게 기억', !tip.hidden && !!bl && JSON.parse(await bl.text()).data.stars.includes('b4') && /내보냈어요/.test(tip.textContent) && JSON.parse(fw.localStorage.getItem('cheongyak-check-backup-tip')) === 'done'); }
+// ---------- XSS: 바깥 피드·단지 값에 스크립트 · javascript: 주소 → 실행 요소·javascript 링크 0개 (2026-11-12) ----------
+await open('#notices'); { const qq = s => d.querySelector(s), bad = () => {
+    const els = [...d.querySelectorAll('*')], on = els.filter(e => [...e.attributes].some(a => /^on/i.test(a.name))), js = [...d.querySelectorAll('a[href], [src], form[action]')].filter(e => /^\s*(javascript|data|vbscript):/i.test(e.getAttribute('href') || e.getAttribute('src') || e.getAttribute('action') || ''));
+    return { on: on.map(e => e.outerHTML.slice(0, 80)), js: js.map(e => e.outerHTML.slice(0, 80)), scripts: d.querySelectorAll('script').length }; };
+  const S0 = d.querySelectorAll('script').length; fw.__xss = 0; const X = '<img src=x onerror="window.__xss=1"><svg onload="window.__xss=2"></svg><scr' + 'ipt>window.__xss=3</scr' + 'ipt>';
+  fw.eval('setFeed')({ updated: '', source: '', items: [
+    { id: 'xs1', org: 'LH', title: X + '나쁜 공고', region: '서울 ' + X, kind: X, posted: '2026-11-01', from: '', to: '2099-01-05', url: 'javascript:window.__xss=4' },
+    { id: 'xs2', org: 'SH', title: '[정정공고] ' + X, region: '서울', kind: '행복주택', posted: '2026-11-02', from: '', to: '2099-01-06', url: ' JaVaScRiPt:window.__xss=5' }] });
+  fw.eval(`danji = normDanji({ updated: '2026-11-12', danji: [{ id: 'xd1', gu: '마포구', name: ${JSON.stringify(X)} + '나쁜 단지', home: 'javascript:window.__xss=6', tel: '02-123-4567', status: '청약중' }], other: [] }); renderDanji();`);
+  await W(150);
+  // 들어올 때 거르는 곳을 건너뛰어도 (화면에서 한 번 더): 정리된 값에 직접 javascript: 를 넣고 다시 그림
+  fw.eval(`subFeed.items.forEach(i => i.url = 'javascript:window.__xss=7'); danji.danji.forEach(x => x.home = 'javascript:window.__xss=8'); renderFeed(); renderDanji();`); await W(150);
+  fw.location.hash = 'danji'; await W(250); fw.location.hash = 'notices'; await W(250);
+  for (const a of d.querySelectorAll('#subFeed a, #danjiList a')) a.dispatchEvent(new fw.MouseEvent('click', { bubbles: true, cancelable: true }));   // 눌러도 실행 안 됨 (javascript: 링크가 없으니)
+  await W(150); const b = bad();
+  ok('XSS: 피드 제목·지역·종류에 <img onerror>·<svg onload>·<script> → 글자로만 · 실행 속성(on…)·javascript: 링크·새 script 0개 · 실행 안 됨', !b.on.length && !b.js.length && b.scripts === S0 && fw.__xss === 0 && qq('#subFeed').textContent.includes('<img src=x onerror='), JSON.stringify(b) + ' xss=' + fw.__xss);
+  ok('XSS: url·home 이 javascript: 면 링크 대신 글자 (공고 이름은 글자 · 단지 홈페이지 링크 없음)', !!qq('#subFeed [data-fid="xs1"] span.nm') && !qq('#subFeed [data-fid="xs1"] a.nm') && !qq('#danjiList li[data-did="xd1"] .dj-links a[href*="script"]') && !!qq('#danjiList li[data-did="xd1"] a[href^="tel:"]'), qq('#subFeed [data-fid="xs1"] .nmrow')?.outerHTML.slice(0, 120)); }
 """
 
 MOBILE = r"""

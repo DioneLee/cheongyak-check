@@ -43,6 +43,7 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
 - 진단 실행: Actions → 공고 피드 → Run workflow → `probe`(LH API) · `probe_myhome`(마이홈 API 응답 칸)
 - 상세가 줄어들었을 때 복구: `node scripts/restore_details.mjs --dry` → 확인 후 `--dry` 없이 (원문 해시가 같은 버전끼리만 · AI 안 씀)
 - **로컬에서는 실제 Gemini 를 부르지 않는다**: detail.mjs 는 Actions·검사(`DETAIL_TEST=1`)에서만 부름. 꼭 필요하면 `DETAIL_ALLOW_REAL=1` → 그 호출도 `_quota.json` 에 더해지니 끝나면 `_quota.json` 커밋·push
+- **index.html 인라인 스크립트를 고치면 `python scripts/csp.py --write`** (`_headers` CSP 해시 · check.py 가 다르면 NG) · 브라우저 확인 `python scripts/verify/csp_check.py`
 - `lib/` 를 바꾸면 sw.js VERSION 을 올리고 index.html 의 `lib/feed-tools.js?v=` 도 같은 값으로 (check.py 가 확인)
 - push 전에 항상 `git pull --rebase origin main` (Actions 가 피드 커밋을 자주 올림)
 

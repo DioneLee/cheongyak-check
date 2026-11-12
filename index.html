@@ -208,6 +208,10 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 /* 오른쪽: 가져오기 · 질문 · 결과 */
 .import-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s1) var(--s2); padding: 18px 20px; border: 0; border-radius: var(--r2); background: var(--accent-soft); margin-bottom: var(--s2); }
 .import-banner p { font-weight: 600; }
+.diag-from { display: block; } .diag-from > * + * { margin-top: 10px; } .diag-from .df-due { font-weight: 500; color: var(--muted); font-size: 14px; }
+.diag-from .df-judge { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-weight: 500; font-size: 14px; } .diag-from .fwhy { margin: 0; flex-basis: 100%; background: var(--paper); }
+.diag-from .jb { padding: 5px 10px; border-radius: var(--pill); font: 700 12px/1.2 var(--sans); } .diag-from .jb.ok { color: var(--pass-ink); background: color-mix(in srgb, var(--pass) 12%, var(--paper)); } .diag-from .jb.unk { color: var(--muted); background: var(--paper); } .diag-from .jb.no { color: var(--fail-ink); background: color-mix(in srgb, var(--fail) 10%, var(--paper)); }
+.diag-from .df-next { font-weight: 500; }
 .me-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s1) var(--s2); padding: 12px 16px 12px 20px; border-radius: var(--r2); background: var(--paper); border: 0; box-shadow: var(--shadow); }
 .me-bar b { color: var(--accent-ink); margin-right: 6px; }
 .sub-add .sub-steps { margin: var(--s2) 0 0; padding-left: 22px; display: grid; gap: var(--s3); }
@@ -382,8 +386,11 @@ footer p + p { margin-top: 6px; }
         <div class="row" style="margin:0"><button type="button" class="primary small" id="importGo">1클릭으로 가져오기</button><button type="button" class="ghost small" id="importNo">닫기</button></div>
       </div>
       <p class="import-links" id="importLinks" hidden><a href="#ioSet">SUITABLE HOME 쓰셨나요? 조건 불러오기 →</a><br><a href="#ioSet">예전 주소에서 옮기셨나요? 옮긴 파일 불러오기 →</a></p>
-      <div class="import-banner" id="diagFrom" role="region" aria-label="고른 공고" hidden><p></p>
-        <div class="row" style="margin:0"><label class="filebtn" for="subPdf">공고문 PDF 올리기</label><a class="btn ghost small" target="_blank" rel="noopener noreferrer" data-from-url>공고문 원문 ↗</a></div></div>
+      <div class="import-banner diag-from" id="diagFrom" role="region" aria-label="고른 공고" hidden>
+        <p><b data-from-name></b> <span class="df-due" data-from-due></span></p>
+        <div class="df-judge" data-from-judge></div>
+        <p class="df-next">순위·점수·월 부담까지 보려면 이 공고문 PDF를 올려 주세요</p>
+        <div class="row" style="margin:0"><label class="filebtn" for="subPdf">PDF 올리기</label><a class="btn ghost small" target="_blank" rel="noopener noreferrer" data-from-url>공고문 원문 ↗</a></div></div>
       <a class="subs-next" id="subsNext" href="#subJudge" hidden></a>
       <div class="tool sub-add" id="subAdd">
         <div class="ai-row" id="subAiRow"><label class="filebtn">공고문 PDF 올리기<input type="file" id="subPdf" accept="application/pdf,.pdf"></label>
@@ -413,7 +420,7 @@ footer p + p { margin-top: 6px; }
       <div class="tool wiz" id="subWiz" hidden>
         <div class="wiz-top"><p class="wiz-count" id="wizCount"></p><div class="wiz-bar" role="progressbar" aria-label="질문 진행" aria-valuemin="1" aria-valuemax="7" id="wizBar"><i></i></div>
           <nav class="wiz-chips" aria-label="질문 바로 가기" id="wizChips"></nav></div>
-        <form id="subMe" onsubmit="return false">
+        <form id="subMe">
           <fieldset class="wiz-step" data-step="0"><legend>누가 신청하나요?</legend>
             <div class="wiz-pick">
               <button type="button" data-wtier="newlywed"><b>신혼부부예요</b><span>결혼했거나 결혼할 예정인 부부</span></button>
@@ -499,7 +506,7 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-12c"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-12d"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="#settings">데이터 백업·옮기기</a></p>
@@ -907,7 +914,7 @@ function renderSubs() {
     metas.push({ n, sig });
     const page = (n.cite.rules || '').match(/p\.?\s*(\d+)/i)?.[1], fx = fixOf(n), src = safeUrl(n.url) ? `<a href="${esc(safeUrl(n.url))}" target="_blank" rel="noopener noreferrer">공고문 원문 ↗</a>` : '';
     return `<div class="easy-card sub-card">${headOf(n)}
-      ${fx ? `<p class="fixnote">판정 기준일 이후 정정공고가 있어요 · ${fx.url ? `<a href="${esc(fx.url)}" target="_blank" rel="noopener noreferrer">원문 확인 ↗</a>` : '원문 확인'}</p>` : ''}
+      ${fx ? `<p class="fixnote">판정 기준일 이후 정정공고가 있어요 · ${safeUrl(fx.url) ? `<a href="${esc(safeUrl(fx.url))}" target="_blank" rel="noopener noreferrer">원문 확인 ↗</a>` : '원문 확인'}</p>` : ''}
       <p class="sig ${sig[0]}" role="status">${sig[1]}</p>
       <p class="basis">예비 판정 · ${esc(n.short)} 공고문 ${page ? `p.${page} ` : ''}기준 · 최종 자격은 사업 주체 심사로 정해져요${src ? ` · ${src}` : ''}</p>
       ${n.src === 'ai' ? '<p class="basis ai">AI가 공고문을 읽어 만든 값이에요. 소득·자산 기준은 원문과 맞춰 보세요.</p>' : ''}
@@ -1008,7 +1015,8 @@ const isSeoul = n => /서울/.test(`${n.city || ''} ${n.addr || ''}`) || SEOUL_G
 function addNotice(raw, msg) {
   const n = normNotice(raw); if (!n) { $('#subMsg').textContent = '공고 JSON 형식이 아니에요 (임대 공고 · 공고일 · 주택형이 필요해요).'; return false; }
   if (!isSeoul(n)) { $('#subMsg').textContent = `지금은 서울 공고만 진단할 수 있어요 (${n.short || '이 공고'} · ${n.city || n.region || '지역 모름'}).`; return false; }
-  state.subs.sel = n.id; const i = state.subs.notices.findIndex(x => x.id === n.id); if (i >= 0) { n.commute ??= state.subs.notices[i].commute; state.subs.notices[i] = n; } else state.subs.notices.push(n);
+  // 공고를 넣으면 고른 공고 카드(diagFrom)를 닫고 결과를 보여 준다
+  state.subs.sel = n.id; diagFrom = null; const i = state.subs.notices.findIndex(x => x.id === n.id); if (i >= 0) { n.commute ??= state.subs.notices[i].commute; state.subs.notices[i] = n; } else state.subs.notices.push(n);
   $('#subMsg').textContent = `${msg}: ${n.short} · 주택형 ${n.types.length}개 · 일정 ${n.schedule.length}개`; render(); return true;
 }
 // ---------- 새로 올라온 공고 (feed/notices.json · GitHub Actions 가 scripts/feed.mjs 로 만든다 · 마이홈포털·LH 공식 API 만) ----------
@@ -1050,9 +1058,9 @@ function feedRow(i, t, done, ph = phaseOf(i, t)) {
   const start = i.startOnly ? i.to : i.from, tag = ph === 'done' ? '<span class="dd mute">마감됨</span>' : ph === 'plan' ? `<span class="dd">시작 D-${daysBetween(t, start)}</span>` : i.to === t ? '<span class="dd">오늘 마감</span>' : dd && !dd.past ? `<span class="dd">${dd.txt}</span>` : isNew ? '<span class="dd new">새 공고</span>' : '';
   let org = ORG_KO[i.org] || i.org, kind = i.kind.startsWith(org) ? i.kind.slice(org.length).replace(/^\((.*)\)$/, '$1') : i.kind;   // 청년안심주택(민간) → 민간
   if (i.direct) { org = `단지 직접 · ${org}${i.kind === '민간임대' ? ' · 민간임대' : ''}`; if (i.kind === '민간임대') kind = ''; }   // 단지 운영사 사이트에만 올라온 공고
-  const st = feedTitle(i), nm = i.url ? `<a class="nm" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer" title="${esc(i.title)}">${esc(st)} ↗</a>` : `<span class="nm" title="${esc(i.title)}">${esc(st)}</span>`;
+  const st = feedTitle(i), nm = safeUrl(i.url) ? `<a class="nm" href="${esc(safeUrl(i.url))}" target="_blank" rel="noopener noreferrer" title="${esc(i.title)}">${esc(st)} ↗</a>` : `<span class="nm" title="${esc(i.title)}">${esc(st)}</span>`;
   const star = `<button type="button" class="star" data-star="${esc(i.id)}" aria-pressed="${stars.has(i.id)}" aria-label="관심 공고${stars.has(i.id) ? ' 빼기' : '로 표시'}">${stars.has(i.id) ? '★' : '☆'}</button>`;
-  const open = detOpen.has(i.id), btn = i.detail ? `<button type="button" class="dbtn" data-detail="${esc(i.id)}" aria-expanded="${open}">상세보기</button>` : i.url ? `<a class="dbtn dlink" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">공고 원문 보기 ↗</a>` : '';
+  const open = detOpen.has(i.id), btn = i.detail ? `<button type="button" class="dbtn" data-detail="${esc(i.id)}" aria-expanded="${open}">상세보기</button>` : safeUrl(i.url) ? `<a class="dbtn dlink" href="${esc(safeUrl(i.url))}" target="_blank" rel="noopener noreferrer">공고 원문 보기 ↗</a>` : '';
   const fix = /정정|변경|재공고/.test(i.title) ? '<span class="dd fix">정정공고</span>' : '';   // 예전 공고는 피드 만들 때 숨김 (scripts/feed.mjs buildFeed)
   const jr = done && window.FeedTools ? FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }) : null, wo = whyOpen.has(i.id);
   const jb = jr ? `<button type="button" class="jb ${JB[jr.st][0]}" data-why="${esc(i.id)}" aria-expanded="${wo}">${JB[jr.st][1]}</button>` : '';
@@ -1102,14 +1110,14 @@ function normDet(x) {
     supply: o(x?.supply, ['type', 'area', 'units', 'price', 'movein']), schedule: o(x?.schedule, ['label', 'date']), apply: s(x?.apply), costs: a(x?.costs), special: a(x?.special), contact: s(x?.contact) };
 }
 // 글 속 http(s) 주소만 링크로 (나머지는 글자 그대로)
-const linkify = v => String(v || '').split(/(https?:\/\/[^\s<>"'),]+)/).map((p, k) => k % 2 && safeUrl(p) ? `<a href="${esc(p)}" target="_blank" rel="noopener noreferrer">${esc(p)} ↗</a>` : esc(p)).join('');
+const linkify = v => String(v || '').split(/(https?:\/\/[^\s<>"'),]+)/).map((p, k) => k % 2 && safeUrl(p) ? `<a href="${esc(safeUrl(p))}" target="_blank" rel="noopener noreferrer">${esc(p)} ↗</a>` : esc(p)).join('');
 function detBody(i) {
   const d = detCache.get(i.id + '@' + i.dv); if (d === undefined) return '<p class="hint">불러오는 중…</p>'; if (!d) return '<p class="hint">상세를 불러오지 못했어요. 공고 원문에서 확인해 주세요.</p>';
   const ul = a => a.length ? `<ul>${a.map(x => `<li>${x}</li>`).join('')}</ul>` : '', row = (k, v) => v ? `<div><dt>${k}</dt><dd>${v}</dd></div>` : '';
   return `${d.target ? `<p class="dtgt">${esc(d.target)}</p>` : ''}<dl>${row('신청 자격', ul(d.eligibility.map(esc)))}${row('소득', esc(d.income))}${row('자산', esc(d.asset))}${row('자동차', esc(d.car))}
     ${row('주택형·가격', d.supply.length ? `<ul>${d.supply.map((r, k) => `<li>${r.type ? `<b>${esc(r.type)}</b> ` : ''}${[r.area, /^\d+$/.test(r.units) ? `${r.units}세대` : r.units, r.price, r.movein && `입주 ${r.movein}`].filter(Boolean).map(esc).join(' · ')}</li>`).join('')}</ul>` : '')}
     ${row('일정', ul(d.schedule.map(r => esc([r.label, r.date].filter(Boolean).join(' ')))))}${row('주소', esc(d.addr))}${row('신청 방법', linkify(d.apply))}${row('내가 낼 비용', ul(d.costs.map(esc)))}${row('특이사항', ul(d.special.map(esc)))}${row('문의', esc(d.contact))}</dl>
-    <p class="hint dnote">${d.api ? '마이홈포털 공공데이터의 기본 정보예요. 신청 자격·소득 기준은' : `AI가 공고문에서 읽은 내용이에요${d.read ? ` (${esc(md2(d.read))} 읽음)` : ''}. 틀릴 수 있으니 신청 전에`} ${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">공고 원문 ↗</a>` : '공고 원문'}${d.api ? '에서 확인하세요.' : '을 꼭 확인하세요.'}</p>`;
+    <p class="hint dnote">${d.api ? '마이홈포털 공공데이터의 기본 정보예요. 신청 자격·소득 기준은' : `AI가 공고문에서 읽은 내용이에요${d.read ? ` (${esc(md2(d.read))} 읽음)` : ''}. 틀릴 수 있으니 신청 전에`} ${safeUrl(i.url) ? `<a href="${esc(safeUrl(i.url))}" target="_blank" rel="noopener noreferrer">공고 원문 ↗</a>` : '공고 원문'}${d.api ? '에서 확인하세요.' : '을 꼭 확인하세요.'}</p>`;
 }
 async function getDet(i) {   // 상세 파일 (캐시) — 상세보기 · 캘린더의 신청 링크에 씀
   const ck = i.id + '@' + i.dv;   // 상세가 바뀌면 dv(내용 해시)가 바뀌어 주소가 달라진다 → 브라우저·서비스 워커에 남은 예전 상세를 쓰지 않음
@@ -1165,7 +1173,7 @@ function danjiCard(d, t) {
   const money = [range(d.dep, fmtMan) && `보증금 ${range(d.dep, fmtMan)}`, range(d.rent, v => `${v}만`) && `월세 ${range(d.rent, v => `${v}만`)}`].filter(Boolean).join(' · ');
   const st = dStatus(d, t), badges = [st ? `<span class="dd ${st === '청약중' ? 'on' : ''}">${st}</span>` : '', d.other ? `<span class="org">민간임대 · ${esc(d.dev || '엘리스')}</span>` : '',
     !d.other && selfOnly(d, t) ? '<span class="dd">자체 사이트에서만 공고</span>' : '', !d.other && d.bbs ? `<span>서울시 공고 ${d.bbs}건${d.extra ? ` · 추가모집 ${d.extra}번 (최근 ${(d.lastExtra || d.first).slice(2).replace(/-/g, '.')})` : ''}</span>` : ''].filter(Boolean).join('');
-  const links = [d.home && `<a href="${esc(d.home)}" target="_blank" rel="noopener noreferrer">홈페이지 ↗</a>`, d.tel && `<a href="tel:${esc(d.tel)}">${esc(d.tel)}</a>`, open && '<a href="#notices">공고 보기</a>'].filter(Boolean).join('');
+  const links = [safeUrl(d.home) && `<a href="${esc(safeUrl(d.home))}" target="_blank" rel="noopener noreferrer">홈페이지 ↗</a>`, d.tel && `<a href="tel:${esc(d.tel)}">${esc(d.tel)}</a>`, open && '<a href="#notices">공고 보기</a>'].filter(Boolean).join('');
   return `<li data-did="${esc(d.id)}"><div class="frow"><span class="nmrow"><span class="nm">${esc(d.name)}</span>${star}</span><span class="sub"><span class="finfo">${badges}<span>${[d.gu, stn, money].filter(Boolean).map(esc).join(' · ')}</span></span></span>
     ${d.other ? '<p class="dj-other">청년안심주택이 아니라 자격이 다를 수 있어요 · 공고문 확인</p>' : ''}${links ? `<div class="dj-links">${links}</div>` : ''}</div></li>`;
 }
@@ -1194,7 +1202,7 @@ function danjiNew() { const t = todayYmd(); return (subFeed?.items || []).filter
 const danjiName = id => [...(danji?.danji || []), ...(danji?.other || [])].find(d => d.id === id)?.name || '';
 function renderDanjiNew() {
   const box = $('#danjiNew'), L = danjiNew(); box.hidden = !L.length; if (!L.length) return;
-  box.querySelector('ul').innerHTML = L.map(i => `<li>${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">${esc(feedTitle(i))} ↗</a>` : `<span>${esc(feedTitle(i))}</span>`}
+  box.querySelector('ul').innerHTML = L.map(i => `<li>${safeUrl(i.url) ? `<a href="${esc(safeUrl(i.url))}" target="_blank" rel="noopener noreferrer">${esc(feedTitle(i))} ↗</a>` : `<span>${esc(feedTitle(i))}</span>`}
     ${stars.has(i.id) ? '<span class="hint">마감 알림 받는 중 ★</span>' : `<button type="button" class="primary" data-dnstar="${esc(i.id)}">이 공고 마감 알림도 받기</button>`}<button type="button" class="ghost" data-dnseen="${esc(i.id)}">확인</button></li>`).join('');
   dispatchEvent(new CustomEvent('cc-danji-new', { detail: L.map(i => ({ id: i.id, title: feedTitle(i), danji: danjiName(i.danji), starred: stars.has(i.id) })) }));
 }
@@ -1381,7 +1389,7 @@ $('#subsSec').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   const S = state.subs, ds = b.dataset;
   if (b.id === 'subDemoExit') { subDemo = false; wizGo(0); return; }
-  if (ds.nsel) { S.sel = ds.nsel; render(); $('#subJudge .sub-main').scrollIntoView({ block: 'nearest' }); return; }
+  if (ds.nsel) { S.sel = ds.nsel; diagFrom = null; render(); $('#subJudge .sub-main').scrollIntoView({ block: 'nearest' }); return; }
   if ('addn' in ds) { $('#subAdd').scrollIntoView({ block: 'start' }); return; }
   if ('sample' in ds) { $('#subSample').click(); return; }
   if (ds.kakao != null) {
@@ -1536,7 +1544,7 @@ $('#moneySet').addEventListener('input', e => {
 // ---------- 탭 4개: #notices · #danji · #diag · #settings (주소로 나눠서 뒤로가기·공유가 된다) ----------
 // 화면은 숨기기만 하고 다시 그리지 않는다 → 질문 진행·입력값·필터가 그대로 남는다
 const TABS = ['notices', 'danji', 'diag', 'settings'], INNER = { subJudge: 'diag', aiSet: 'settings', ioSet: 'settings' };   // #settings 는 메뉴에 없음 (맨 아래 '데이터 백업·옮기기' · 바로 연결 링크로만)
-let diagFrom = null;   // 피드에서 '진단 →' 을 눌렀는데 내 공고에 없던 공고 { title, url } → 진단 탭 맨 위 안내
+let diagFrom = null;   // 피드에서 '진단 →' 을 눌렀는데 내 공고에 없던 공고(피드 항목) → 진단 탭 맨 위 카드 · 그동안 이전 진단 결과는 숨김 (지우지 않음: 내 공고에서 고르면 다시 보임)
 function route(focus = true) {
   let h = location.hash.slice(1), inner = INNER[h] && document.getElementById(h);   // 탭 안 칸으로 가는 링크 (#subJudge · #aiSet · #ioSet)
   if (inner) { h = INNER[h]; history.replaceState(null, '', '#' + h); for (let e = inner; e; e = e.parentElement?.closest('details')) if (e.tagName === 'DETAILS') e.open = true; }   // #aiSet: 고급도 펼침
@@ -1549,16 +1557,22 @@ function route(focus = true) {
   else if (focus) { window.scrollTo(0, 0); document.querySelector(`[data-tab="${h}"] .tab-title`)?.focus({ preventScroll: true }); }
 }
 function renderDiagFrom() {
-  const box = $('#diagFrom'); box.hidden = !diagFrom; if (!diagFrom) return;
-  box.querySelector('p').textContent = `${diagFrom.title} · 공고문 PDF를 올리면 판정해요`;
-  const a = box.querySelector('[data-from-url]'); a.hidden = !safeUrl(diagFrom.url); if (!a.hidden) a.href = diagFrom.url;
+  const box = $('#diagFrom'), i = diagFrom; box.hidden = !i; $('#subJudge').hidden = !!i; if (!i) return;
+  const q = s => box.querySelector(s), t = todayYmd(), dd = i.to && ddayOf({ from: i.from || i.to, to: i.to }, t);
+  q('[data-from-name]').textContent = shortTitle(i.title);
+  q('[data-from-due]').textContent = i.closed || (i.to && i.to < t) ? '마감됨' : i.to ? `${i.to.replace(/-/g, '.')} 마감${dd ? ` · ${dd.txt}` : ''}` : '마감일은 공고 원문에서';
+  // 예비 판정: 공고 탭 배지와 같은 기본 조건(cr) · 같은 판정 함수
+  const jr = state.subs.wizard.done && i.cr && window.FeedTools ? FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }) : null;
+  q('[data-from-judge]').innerHTML = jr ? `<span>예비 판정</span><span class="jb ${JB[jr.st][0]}">${JB[jr.st][1]}</span><div class="fwhy"><ul>${jr.why.map(w => `<li class="${w.ok === true ? 'y' : w.ok === false ? 'n' : 'q'}"><b>${w.ok === true ? '✔' : w.ok === false ? '✘' : '?'}</b> ${esc(w.t)}: ${esc(w.v)}</li>`).join('')}</ul><p class="hint">공고 목록의 기본 조건(나이·무주택·소득·자산 등)만 본 참고용이에요.</p></div>`
+    : !i.cr ? '<span>이 공고는 기본 조건 정보가 없어 예비 판정을 못 해요.</span>' : '<span>내 조건을 입력하면 기본 조건이 맞아 보이는지 먼저 볼 수 있어요.</span>';
+  const a = q('[data-from-url]'); a.hidden = !safeUrl(i.url); if (!a.hidden) a.href = safeUrl(i.url);
 }
 addEventListener('hashchange', () => route());
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-diag]'); if (!b) return;
   const i = (subFeed?.items || []).find(x => x.id === b.dataset.diag); if (!i) return;
   const n = noticeOf(i);
-  if (n) { state.subs.sel = n.id; subDemo = false; diagFrom = null; render(); } else diagFrom = { title: shortTitle(i.title), url: i.url };
+  if (n) { state.subs.sel = n.id; subDemo = false; diagFrom = null; render(); } else diagFrom = i;
   location.hash = 'diag';
 });
 document.addEventListener('click', e => {
@@ -1566,7 +1580,8 @@ document.addEventListener('click', e => {
   termsMem = TERMS_V; try { localStorage.setItem(TERMS_KEY, TERMS_V); } catch (err) {}   // 이 사이트 키와 따로 (판정 데이터와 섞지 않음)
   render(); $('#subJudge').scrollIntoView({ block: 'start' });
 });
-function render() { save(); renderSubsNext(); renderSubs(); renderImport(); renderMeBar(); renderMoney(); if (subFeed) renderFeed(); }   // 내 조건이 바뀌면 '신청 가능' 배지도 다시
+$('#subMe').addEventListener('submit', e => e.preventDefault());   // CSP 로 인라인 onsubmit 이 막혀서 (2026-11-12)
+function render() { save(); renderSubsNext(); renderSubs(); renderImport(); renderMeBar(); renderMoney(); if (subFeed) renderFeed(); renderDiagFrom(); }   // 내 조건이 바뀌면 '신청 가능' 배지도 다시
 render(); route(false);
 if ('serviceWorker' in navigator && location.protocol !== 'file:' && !IS_APP) navigator.serviceWorker.register('sw.js').catch(() => {});
 
