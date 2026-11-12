@@ -6,7 +6,7 @@
 
 - **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
 
-- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-12b`)
+- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-12c`)
 - 단지 탭 `#danji` + 단지 직접 공고(엘리스) (2026-11-09, `docs/design/단지.md`): 메뉴 "공고/단지/진단/설정" · 서울 청년안심주택 100곳 + 그 밖의 서울 민간임대 6곳 · 관심 단지 ★ → 새 공고 띠(앱은 알림)
 - 메뉴는 "공고/단지/진단" 3개 (2026-11-12) · 설정 `#settings` 는 맨 아래 '데이터 백업·옮기기' 링크로만 (백업·옮기기 + 접힌 고급)
 - 탭 (2026-11-09, `docs/design/탭과문구.md`): 공고 `#notices`(원문 사이트 4곳 · 공고 목록 세부 탭 진행 중/예정/완료 · 검색(이름·역·구 + 구 선택) · 관심 공고 · 캘린더 · 줄마다 '진단 →') · 진단 `#diag`(PDF 올리기 + 질문 + 결과) · 설정 `#settings`(AI 설정 · 데이터 옮기기 · 고급)
@@ -15,7 +15,7 @@
 - 공고 출처: LH·마이홈포털 공공데이터 API + SH 공고 게시판 + 서울 청년안심주택 모집공고 목록 + 단지 직접(엘리스, `scripts/sources/`) (서울만)
   - 게시판(SH·청년안심)은 2026-11-09 부터 제목·기관·날짜·원문 링크만 (본문·공고문은 저장·AI 읽기 안 함) · 같은 사이트 요청 3초 간격 · 실행마다 robots.txt 확인 · 실제 실행 하루 약 4번
 - 공고 상세(신청 조건 요약): 2026-11-09 부터 마이홈 API 기본 정보만 (게시판 공고는 상세 없음 → '공고 원문 보기'). Gemini 자동 읽기 코드(detail.mjs)는 남아 있지만 지금 부르는 출처 없음
-- 검사 (2026-11-10 마지막): `python scripts/verify/check.py` 141/141 (판정 동등성은 기준 파일 있는 PC 에서만) · `node scripts/verify/tools_check.mjs` 33 · `detail_check.mjs` 57 · `feed_check.mjs` 25 · `danji_check.mjs` 28 · `app_bridge_check.mjs` 32 · `cron_check.mjs` 5
+- 검사 (2026-11-10 마지막): `python scripts/verify/check.py` 141/141 (판정 동등성은 기준 파일 있는 PC 에서만) · `node scripts/verify/tools_check.mjs` 33 · `detail_check.mjs` 57 · `feed_check.mjs` 25 · `danji_check.mjs` 28 · `app_bridge_check.mjs` 32 · `cron_check.mjs` 5 · `sw_redirect_check.mjs` 10 (Pages 308 + 서비스 워커)
   - 판정 동등성 검사는 `../sjcu/index_v28_backup.html`(SUITABLE HOME 마지막 청약 버전)이 있는 PC 에서만 돈다
   - check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 

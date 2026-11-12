@@ -3,10 +3,15 @@
 // - 아이콘 · 예시 공고 · manifest: 저장본 먼저 (없으면 받아서 저장)
 // - 다른 주소(AI·지도·글꼴)는 건드리지 않는다
 // 배포할 때 VERSION 을 바꾸면 새 저장소를 만들고 예전 것은 지운다 (scripts/verify/check.py 가 index.html·아이콘이 바뀌었는데 그대로면 알려 준다)
-const VERSION = 'cheongyak-check-2026-11-12b';
+// 리다이렉트: Cloudflare Pages 는 /terms.html → /terms, /index.html → / 로 308 을 준다. 넘어간 응답(redirected)을 그대로 화면 요청에 넘기면
+//   크롬이 거부한다(ERR_FAILED) → 받은 응답은 늘 clean() 으로 새 Response 로 감싸 넘기고 저장한다 (사전 저장 CORE 도)
+const VERSION = 'cheongyak-check-2026-11-12c';
 const CORE = ['./', 'index.html', 'terms.html', 'privacy.html', 'lib/feed-tools.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'samples/notice_yongsan.json', 'feed/notices.json', 'feed/danji.json'];
 
-self.addEventListener('install', e => e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting())));
+const clean = res => res.redirected ? new Response(res.body, { status: res.status, statusText: res.statusText, headers: res.headers }) : res;
+self.addEventListener('install', e => e.waitUntil(caches.open(VERSION).then(c => Promise.all(CORE.map(async p => {
+  const res = clean(await fetch(p, { cache: 'reload' })); if (!res.ok) throw new Error(`사전 저장 실패 ${p} ${res.status}`); await c.put(p, res);
+}))).then(() => self.skipWaiting())));
 self.addEventListener('activate', e => e.waitUntil(caches.keys()
   .then(ks => Promise.all(ks.filter(k => k.startsWith('cheongyak-check-') && k !== VERSION).map(k => caches.delete(k))))
   .then(() => self.clients.claim())));
@@ -21,7 +26,7 @@ self.addEventListener('fetch', e => {
 async function netFirst(r) {
   const c = await caches.open(VERSION), saved = () => c.match(r, { ignoreSearch: true }).then(x => x || (r.mode === 'navigate' ? c.match('./') : undefined));
   try {
-    const res = await fetch(r, { cache: 'no-store' });
+    const res = clean(await (r.mode === 'navigate' ? fetch(r.url, { cache: 'no-store', redirect: 'follow', credentials: 'same-origin' }) : fetch(r, { cache: 'no-store' })));
     if (res.ok) { c.put(r, res.clone()); return res; }
     return (await saved()) || res;   // 서버 오류(5xx 등)도 저장본이 있으면 저장본
   } catch (err) {
@@ -31,7 +36,7 @@ async function netFirst(r) {
 async function cacheFirst(r) {
   const c = await caches.open(VERSION), hit = await c.match(r);
   if (hit) return hit;
-  const res = await fetch(r);
+  const res = clean(await fetch(r));
   if (res.ok) c.put(r, res.clone());
   return res;
 }
