@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12",
+ "updated": "2026-11-13",
  "source": "서울시 청년안심주택 단지 정보 · 모집공고 게시판 (soco.seoul.go.kr)",
  "danji": [
   {
@@ -20,7 +20,7 @@
     122
    ],
    "dev": "선릉역마에스트로역세권청년주택",
-   "home": "https://maestrosamseong.com",
+   "home": "https://maestrosamseong.com/",
    "tel": "02-3453-9655",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -160,7 +160,7 @@
     74
    ],
    "dev": "(주)대한제37호위탁관리부동산투자회사",
-   "home": "https://gildonglife.co.kr",
+   "home": "https://gildonglife.co.kr/",
    "tel": "02-553-8387",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -188,7 +188,7 @@
     74
    ],
    "dev": "(주)대한제37호위탁관리부동산투자회사",
-   "home": "https://gildonglife.co.kr",
+   "home": "https://gildonglife.co.kr/",
    "tel": "02-553-8387",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -216,7 +216,7 @@
     71
    ],
    "dev": "㈜알이비에셋 대표 정은채",
-   "home": "http://천호역세권청년주택.com",
+   "home": "http://xn--zf0bo4e9zsyre7pe70grdw68amqm.com/",
    "tel": "02-6472-3902",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -472,11 +472,11 @@
    "tel": "홈페이지 :",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2020-10-05",
-   "bbs": 2,
-   "extra": 1,
-   "lastExtra": "2025-12-11"
+   "bbs": 3,
+   "extra": 2,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000412",
@@ -524,7 +524,7 @@
     18000
    ],
    "dev": "우리자산신탁 주식화사",
-   "home": "https://www.juventus240.com",
+   "home": "https://www.juventus240.com/",
    "tel": "02-855-2401",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -580,15 +580,15 @@
     21
    ],
    "dev": "박정호 외 3인",
-   "home": "http://www.bx201.co.kr",
+   "home": "http://www.bx201.co.kr/",
    "tel": "02-3285-0201",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2022-04-01",
-   "bbs": 21,
-   "extra": 20,
-   "lastExtra": "2026-09-17"
+   "bbs": 22,
+   "extra": 21,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000496",
@@ -608,7 +608,7 @@
     85
    ],
    "dev": "(주)신림리더스하우징",
-   "home": "https://www.최강타워.com",
+   "home": "https://www.xn--939aq02c7teiyd.com/",
    "tel": "02-872-8886",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -748,7 +748,7 @@
     136
    ],
    "dev": "(주)엘앤케이이스테이트",
-   "home": "https://Thepodium830.com",
+   "home": "https://thepodium830.com/",
    "tel": "02-6239-0330",
    "viewAt": "2026-11-09",
    "base": "청약중",
@@ -776,7 +776,7 @@
     85
    ],
    "dev": "㈜마스턴제124호위탁관리부동산투자회사",
-   "home": "https://www.remarkvillguui.com",
+   "home": "https://www.remarkvillguui.com/",
    "tel": "02-446-0246",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -832,7 +832,7 @@
     104
    ],
    "dev": "(주)더블유앤홀딩스",
-   "home": "https://whtower643.com",
+   "home": "https://whtower643.com/",
    "tel": "02-6216-1200",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -860,7 +860,7 @@
     74
    ],
    "dev": "개봉아이알디피에프브이㈜",
-   "home": "https://seizium-gb.com",
+   "home": "https://seizium-gb.com/",
    "tel": "02-6342-9300",
    "viewAt": "2026-11-09",
    "base": "청약중",
@@ -888,7 +888,7 @@
     94
    ],
    "dev": "(주)하나하우징개봉위탁관리부동산투자회사",
-   "home": "https://www.egaebong.com",
+   "home": "https://www.egaebong.com/",
    "tel": "02-2612-1790",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -916,7 +916,7 @@
     59
    ],
    "dev": "(주)성원산업",
-   "home": "https://www.cvweston.com",
+   "home": "https://www.cvweston.com/",
    "tel": "02-806-0883",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -944,7 +944,7 @@
     65
    ],
    "dev": "현대아산(주)",
-   "home": "https://kws-hdprahills.co.kr",
+   "home": "https://kws-hdprahills.co.kr/",
    "tel": "02-6264-6370",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -972,7 +972,7 @@
     119
    ],
    "dev": "주식회사 엘앤피개발",
-   "home": "https://www.harrington495.kr",
+   "home": "https://www.harrington495.kr/",
    "tel": "02-935-9069",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1000,7 +1000,7 @@
     32
    ],
    "dev": "(주)태운산업개발",
-   "home": "https://yntower.qshop.ai",
+   "home": "https://yntower.qshop.ai/",
    "tel": "02-449-7425",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1028,7 +1028,7 @@
     93
    ],
    "dev": "유한책임회사 문하",
-   "home": "https://mhinitium.co.kr",
+   "home": "https://mhinitium.co.kr/",
    "tel": "070-4098-0123",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1112,7 +1112,7 @@
     85
    ],
    "dev": "주식회사 브이인마크청년주택위탁관리부동산투자회사",
-   "home": "https://www.listanam.co.kr",
+   "home": "https://www.listanam.co.kr/",
    "tel": "02-6235-7702",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1140,7 +1140,7 @@
     104
    ],
    "dev": "동서빌딩",
-   "home": "https://unit125.shineui.kr",
+   "home": "https://unit125.shineui.kr/",
    "tel": "02-2247-5799",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1168,7 +1168,7 @@
     71
    ],
    "dev": "주식회사 씨드원",
-   "home": "https://www.janganheartrium.co.kr",
+   "home": "https://www.janganheartrium.co.kr/",
    "tel": "02-2038-9931",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1196,7 +1196,7 @@
     100
    ],
    "dev": "(주)우리대성문위탁관리부동산투자회사",
-   "home": "https://www.queensw.com",
+   "home": "https://www.queensw.com/",
    "tel": "02-6213-5150",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1252,7 +1252,7 @@
     29
    ],
    "dev": "(주)휴먼타운",
-   "home": "https://www.hgjskycity.com",
+   "home": "https://www.hgjskycity.com/",
    "tel": "02-3390-4700",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1336,7 +1336,7 @@
     105
    ],
    "dev": "주식회사 문배",
-   "home": "https://thefirsttower.imweb.me",
+   "home": "https://thefirsttower.imweb.me/",
    "tel": "02-823-3920",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1392,7 +1392,7 @@
     73
    ],
    "dev": "금성종합건설 주식회사",
-   "home": "http://www.gold-tower.co.kr",
+   "home": "http://www.gold-tower.co.kr/",
    "tel": "070-4349-2998",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1448,7 +1448,7 @@
     108
    ],
    "dev": "스타팰리스 이수",
-   "home": "https://starpalace.ai.kr",
+   "home": "https://starpalace.ai.kr/",
    "tel": "070-5066-2558",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1476,15 +1476,15 @@
     141
    ],
    "dev": "㈜엠지하우징",
-   "home": "https://eseo314.com",
+   "home": "https://eseo314.com/",
    "tel": "02-333-3352",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2026-09-15",
-   "bbs": 1,
-   "extra": 0,
-   "lastExtra": ""
+   "bbs": 2,
+   "extra": 1,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000355",
@@ -1532,7 +1532,7 @@
     103
    ],
    "dev": "㈜마스턴146호위탁관리부동산투자회사",
-   "home": "https://remarkvillmapo.com",
+   "home": "https://remarkvillmapo.com/",
    "tel": "02-3272-6008",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1588,7 +1588,7 @@
     39
    ],
    "dev": "멀티에셋합정역청년주택전문투자형사모투자(유)",
-   "home": "https://서교효성해링턴타워.kr",
+   "home": "https://xn--9d0bz9umvfpcq27a15pgxaw2wfxc.kr/",
    "tel": "02-335-1800",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1700,7 +1700,7 @@
     100
    ],
    "dev": "(주)맹그로브제1호위탁관리부동산투자회사",
-   "home": "https://changcheon.mangrove.city",
+   "home": "https://changcheon.mangrove.city/",
    "tel": "02-2289-6348",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1784,7 +1784,7 @@
     141
    ],
    "dev": "(주)에이치비양재",
-   "home": "https://hobansummit-yj.co.kr",
+   "home": "https://hobansummit-yj.co.kr/",
    "tel": "02-6204-6380",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1812,7 +1812,7 @@
     102
    ],
    "dev": "한상(한석일외3명)",
-   "home": "https://www.hy-stay.com",
+   "home": "https://www.hy-stay.com/",
    "tel": "02-2293-8222",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1840,7 +1840,7 @@
     88
    ],
    "dev": "인트러스제1호전문투자형사모부동산투자(유)",
-   "home": "https://labomseongdong.com",
+   "home": "https://labomseongdong.com/",
    "tel": "02-6459-9200",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1868,7 +1868,7 @@
     null
    ],
    "dev": "우리자산신탁 주식회사",
-   "home": "https://caj266.com",
+   "home": "https://caj266.com/",
    "tel": "02-6273-0266",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1924,7 +1924,7 @@
     117
    ],
    "dev": "㈜하월곡동대한제43호위탁관리부동산투자회사",
-   "home": "https://Heritz-Tower.com",
+   "home": "https://heritz-tower.com/",
    "tel": "02-909-4601",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -1952,15 +1952,15 @@
     86
    ],
    "dev": "꿈꾸는 이상(주)",
-   "home": "https://felix222.com",
+   "home": "https://felix222.com/",
    "tel": "02-6232-0277",
    "viewAt": "2026-11-09",
    "base": "청약중",
    "status": "청약중",
    "first": "2024-12-23",
-   "bbs": 9,
-   "extra": 8,
-   "lastExtra": "2026-11-05"
+   "bbs": 10,
+   "extra": 9,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000577",
@@ -1980,15 +1980,15 @@
     81
    ],
    "dev": "주식회사 종암피에프브이",
-   "home": "https://라온프라이빗종암.com",
+   "home": "https://xn--oi2ba973cqwhh4a78cwwcd18b.com/",
    "tel": "02-2135-5966",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2025-04-14",
-   "bbs": 8,
-   "extra": 7,
-   "lastExtra": "2026-10-15"
+   "bbs": 9,
+   "extra": 8,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000529",
@@ -2008,7 +2008,7 @@
     86
    ],
    "dev": "문정역마에스트로프로젝트금융투자주식회사",
-   "home": "https://maestromunjeong.com",
+   "home": "https://maestromunjeong.com/",
    "tel": "02-3453-9655",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2092,7 +2092,7 @@
     100
    ],
    "dev": "㈜파크디앤씨",
-   "home": "https://songpaht484.com",
+   "home": "https://songpaht484.com/",
    "tel": "02-6273-0484",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2120,7 +2120,7 @@
     79
    ],
    "dev": "주식회사 제이케이스타 대표이사 이준훈",
-   "home": "https://juntower.co.kr",
+   "home": "https://juntower.co.kr/",
    "tel": "02-835-0888",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2176,7 +2176,7 @@
     109
    ],
    "dev": "주식회사 랜드코퍼레이션",
-   "home": "https://sinpung2030.com",
+   "home": "https://sinpung2030.com/",
    "tel": "02-6223-2005",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2204,7 +2204,7 @@
     71
    ],
    "dev": "(주)당산동청년주택피에프브이",
-   "home": "http://www.포레나당산.com",
+   "home": "http://www.xn--910b48b70glxklhy.com/",
    "tel": "02-2633-2030",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2232,7 +2232,7 @@
     127
    ],
    "dev": "롯데건설(주)",
-   "home": "https://www.elyes.co.kr",
+   "home": "https://www.elyes.co.kr/",
    "tel": "02-3272-2997",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2260,11 +2260,11 @@
     27
    ],
    "dev": "(주)롯데건설",
-   "home": "https://www.elyes.co.kr",
+   "home": "https://www.elyes.co.kr/",
    "tel": "02-821-4013",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2022-02-11",
    "bbs": 1,
    "extra": 0,
@@ -2316,7 +2316,7 @@
     74
    ],
    "dev": "(주)에버그린플라자",
-   "home": "https://www.urbanhub25.com",
+   "home": "https://www.urbanhub25.com/",
    "tel": "02-6954-1162",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2344,7 +2344,7 @@
     121
    ],
    "dev": "㈜이지스용산청년주택위탁관리부동산투자회사",
-   "home": "https://yongsan2030.com",
+   "home": "https://yongsan2030.com/",
    "tel": "02-701-1090",
    "viewAt": "2026-11-09",
    "base": "청약예정",
@@ -2400,7 +2400,7 @@
     11
    ],
    "dev": "(주)대조피에프브이",
-   "home": "http://호반베르디움스테이원.com",
+   "home": "http://xn--2z1bz6f6tctpw4vlsgid92d895c2hl.com/",
    "tel": "02-355-2030",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2428,7 +2428,7 @@
     53
    ],
    "dev": "유한회사 자산하우징",
-   "home": "http://www.thestudio163.co.kr",
+   "home": "http://www.thestudio163.co.kr/",
    "tel": "02-564-4866",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2456,7 +2456,7 @@
     69
    ],
    "dev": "㈜에이치엔비개발",
-   "home": "https://Lumino816.com",
+   "home": "https://lumino816.com/",
    "tel": "02-2602-6665",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2484,7 +2484,7 @@
     67
    ],
    "dev": "주식회사 위드웰에셋",
-   "home": "https://lucestation.com",
+   "home": "https://lucestation.com/",
    "tel": "02-356-7108",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2540,15 +2540,15 @@
     85
    ],
    "dev": "이승은 외 3인",
-   "home": "https://www.lovenheim.imweb.me",
+   "home": "https://www.lovenheim.imweb.me/",
    "tel": "02-6273-0707",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2023-07-24",
-   "bbs": 14,
-   "extra": 13,
-   "lastExtra": "2026-10-01"
+   "bbs": 15,
+   "extra": 14,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000513",
@@ -2652,15 +2652,15 @@
     132
    ],
    "dev": "㈜상봉대한제42호위탁관리부동산투자회사",
-   "home": "https://sangbonglife.co.kr",
+   "home": "https://sangbonglife.co.kr/",
    "tel": "070-4119-0311",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2026-07-07",
-   "bbs": 3,
-   "extra": 2,
-   "lastExtra": "2026-10-15"
+   "bbs": 4,
+   "extra": 3,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000586",
@@ -2680,15 +2680,15 @@
     103
    ],
    "dev": "상봉아이알디피에프브이(주)",
-   "home": "https://seizium-sb.com",
+   "home": "https://seizium-sb.com/",
    "tel": "070-4139-4885",
    "viewAt": "2026-11-09",
    "base": "공급완료",
-   "status": "공급완료",
+   "status": "청약중",
    "first": "2025-11-04",
-   "bbs": 12,
-   "extra": 11,
-   "lastExtra": "2026-10-01"
+   "bbs": 13,
+   "extra": 12,
+   "lastExtra": "2026-11-12"
   },
   {
    "id": "20000583",
@@ -2708,7 +2708,7 @@
     84
    ],
    "dev": "상봉동케이원청년주택피에프브이(주)",
-   "home": "https://ycentralcity.com",
+   "home": "https://ycentralcity.com/",
    "tel": "02-6451-0220",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2736,7 +2736,7 @@
     60
    ],
    "dev": "(주)대원교역상사",
-   "home": "https://jstar2030.modoo.at",
+   "home": "https://jstar2030.modoo.at/",
    "tel": "02-537-4102",
    "viewAt": "2026-11-09",
    "base": "공급완료",
@@ -2764,7 +2764,7 @@
     118
    ],
    "dev": "묵동아이알디피에프브이(주)",
-   "home": "https://seizium-tr.com",
+   "home": "https://seizium-tr.com/",
    "tel": "02-6272-0927",
    "viewAt": "2026-11-09",
    "base": "공급완료",
