@@ -48,7 +48,7 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true }
   ok('저장할 때마다 Preferences 에도 (이 키만)', b.prefs['cheongyak-check-v1'] === '{"next":2}' && !('other' in b.prefs)); }
 // 2) 피드 오프라인 · 3) 알림
 { const b = boot({ ls: { 'cheongyak-check-v1': '{}', 'cheongyak-check-stars': '[]' } }); await tick();
-  await (await b.win.fetch('https://dionelee.github.io/cheongyak-check/feed/notices.json')).text(); await tick();
+  await (await b.win.fetch('https://seoul-cheongyak-check.pages.dev/feed/notices.json')).text(); await tick();
   ok('피드를 받으면 기억', JSON.parse(b.local.getItem('cheongyak-check-app-feed')).items.length === 3);
   b.local.setItem('cheongyak-check-stars', '["a","b","c"]'); await tick(); await tick();
   const s = b.log.scheduled;
@@ -86,7 +86,7 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true }
   ok('알림을 누르면 공고 탭', b.ctx.location.hash === '#notices' && starred.length === 1);
   let refreshed = 0; b.win.ccRefreshFeed = () => refreshed++; b.listeners.resume();
   ok('앱을 다시 볼 때 피드 새로 받기 (새 공고 확인)', refreshed === 1);
-  await (await b.win.fetch('https://dionelee.github.io/cheongyak-check/feed/danji.json')).text();
+  await (await b.win.fetch('https://seoul-cheongyak-check.pages.dev/feed/danji.json')).text();
   ok('단지 피드도 받으면 기억', b.local.getItem('cheongyak-check-app-danji') === '{"danji":[1]}'); }
 { const b = boot({ ls: { 'cheongyak-check-v1': '{}' }, granted: false }); await tick();
   b.wl['cc-danji-new']({ detail: [{ id: 'q', title: 't' }] }); await tick(); await tick();

@@ -1,0 +1,8 @@
+# Cloudflare Pages 응답 머리 (새 주소 seoul-cheongyak-check.pages.dev 에서만 쓰임 · GitHub Pages 는 이 파일을 무시)
+# 서비스 워커 · 공고/단지 피드 · 공고 상세 · 구독 캘린더(.ics)는 늘 새로 확인 (예전 것이 캐시에 남지 않게)
+# 피드는 앱(https://localhost · capacitor://localhost)이 다른 출처에서 받으므로 CORS 허용 (GitHub Pages 는 기본이 * 였음 · 공개 공고 정보뿐)
+/sw.js
+  Cache-Control: no-cache
+/feed/*
+  Cache-Control: no-cache
+  Access-Control-Allow-Origin: *

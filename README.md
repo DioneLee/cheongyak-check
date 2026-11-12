@@ -3,7 +3,7 @@
 공고문 PDF를 올리거나 공고를 고르고 몇 가지 질문에 답하면, 신청할 수 있는지(신호등)와 실제 한 달 부담을 보여 주는 웹앱(PWA).
 SUITABLE HOME(https://dionelee.github.io/suitable-home/)의 청약 화면을 따로 뗐다. 판정·계산·AI 읽기 코드는 그대로 옮겼고, 두 사이트 결과가 같은지 자동 검사한다.
 
-- 주소(배포 후): https://dionelee.github.io/cheongyak-check/
+- 주소: https://seoul-cheongyak-check.pages.dev/ (Cloudflare Pages · 2026-11-12 옮김) · 예전 주소 https://dionelee.github.io/cheongyak-check/ 도 당분간 열림('주소가 바뀌었어요' 띠 · 구독 캘린더 계속 갱신)
 - 단일 `index.html` + CDN(Pretendard)만 · 빌드 없음
 - 입력(생년월일·소득·자산)은 이 기기 localStorage `cheongyak-check-v1` 에만. 회원가입·서버 저장·방문자 분석 없음
 - 지역: **서울 공고만** (피드·공고 추가·가져오기 모두)
@@ -41,4 +41,4 @@ python scripts/verify/shots.py        # 화면 사진 screenshots/
 ```
 필요: Python 3 + Pillow, Node 20+, Chrome. 판정 동등성은 옆 폴더 `../sjcu`(SUITABLE HOME) 가 있을 때만.
 
-AI 읽기는 SUITABLE HOME 과 같은 Cloudflare Worker(`suitable-home-ai`)를 쓴다. 같은 주소(dionelee.github.io)라 Worker 설정을 바꿀 필요가 없다. 다른 도메인으로 옮기면 Worker 의 `ORIGINS` 에 새 주소를 넣어야 한다.
+AI 읽기는 SUITABLE HOME 과 같은 Cloudflare Worker(`suitable-home-ai`)를 쓴다. 예전에는 같은 주소(dionelee.github.io)라 Worker 설정을 바꿀 필요가 없다. 다른 도메인으로 옮기면 Worker 의 `ORIGINS` 에 새 주소를 넣어야 한다.

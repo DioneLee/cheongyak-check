@@ -22,6 +22,8 @@ def ok(name, cond, got=""): rows.append(("OK" if cond else "NG", name, str(got))
 
 # ---------- 1) 정적 검사 ----------
 src = (REPO / "index.html").read_text(encoding="utf-8")
+_site = re.search(r"const NEW_SITE = '([^']+)'", src).group(1)
+ok("새 주소는 상수 NEW_SITE 한 곳 · 공유 미리보기(og:) 두 줄도 같은 값 · 남의 주소(seoul- 없는 이름) 없음", _site == "https://seoul-cheongyak-check.pages.dev/" and f'og:url" content="{_site}"' in src and f'og:image" content="{_site}icons/' in src and not re.search(r"(?<![\w-])cheongyak-check\.pages\.dev", src), _site)
 ok("기존 저장 키(newlywed-home-v1)는 읽기만", src.count("newlywed-home-v1") == 1 and not re.search(r"(setItem|removeItem)\(\s*OLD_KEY", src) and src.count("OLD_KEY") == 2, src.count("OLD_KEY"))
 tracked = [p for p in REPO.rglob("*") if p.is_file() and ".git" not in p.parts and p.suffix in {".html", ".js", ".mjs", ".json", ".yml", ".md", ".py", ".webmanifest"}]
 ok("API 키(AIza…) 없음", not any("AIza" in p.read_text(encoding="utf-8", errors="ignore") for p in tracked if p.name != "check.py"))
@@ -250,6 +252,22 @@ q('#importFile').files = dt2.files; q('#importFile').dispatchEvent(new fw.Event(
 ok('입력이 있으면 덮어쓰기 확인', !!q('#ioYes') && fw.eval('state.subs.notices.length') === 2);
 q('#ioYes')?.click(); await W(200);
 ok('확인하면 불러온 내용으로', fw.eval('state.subs.notices.length') === 1 && fw.eval('state.settings.myCash') === 3000);
+// 주소 옮기기 (2026-11-12): 내보내기 파일에 공고 ★·단지 ★·본 공고·약관 확인까지 → 새 주소에서 불러오면 그대로
+{ fw.eval(`stars.add('lh-x1'); dStars.add('x-elyes-mullae'); dSeen.add('elyes-z'); lset(SKEY, [...stars]); lset(DKEY, [...dStars]); lset(DSEEN, [...dSeen])`);
+  let bl = null; const ou2 = fw.URL.createObjectURL; fw.URL.createObjectURL = b => { bl = b; return 'blob:x'; }; q('#exportBtn').click(); fw.URL.createObjectURL = ou2; const ex2 = JSON.parse(await bl.text()), D2 = ex2.data;
+  ok('내보내기: 내 조건·내 공고·돈 조건·공고 ★·단지 ★·본 공고·약관 확인', !!D2.subs.me && D2.subs.notices.length === 1 && D2.settings.myCash === 3000 && D2.stars.includes('lh-x1') && D2.danjiStars.includes('x-elyes-mullae') && D2.danjiSeen.includes('elyes-z') && D2.terms === fw.eval('TERMS_V') && /관심 단지 ★ 1개/.test(q('#ioMsg').textContent), Object.keys(D2).join());
+  for (const k of ['cheongyak-check-v1', 'cheongyak-check-stars', 'cheongyak-check-danji-stars', 'cheongyak-check-danji-seen', 'cheongyak-check-terms']) fw.localStorage.removeItem(k);
+  await open('#settings'); const dt3 = new fw.DataTransfer(); dt3.items.add(new fw.File([JSON.stringify(ex2)], 'move.json', { type: 'application/json' }));
+  d.querySelector('#importFile').files = dt3.files; d.querySelector('#importFile').dispatchEvent(new fw.Event('change')); for (let n = 0; n < 30 && fw.eval('state.subs.notices.length') !== 1; n++) await W(100);
+  ok('새 주소에서 불러오기: 내 조건·공고·돈 조건 + ★·약관 확인이 이 기기에 저장', fw.eval('state.subs.notices.length') === 1 && fw.eval('state.settings.myCash') === 3000 && JSON.parse(fw.localStorage.getItem('cheongyak-check-stars')).includes('lh-x1') && JSON.parse(fw.localStorage.getItem('cheongyak-check-danji-stars')).includes('x-elyes-mullae') && JSON.parse(fw.localStorage.getItem('cheongyak-check-danji-seen')).includes('elyes-z') && fw.localStorage.getItem('cheongyak-check-terms') === fw.eval('TERMS_V')); }
+{ const qq = s => d.querySelector(s);
+  ok('localhost·새 주소에서는 "주소가 바뀌었어요" 띠 없음', qq('#movedBar').hidden);
+  fw.eval('ON_OLD = true; renderMoved()');
+  const mb = qq('#movedBar'), go = qq('#movedGo');
+  ok('예전 주소(github.io): 모든 탭 위 "주소가 바뀌었어요" · 새 주소 링크 · 내 조건 옮기기 · "캘린더 구독도 새 주소로 다시 해 주세요"', !mb.hidden && !mb.closest('[data-tab]') && go.href === fw.eval('NEW_SITE') && go.href === 'https://seoul-cheongyak-check.pages.dev/' && mb.textContent.includes('캘린더 구독도 새 주소로 다시 해 주세요') && !!qq('#movedExport'));
+  let bl = null; const ou3 = fw.URL.createObjectURL; fw.URL.createObjectURL = b => { bl = b; return 'blob:x'; }; qq('#movedExport').click(); fw.URL.createObjectURL = ou3;
+  ok('띠의 "내 조건 옮기기" → 내보내기 파일 (★ 포함) · 안내', !!bl && JSON.parse(await bl.text()).data.stars.includes('lh-x1') && /내보냈어요/.test(qq('#movedMsg').textContent));
+  fw.eval('ON_OLD = false; renderMoved()'); }
 // ---------- 단지 탭 (실제 feed/danji.json) · 단지 직접 공고 · 관심 단지 새 공고 ----------
 const APP = '앱을 열면 관심 단지 새 공고를 알려 드려요', OTH = '청년안심주택이 아니라 자격이 다를 수 있어요 · 공고문 확인';
 fw.location.hash = 'notices'; await W(150); q('[data-tab-link="danji"]').click(); await W(300);
@@ -322,6 +340,9 @@ ok('390 첫 화면은 공고 탭 (다른 탭 숨김)', q('h1').getBoundingClient
   ok('390 메뉴 4개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 4 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
 ok('기존 사이트 입력 발견 → 진단 탭 맨 위 배너 + 공고 탭 위 한 줄', !q('#importBanner').hidden && q('#h-diag').nextElementSibling === q('#importBanner') && !q('#importHint').hidden && q('#importHint').textContent.includes('SUITABLE HOME 조건 가져오기 → 진단') && q('#importHint').getAttribute('href') === '#diag');
+{ fw.eval('CAN_READ_SH = false; renderImport()');
+  ok('새 주소(저장 공간이 다름): 1클릭 가져오기 대신 "SUITABLE HOME에서 내보낸 JSON 파일 불러오기" · 공고 탭 한 줄 숨김', !q('#importBanner').hidden && q('#importGo').hidden && !q('#importFileGo').hidden && q('#importFileGo').textContent.includes('SUITABLE HOME에서 내보낸 JSON 파일 불러오기') && q('#importHint').hidden && localStorage.getItem('newlywed-home-v1') === before);
+  fw.eval('CAN_READ_SH = true; renderImport()'); }
 q('#importHint').click(); await W(150);
 ok('공고 탭 한 줄 → 진단 탭', vis() === 'diag' && fw.location.hash === '#diag');
 q('#importGo').click(); await W(600);

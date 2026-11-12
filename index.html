@@ -8,8 +8,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="청약 체크 — 서울 청약, 내 상황으로 보는 예비 진단">
 <meta property="og:description" content="서울 청약 공고를 고르고 내 상황을 답하면, 신청할 수 있는지와 실제 한 달 부담을 보여 줘요.">
-<meta property="og:url" content="https://dionelee.github.io/cheongyak-check/">
-<meta property="og:image" content="https://dionelee.github.io/cheongyak-check/icons/og-image.png">
+<meta property="og:url" content="https://seoul-cheongyak-check.pages.dev/">
+<meta property="og:image" content="https://seoul-cheongyak-check.pages.dev/icons/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -175,6 +175,8 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 @media (hover: hover) { .sub-feed .star:hover { background: none; color: var(--warn); } }
 .sub-feed .jb { padding: 5px 10px; min-height: 0; border-radius: var(--pill); border: 0; font: 700 12px/1.2 var(--sans); cursor: pointer; }
 .sub-feed .jb.ok { color: var(--pass-ink); background: color-mix(in srgb, var(--pass) 12%, var(--paper)); } .sub-feed .jb.unk { color: var(--muted); background: var(--bg); } .sub-feed .jb.no { color: var(--fail-ink); background: color-mix(in srgb, var(--fail) 12%, var(--paper)); }
+.moved { margin-top: var(--s2); padding: 12px var(--s2); border-radius: var(--r2); background: color-mix(in srgb, var(--warn) 14%, var(--paper)); font-size: 14px; line-height: 1.55; }
+.moved p + p { margin-top: 4px; } .moved b { font-size: 15px; } .moved a { font-weight: 700; } .moved button { min-height: 36px; padding: 0 12px; border-radius: var(--pill); font-size: 13px; }
 .dj-new { margin-top: var(--s2); padding: 16px 20px; border-radius: var(--r2); background: color-mix(in srgb, var(--warn) 12%, var(--paper)); }
 .dj-new h2 { font: 700 15px/1.4 var(--sans); color: var(--warn-ink); }
 .dj-new ul { list-style: none; padding: 0; margin: 6px 0 0; } .dj-new li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 0; } .dj-new li + li { border-top: 1px solid rgba(0, 27, 55, 0.06); }
@@ -343,6 +345,11 @@ footer p + p { margin-top: 6px; }
   </nav>
 </div></header>
 <main id="top">
+  <div class="wrap"><section class="moved" id="movedBar" aria-labelledby="h-moved" hidden>
+    <p><b id="h-moved">주소가 바뀌었어요</b> · <a id="movedGo" href="#">새 주소 열기 ↗</a></p>
+    <p>내 조건·공고·★는 이 주소에만 저장돼 있어요. <button type="button" class="ghost" id="movedExport">내 조건 옮기기</button> 로 받은 파일을 새 주소의 설정 → 데이터 옮기기 → JSON 파일 불러오기로 넣어 주세요.</p>
+    <p>캘린더 구독도 새 주소로 다시 해 주세요</p><p class="msg" id="movedMsg" role="status"></p>
+  </section></div>
   <section class="wrap links-sec" id="linksSec" data-tab="notices" aria-labelledby="h-links">
     <a class="subs-next" id="importHint" href="#diag" hidden><b>가져오기</b>SUITABLE HOME 조건 가져오기 → 진단</a>
     <section class="dj-new" id="danjiNew" aria-labelledby="h-djnew" hidden><h2 id="h-djnew">관심 단지 새 공고</h2><ul></ul></section>
@@ -367,7 +374,8 @@ footer p + p { margin-top: 6px; }
     <h2 id="h-diag" class="sec-title tab-title" tabindex="-1">내 청약 순위·점수 진단해보기</h2>
       <div class="import-banner" id="importBanner" role="region" aria-label="기존 입력 가져오기" hidden>
         <p>기존 사이트(SUITABLE HOME)에서 입력한 청약 조건이 있어요</p>
-        <div class="row" style="margin:0"><button type="button" class="primary small" id="importGo">1클릭으로 가져오기</button><button type="button" class="ghost small" id="importNo">닫기</button></div>
+        <div class="row" style="margin:0"><button type="button" class="primary small" id="importGo">1클릭으로 가져오기</button><label class="filebtn" id="importFileGo" hidden>SUITABLE HOME에서 내보낸 JSON 파일 불러오기<input type="file" data-import-file accept="application/json,.json"></label><button type="button" class="ghost small" id="importNo">닫기</button></div>
+        <p class="msg" id="importMsg" role="status"></p>
       </div>
       <div class="import-banner" id="diagFrom" role="region" aria-label="고른 공고" hidden><p></p>
         <div class="row" style="margin:0"><label class="filebtn" for="subPdf">공고문 PDF 올리기</label><a class="btn ghost small" target="_blank" rel="noopener noreferrer" data-from-url>공고문 원문 ↗</a></div></div>
@@ -475,7 +483,7 @@ footer p + p { margin-top: 6px; }
     </details>
     <details class="tool fold" id="ioSet"><summary><b>데이터 옮기기</b> <span class="hint">JSON 파일 불러오기 · 내보내기</span></summary>
       <p class="hint">다른 기기·다른 주소로 옮길 때 써요. SUITABLE HOME에서 내보낸 파일을 넣으면 청약 조건만 가져와요.</p>
-      <div class="io-row"><label class="filebtn">JSON 파일 불러오기<input type="file" id="importFile" accept="application/json,.json"></label><button type="button" class="ghost" id="exportBtn">내 상황 내보내기</button></div>
+      <div class="io-row"><label class="filebtn">JSON 파일 불러오기<input type="file" id="importFile" data-import-file accept="application/json,.json"></label><button type="button" class="ghost" id="exportBtn">내 상황 내보내기</button></div>
       <p class="msg" id="ioMsg" role="status"></p>
     </details>
   <details class="tool fold sub-adv" id="subAdv"><summary><b>고급</b> <span class="hint">공고 원문 JSON 직접 고치기</span></summary>
@@ -485,7 +493,7 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-10d"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-12a"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a></p>
@@ -505,8 +513,14 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const KEY = 'cheongyak-check-v1';
 const OLD_KEY = 'newlywed-home-v1';   // SUITABLE HOME 저장 데이터: 가져올 때 읽기만 한다. 절대 쓰거나 지우지 않는다 (scripts/verify/check.py 가 검사)
 // 앱(Capacitor)일 때만: 화면 파일은 앱 안(https://localhost)이라 공고 피드·상세·구독 캘린더는 사이트에서 받는다. 웹은 SITE = '' → 그대로 상대 주소
-const IS_APP = !!window.Capacitor?.isNativePlatform?.(), SITE = IS_APP ? 'https://dionelee.github.io/cheongyak-check/' : '';
-const AI_WORKER = 'https://suitable-home-ai.demolee.workers.dev';   // SUITABLE HOME 과 같은 Worker (허용 주소 https://dionelee.github.io)
+// 주소는 여기 한 곳 (2026-11-12 Cloudflare Pages 프로젝트 seoul-cheongyak-check · 'seoul-' 없는 이름은 남의 서비스라 쓰지 않음)
+// 예전 주소(GitHub Pages)도 당분간 같이 열리고 구독 캘린더도 계속 갱신된다. 앱 피드 · 예전 주소 띠 링크 · 앱의 구독 캘린더는 NEW_SITE 를 쓴다
+// 맨 위 공유 미리보기(og:) 두 줄만 HTML 이라 글자로 — check.py 가 NEW_SITE 와 같은지 확인
+const NEW_SITE = 'https://seoul-cheongyak-check.pages.dev/', OLD_HOST = 'dionelee.github.io';
+// ON_OLD: 예전 주소 → 맨 위 '주소가 바뀌었어요' 띠 · CAN_READ_SH: SUITABLE HOME(github.io) 저장 공간을 직접 읽을 수 있는 주소 (let: 검사가 바꿔 봄)
+let ON_OLD = location.hostname === OLD_HOST, CAN_READ_SH = location.hostname === OLD_HOST || location.hostname === 'localhost';
+const IS_APP = !!window.Capacitor?.isNativePlatform?.(), SITE = IS_APP ? NEW_SITE : '';
+const AI_WORKER = 'https://suitable-home-ai.demolee.workers.dev';   // SUITABLE HOME 과 같은 Worker (허용 주소 https://dionelee.github.io · https://seoul-cheongyak-check.pages.dev · 앱)
 const AI_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash-lite'];
 const AI_KEY = 'suitable-gemini-key';   // 내 키: 같은 주소의 SUITABLE HOME 과 함께 쓴다 (이 기기에만)
 const SUITABLE = 'https://dionelee.github.io/suitable-home/#listings';
@@ -1451,24 +1465,43 @@ function takeFrom(x, label) {
   subDemo = false; wizOpen = false; noticesKey = ''; importOff = true;
   const S = state.subs, what = `공고 ${S.notices.length}개${S.wizard.done ? ' · 내 조건' : ''}`; $('#subMsg').textContent = `${label}: ${what}${jo(what, '을', '를')} 가져왔어요.${out ? ` 서울 밖 공고 ${out}개는 빼고 가져왔어요.` : ''}`; render();
 }
-function renderImport() { const show = !importOff && !hasMine(state) && hasMine(oldData()); $('#importBanner').hidden = !show; $('#importHint').hidden = !show; }
+function renderImport() {   // github.io 에서는 SUITABLE HOME 저장 데이터를 1클릭으로 · 새 주소(저장 공간이 다름)에서는 SUITABLE HOME 에서 내보낸 JSON 파일 불러오기 안내
+  const can = CAN_READ_SH, show = !importOff && !hasMine(state) && (!can || hasMine(oldData()));
+  $('#importBanner').hidden = !show; $('#importHint').hidden = !(show && can);
+  $('#importBanner > p').textContent = can ? '기존 사이트(SUITABLE HOME)에서 입력한 청약 조건이 있어요' : 'SUITABLE HOME에서 쓰던 청약 조건은 SUITABLE HOME에서 내보낸 JSON 파일을 불러오면 옮겨져요';
+  $('#importGo').hidden = !can; $('#importFileGo').hidden = can;
+}
+function renderMoved() { $('#movedBar').hidden = !ON_OLD || IS_APP; $('#movedGo').href = NEW_SITE; }
 $('#importGo').addEventListener('click', () => { const o = oldData(); if (o) takeFrom(o, 'SUITABLE HOME'); });
 $('#importNo').addEventListener('click', () => { importOff = true; render(); });
-$('#importFile').addEventListener('change', async e => {
+// 내보내기 파일의 브라우저 저장 값(공고 ★ · 단지 ★ · 본 공고 · 약관 확인) — 불러올 때는 지금 것과 합친다
+const extrasOut = () => ({ stars: [...stars], danjiStars: [...dStars], danjiSeen: [...dSeen], terms: termsOk() ? TERMS_V : '' });
+function extrasIn(x) {
+  const arr = v => Array.isArray(v) ? v.map(String).filter(s => s.length <= 80).slice(0, 2000) : [];
+  for (const s of arr(x?.stars)) stars.add(s); for (const s of arr(x?.danjiStars)) dStars.add(s); for (const s of arr(x?.danjiSeen)) dSeen.add(s);
+  lset(SKEY, [...stars]); lset(DKEY, [...dStars]); lset(DSEEN, [...dSeen]);
+  if (x?.terms === TERMS_V) { termsMem = TERMS_V; try { localStorage.setItem(TERMS_KEY, TERMS_V); } catch (e) {} }
+  renderDanji();
+}
+const importChange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   let x = null; try { const j = JSON.parse(await f.text()); x = j?.data ?? j; } catch (err) {}
-  if (!x?.subs || typeof x.subs !== 'object') { $('#ioMsg').textContent = 'SUITABLE HOME이나 청약 체크에서 내보낸 JSON 파일이 아니에요.'; return; }
-  if (!hasMine(state)) { takeFrom(x, f.name); $('#ioMsg').textContent = ''; return; }
+  if (!x?.subs || typeof x.subs !== 'object') { (e.target.closest('#importBanner') ? $('#importMsg') : $('#ioMsg')).textContent = 'SUITABLE HOME이나 청약 체크에서 내보낸 JSON 파일이 아니에요.'; return; }
+  if (!hasMine(state)) { takeFrom(x, f.name); extrasIn(x); $('#ioMsg').textContent = ''; $('#importMsg').textContent = ''; return; }
   $('#ioMsg').innerHTML = `${esc(f.name)}: 공고 ${(x.subs.notices || []).length}개. 지금 입력을 덮어쓸까요? <button type="button" class="small danger" id="ioYes">덮어쓰기</button> <button type="button" class="small ghost" id="ioNo">취소</button>`;
-  $('#ioYes').onclick = () => { $('#ioMsg').textContent = ''; takeFrom(x, f.name); };
+  $('#ioYes').onclick = () => { $('#ioMsg').textContent = ''; takeFrom(x, f.name); extrasIn(x); };
   $('#ioNo').onclick = () => { $('#ioMsg').textContent = '불러오기를 취소했어요.'; };
-});
-$('#exportBtn').addEventListener('click', () => {
+};
+for (const el of document.querySelectorAll('[data-import-file]')) el.addEventListener('change', importChange);
+function exportFile(msg) {   // 내 조건·공고·돈 조건 + 공고 ★·단지 ★·약관 확인
   const d = new Date(), ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  const blob = new Blob([JSON.stringify({ app: 'cheongyak-check', version: 1, exportedAt: d.toISOString(), data: { v: state.v, settings: state.settings, subs: state.subs } })], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify({ app: 'cheongyak-check', version: 1, exportedAt: d.toISOString(), data: { v: state.v, settings: state.settings, subs: state.subs, ...extrasOut() } })], { type: 'application/json' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `cheongyak-check-${ymd}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  $('#ioMsg').textContent = `내보냈어요: 공고 ${state.subs.notices.length}개. 생년월일·소득 같은 개인정보가 들어 있으니 파일을 공유할 때 주의하세요.`;
-});
+  msg.textContent = `내보냈어요: 내 공고 ${state.subs.notices.length}개 · 관심 공고 ★ ${stars.size}개 · 관심 단지 ★ ${dStars.size}개. 생년월일·소득 같은 개인정보가 들어 있으니 파일을 공유할 때 주의하세요.`;
+}
+$('#exportBtn').addEventListener('click', () => exportFile($('#ioMsg')));
+$('#movedExport').addEventListener('click', () => exportFile($('#movedMsg')));
+renderMoved();
 // 질문을 마치면 질문 화면은 접고 한 줄 요약만
 function renderMeBar() {
   const S = state.subs, show = S.wizard.done && !wizOpen && !subDemo; $('#meBar').hidden = !show; if (!show) return;
