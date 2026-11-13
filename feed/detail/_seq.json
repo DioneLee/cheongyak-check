@@ -224,16 +224,6 @@
    "s": "2026-10-29||17:00"
   }
  },
- "elyes-IaujyBiOa1xNmAW56SEUZQ": {
-  "start": {
-   "n": 0,
-   "s": "2026-10-30||"
-  },
-  "end": {
-   "n": 0,
-   "s": "2026-11-01||"
-  }
- },
  "elyes-_sh1K4UfAo2S9rSP1AiVTg": {
   "start": {
    "n": 0,
@@ -485,5 +475,16 @@
    "n": 0,
    "s": "2026-11-15||"
   }
- }
+ },
+ "elyes-Pk3JJo6YTuIi90Gdez7ojA": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-13||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-15||"
+  }
+ },
+ "elyes-D2wVcsoVimDbMXYqYiSjbg": {}
 }
