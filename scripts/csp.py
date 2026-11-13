@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ["index.html", "terms.html", "privacy.html"]
-SCRIPT_HOSTS = []   # 스크립트는 이 사이트 것만 (lib/feed-tools.js) · 글꼴 CSS 는 style 이라 따로 안 막음
+SCRIPT_HOSTS = ["https://cdnjs.cloudflare.com"]   # 이 사이트(lib/feed-tools.js) + 지도(Leaflet, 지도를 열 때만) · 글꼴 CSS 는 style 이라 따로 안 막음
 CONNECT = ["https://suitable-home-ai.demolee.workers.dev", "https://generativelanguage.googleapis.com", "https://nominatim.openstreetmap.org"]   # AI Worker · 내 키(고급 설정) · 주소 검색 · 피드는 이 사이트(self)
 
 def inline_hashes():

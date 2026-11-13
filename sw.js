@@ -5,7 +5,7 @@
 // 배포할 때 VERSION 을 바꾸면 새 저장소를 만들고 예전 것은 지운다 (scripts/verify/check.py 가 index.html·아이콘이 바뀌었는데 그대로면 알려 준다)
 // 리다이렉트: Cloudflare Pages 는 /terms.html → /terms, /index.html → / 로 308 을 준다. 넘어간 응답(redirected)을 그대로 화면 요청에 넘기면
 //   크롬이 거부한다(ERR_FAILED) → 받은 응답은 늘 clean() 으로 새 Response 로 감싸 넘기고 저장한다 (사전 저장 CORE 도)
-const VERSION = 'cheongyak-check-2026-11-12d';
+const VERSION = 'cheongyak-check-2026-11-13a';
 const CORE = ['./', 'index.html', 'terms.html', 'privacy.html', 'lib/feed-tools.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'samples/notice_yongsan.json', 'feed/notices.json', 'feed/danji.json'];
 
 const clean = res => res.redirected ? new Response(res.body, { status: res.status, statusText: res.statusText, headers: res.headers }) : res;

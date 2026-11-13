@@ -8,6 +8,6 @@
   Access-Control-Allow-Origin: *
 # 모든 응답: CSP(스크립트는 이 사이트 + 쓰는 CDN + 인라인 해시만 · scripts/csp.py 가 맞춤) · 형식 추측 금지 · 다른 사이트로는 출처(도메인)만
 /*
-  Content-Security-Policy: script-src 'self' 'sha256-fzVGayOf7UIrPW29qevTCrpCZZFig1yv1ScSikSiaq0='; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; connect-src 'self' https://suitable-home-ai.demolee.workers.dev https://generativelanguage.googleapis.com https://nominatim.openstreetmap.org
+  Content-Security-Policy: script-src 'self' https://cdnjs.cloudflare.com 'sha256-+9R0DQLecoupHXXbMFbniQDqM4oL/1xLYdOaMvGKgMU='; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; connect-src 'self' https://suitable-home-ai.demolee.workers.dev https://generativelanguage.googleapis.com https://nominatim.openstreetmap.org
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

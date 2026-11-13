@@ -185,6 +185,21 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 .dj-new ul { list-style: none; padding: 0; margin: 6px 0 0; } .dj-new li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 0; } .dj-new li + li { border-top: 1px solid rgba(0, 27, 55, 0.06); }
 .dj-new li a { flex: 1 1 200px; font-weight: 600; color: var(--ink); } .dj-new button { min-height: 36px; padding: 0 12px; border-radius: var(--r1); font-size: 13px; }
 .dj-new button:not(.primary) { background: var(--paper); }
+.vtoggle { display: inline-flex; gap: 0; margin: 12px 0 4px; border: 1px solid var(--line); border-radius: var(--pill); padding: 3px; background: var(--subtle); }
+.vtoggle button { min-height: 36px; padding: 0 18px; border: 0; border-radius: var(--pill); background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; box-shadow: none; }
+.vtoggle button[aria-pressed="true"] { background: var(--paper); color: var(--ink); box-shadow: var(--shadow); }
+.mapbar { padding: 8px 0 0; } .mapbar .hint { margin: 0; } .mapok { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; cursor: pointer; } .mapok input { width: 20px; height: 20px; margin: 0; }
+.mapwrap { padding: 8px 0 4px; } .mapwrap .mapnote { margin: 8px 0 0; }
+.gmap { height: 440px; border-radius: var(--r1); border: 1px solid var(--line); background: var(--subtle); font-family: var(--sans); z-index: 0; }
+@media (max-width: 600px) { .gmap { height: 360px; } }
+.gmap .mgu span, .gmap .mpin span { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 44px; min-height: 40px; padding: 2px 8px;
+  border-radius: var(--r1); background: var(--accent); color: var(--on-accent); font: 700 15px/1.15 var(--sans); white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-up); }
+.gmap .mgu b, .gmap .mpin b { font-size: 11px; font-weight: 500; }
+.gmap .mpin span { background: var(--paper); color: var(--ink); border: 2px solid var(--accent); }
+.gmap .mgu, .gmap .mpin { outline: none; } .gmap .mgu:focus-visible span, .gmap .mpin:focus-visible span { outline: 3px solid var(--ink); outline-offset: 2px; }
+.gmap .mlist { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; } .gmap .mlist li + li { border-top: 1px solid var(--line); }
+.gmap .mlist button { display: block; width: 100%; min-height: 44px; padding: 8px 4px; border: 0; background: none; color: var(--accent-deep); font: 600 14px/1.4 var(--sans); text-align: left; box-shadow: none; cursor: pointer; }
+.flist li.flash { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: var(--r1); }
 .dj-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 16px 0 12px; border-bottom: 1px solid var(--line); }
 .dj-tools input { grid-column: 1 / -1; } .dj-tools select, .dj-tools input { margin: 0; min-height: 40px; font-size: 14px; padding: 6px 12px; }
 @media (min-width: 720px) { .dj-tools { grid-template-columns: 1fr 1fr 2fr; } .dj-tools input { grid-column: auto; } }
@@ -506,7 +521,7 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-12d"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-13a"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="#settings">데이터 백업·옮기기</a></p>
@@ -1075,7 +1090,7 @@ function renderFeed() {
   box.hidden = !seoul.length; if (box.hidden) return;
   if (!box.querySelector('#feedSearch')) {   // 검색 칸은 한 번만 (한글 입력 중에 다시 그리면 글자가 끊김)
     box.innerHTML = `<div id="feedAsk"></div><div class="ftabs" role="tablist" aria-label="공고 상태" id="feedTabs"></div>
-      <div class="fsearch" id="feedSearch"><select data-fq="gu" aria-label="구"></select><input type="search" data-fq="q" aria-label="공고 이름·역·구 검색" placeholder="공고 이름·역·구 검색"></div><div id="feedBody"></div>`;
+      <div class="fsearch" id="feedSearch"><select data-fq="gu" aria-label="구"></select><input type="search" data-fq="q" aria-label="공고 이름·역·구 검색" placeholder="공고 이름·역·구 검색"></div>${VIEW_BTNS('fview')}<div class="mapbar" hidden></div><div id="feedMap" class="mapwrap" hidden></div><div id="feedBody"></div>`;
   }
   const q = feedQ.q.trim().replace(/\s+/g, '').toLowerCase(), gus = SEOUL_GU.filter(g => seoul.some(i => guOf(i) === g));
   if (feedQ.gu && !gus.includes(feedQ.gu)) feedQ.gu = '';
@@ -1099,6 +1114,9 @@ function renderFeed() {
     ${L.length ? '' : `<p class="hint fnone">${q || feedQ.gu ? '검색에 맞는 공고가 없어요.' : none}</p>`}
     <div class="foot"><span>${f.updated ? `${esc(md2(f.updated.slice(0, 10)))} 확인 · ` : ''}${esc(f.source || '')}</span>${more > 0 ? `<button type="button" class="ghost small more" data-feedmore>공고 ${more}개 더 보기</button>` : ''}</div>`;
   const mb = box.querySelector('[data-feedmore]'); if (mb) mb.onclick = () => { feedAll = true; renderFeed(); };
+  setView(box, 'fview', feedView); const isMap = feedView === 'map';
+  box.querySelector('#feedBody').hidden = isMap; box.querySelector('#feedMap').hidden = !isMap; box.querySelector('.mapbar').hidden = !isMap;
+  if (isMap) mapFeed(box, L, t, done);
 }
 $('#subFeed').addEventListener('input', e => { const s = e.target.closest('[data-fq]'); if (!s) return; feedQ[s.dataset.fq] = s.value; feedAll = false; renderFeed(); });
 // 상세보기: feed/detail/{id}.json (GitHub Actions 가 공고문 PDF 를 Gemini 로 읽어 둔 신청 조건 요약 · scripts/detail.mjs)
@@ -1185,6 +1203,8 @@ function renderDanjiList() {
   const L = danji.danji.filter(hit).sort(sort), O = danji.other.filter(hit).sort(sort);
   ul.innerHTML = `<p class="hint" role="status">${L.length + O.length}곳${dF.gu || dF.st || q ? ' (필터)' : ''}</p><ul class="flist">${L.map(d => danjiCard(d, t)).join('')}</ul>${L.length || O.length ? '' : '<p class="hint fnone">맞는 단지가 없어요.</p>'}
     ${O.length ? `<h3 class="fgroup">그 밖의 서울 민간임대 ${O.length}곳</h3><ul class="flist">${O.map(d => danjiCard(d, t)).join('')}</ul>` : ''}`;
+  const box = $('#danjiBox'), isMap = danjiView === 'map'; setView(box, 'dview', danjiView); ul.hidden = isMap; box.querySelector('#danjiMap').hidden = !isMap;
+  if (isMap) mapDanji(box.querySelector('#danjiMap'), [...L, ...O], t, L.length + O.length);
 }
 function renderDanji() {
   renderDanjiNew(); const box = $('#danjiBox'); if (!danji) return;
@@ -1192,7 +1212,7 @@ function renderDanji() {
     const all = [...danji.danji, ...danji.other], gus = [...new Set(all.map(d => d.gu).filter(Boolean))].sort(), sts = [...new Set(danji.danji.map(d => d.station).filter(Boolean))].sort();
     const opt = (v, l, cur) => `<option value="${esc(v)}"${v === cur ? ' selected' : ''}>${esc(l)}</option>`;
     box.innerHTML = `<div class="dj-tools"><select data-df="gu" aria-label="구">${opt('', '구 전체', dF.gu)}${gus.map(g => opt(g, g, dF.gu)).join('')}</select><select data-df="st" aria-label="역">${opt('', '역 전체', dF.st)}${sts.map(g => opt(g, g, dF.st)).join('')}</select>
-      <input type="search" data-df="q" aria-label="단지 이름·역 검색" placeholder="단지 이름·역 검색" value="${esc(dF.q)}"></div><div id="danjiList"></div>
+      <input type="search" data-df="q" aria-label="단지 이름·역 검색" placeholder="단지 이름·역 검색" value="${esc(dF.q)}"></div>${VIEW_BTNS('dview')}<div id="danjiMap" class="mapwrap" hidden></div><div id="danjiList"></div>
       <p class="hint foot">${danji.updated ? `${esc(md2(danji.updated))} 확인 · ` : ''}서울시 청년안심주택 · 엘리스 · 단지 기본 정보만 (공고문 본문·사진은 저장하지 않아요)</p>`;
   }
   renderDanjiList();
@@ -1226,6 +1246,81 @@ $('#danjiBox').addEventListener('click', e => {
   lset(DKEY, [...dStars]); renderDanjiList(); renderDanjiNew();
 });
 $('#danjiBox').addEventListener('input', e => { const s = e.target.closest('[data-df]'); if (!s) return; dF[s.dataset.df] = s.value; renderDanjiList(); });
+// ---------- 지도로 보기 (공고·단지 탭, 2026-11-13): 멀리 = 구별 개수, 가까이 = 가까운 역 핀 ----------
+// 좌표는 위치 검색 없이: 구는 구청 근처 고정값(GU_XY) · 핀은 가까운 역(feed/stations.json, OSM). 건물 위치가 아니라 '○○역 근처'.
+// Leaflet·역 좌표는 지도를 처음 열 때만 받는다 (목록만 보는 사람·오프라인은 그대로) · 지금 고른 탭(진행 중·예정·완료)·구·검색을 그대로 쓴다
+let feedView = 'list', danjiView = 'list', mapOkOnly = false;
+const VIEW_BTNS = k => `<div class="vtoggle" role="group" aria-label="보기 방식"><button type="button" data-${k}="list">목록</button><button type="button" data-${k}="map">지도</button></div>`;
+const setView = (box, k, v) => box.querySelectorAll(`[data-${k}]`).forEach(b => b.setAttribute('aria-pressed', b.dataset[k] === v));
+const GU_XY = { 강남구: [37.5172, 127.0473], 강동구: [37.5301, 127.1238], 강북구: [37.6396, 127.0257], 강서구: [37.5509, 126.8495], 관악구: [37.4784, 126.9516], 광진구: [37.5385, 127.0823], 구로구: [37.4955, 126.8875],
+  금천구: [37.4569, 126.8955], 노원구: [37.6542, 127.0568], 도봉구: [37.6688, 127.0471], 동대문구: [37.5744, 127.0400], 동작구: [37.5124, 126.9393], 마포구: [37.5663, 126.9019], 서대문구: [37.5791, 126.9368],
+  서초구: [37.4837, 127.0324], 성동구: [37.5633, 127.0371], 성북구: [37.5894, 127.0167], 송파구: [37.5145, 127.1059], 양천구: [37.5170, 126.8665], 영등포구: [37.5264, 126.8962], 용산구: [37.5326, 126.9905],
+  은평구: [37.6027, 126.9291], 종로구: [37.5735, 126.9790], 중구: [37.5641, 126.9979], 중랑구: [37.6066, 127.0927] };
+const LF = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min';
+let mapLibs = null, STN = {};
+const loadMapLibs = () => mapLibs ??= Promise.all([
+  new Promise((ok, no) => { const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = LF + '.css'; document.head.append(c);
+    const s = document.createElement('script'); s.src = LF + '.js'; s.onload = ok; s.onerror = no; document.head.append(s); }),
+  fetch(`${SITE}feed/stations.json`).then(r => r.ok ? r.json() : {}).then(j => { STN = j.stations || {}; }).catch(() => {})
+]).catch(e => { mapLibs = null; throw e; });   // 실패하면 다음에 다시 시도
+const maps = new Map();
+// pts: [{ gu, st, label, go }] → 멀리: 구별 동그라미(개수, 누르면 확대) · 가까이: 역 핀(같은 역은 한 핀, 누르면 이름 목록 → 목록에서 보기)
+async function drawMap(wrap, pts, note) {
+  const key = wrap.id;
+  if (!wrap.querySelector('.gmap')) wrap.innerHTML = '<div class="gmap" role="region" aria-label="지도 · 구를 누르면 확대돼요"></div><p class="hint mapnote"></p>';
+  wrap.querySelector('.mapnote').textContent = note;
+  try { await loadMapLibs(); } catch (e) { wrap.querySelector('.mapnote').textContent = "지도를 불러오지 못했어요. 인터넷 연결을 확인하고 '지도'를 다시 눌러 주세요."; return; }
+  let m = maps.get(key);
+  if (!m) {
+    m = L.map(wrap.querySelector('.gmap'), { scrollWheelZoom: false, dragging: !L.Browser.mobile, zoomSnap: 0.5 }).setView([37.5565, 126.978], 11);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(m);
+    m.on('click', () => m.scrollWheelZoom.enable()); wrap.addEventListener('mouseleave', () => m.scrollWheelZoom.disable());
+    m.on('zoomend', () => paintMap(m)); maps.set(key, m);
+  }
+  const k2 = pts.map(p => p.go).join();
+  m._pts = pts; m.invalidateSize();
+  if (m._key !== k2) { m._key = k2; const b = pts.map(p => GU_XY[p.gu]).filter(Boolean); b.length > 1 ? m.fitBounds(b, { padding: [40, 40], maxZoom: 12 }) : m.setView(b[0] || [37.5565, 126.978], 12); }
+  paintMap(m);
+}
+function paintMap(m) {
+  m._lay?.remove(); m._lay = L.layerGroup().addTo(m);
+  const near = m.getZoom() >= 13, groups = {};
+  for (const p of m._pts) {
+    const xy = near && STN[p.st] ? STN[p.st] : GU_XY[p.gu]; if (!xy) continue;
+    const g = near ? (STN[p.st] ? p.st : `${p.gu} · 역 정보 없음`) : p.gu; (groups[g] ??= { xy, ps: [] }).ps.push(p);
+  }
+  for (const [name, { xy, ps }] of Object.entries(groups)) {
+    const mk = L.marker(xy, { icon: L.divIcon({ className: near ? 'mpin' : 'mgu', html: `<span><b>${esc(near ? name.replace(/역$/, '역 근처') : name)}</b>${ps.length}</span>`, iconSize: [0, 0] }),
+      title: near ? `${name} ${ps.length}건 · 눌러서 이름 보기` : `${name} ${ps.length}건 · 눌러서 확대` }).addTo(m._lay);
+    if (near) mk.bindPopup(`<ul class="mlist">${ps.map(p => `<li><button type="button" ${p.go}>${esc(p.label)}</button></li>`).join('')}</ul>`, { maxWidth: 260 });
+    else mk.on('click', () => { const b = ps.map(p => STN[p.st]).filter(Boolean);   // 휴대폰처럼 좁아도 핀이 보이는 확대(13) 이상으로
+      b.length > 1 ? m.setView(L.latLngBounds(b).getCenter(), Math.min(15, Math.max(13, m.getBoundsZoom(b, false, L.point(48, 48))))) : m.setView(b[0] || xy, 14); });
+  }
+}
+function mapFeed(box, L0, t, done) {
+  const jr = i => FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }).st;
+  const ok = done && window.FeedTools ? L0.filter(i => jr(i) === 'ok') : [], list = done && mapOkOnly ? ok : L0, noGu = list.filter(i => !GU_XY[guOf(i)]).length;
+  box.querySelector('.mapbar').innerHTML = done ? `<label class="mapok"><input type="checkbox" data-mapok${mapOkOnly ? ' checked' : ''}> 기본 조건 맞아 보임만 (${ok.length}건)</label>`
+    : '<p class="hint">내 조건을 넣으면 기본 조건이 맞아 보이는 공고만 볼 수 있어요 → <a href="#diag">진단</a></p>';
+  drawMap(box.querySelector('#feedMap'), list.map(i => ({ gu: guOf(i), st: i.st?.n || '', label: feedTitle(i), go: `data-mapgo="${esc(i.id)}"` })),
+    `${{ now: '진행 중', plan: '예정', done: '완료' }[feedTab]} 공고 ${list.length}건 · 핀은 건물이 아니라 가까운 역 위치예요${noGu ? ` · 구를 모르는 ${noGu}건은 지도에 없어요` : ''}`);
+}
+function mapDanji(wrap, L0, t, n) {
+  drawMap(wrap, L0.map(d => ({ gu: d.gu, st: d.station || '', label: `${d.name}${dStatus(d, t) ? ` · ${dStatus(d, t)}` : ''}`, go: `data-mapgod="${esc(d.id)}"` })),
+    `단지 ${n}곳 · 핀은 건물이 아니라 가까운 역 위치예요`);
+}
+// 목록/지도 전환 · 지도 핀의 이름 → 목록에서 그 공고·단지로
+document.addEventListener('click', e => {
+  const v = e.target.closest('[data-fview], [data-dview]');
+  if (v) { if (v.dataset.fview) { feedView = v.dataset.fview; renderFeed(); } else { danjiView = v.dataset.dview; renderDanjiList(); } return; }
+  const g = e.target.closest('[data-mapgo], [data-mapgod]'); if (!g) return;
+  let sel;
+  if (g.dataset.mapgo) { feedView = 'list'; feedAll = true; renderFeed(); sel = `#subFeed [data-fid="${CSS.escape(g.dataset.mapgo)}"]`; }
+  else { danjiView = 'list'; renderDanjiList(); sel = `#danjiBox [data-did="${CSS.escape(g.dataset.mapgod)}"]`; }
+  const li = document.querySelector(sel); if (!li) return;
+  li.tabIndex = -1; li.scrollIntoView({ block: 'center' }); li.focus({ preventScroll: true }); li.classList.add('flash'); setTimeout(() => li.classList.remove('flash'), 2000);
+});
+document.addEventListener('change', e => { if (e.target.matches('[data-mapok]')) { mapOkOnly = e.target.checked; renderFeed(); } });
 const loadFeeds = () => Promise.all([
   fetch(`${SITE}feed/notices.json`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(setFeed).catch(() => {}),
   fetch(`${SITE}feed/danji.json`, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(x => { danji = normDanji(x); renderDanji(); if (subFeed) renderFeed(); }).catch(() => {})]);
