@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T21:49:11+09:00",
+ "updated": "2026-11-14T03:49:24+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -1116,52 +1116,6 @@
     "src": "name"
    },
    "lm": ""
-  },
-  {
-   "id": "myhome-21471",
-   "org": "캠코",
-   "title": "나라키움영등포복합청사 예비입주자 모집공고(21형)",
-   "region": "서울 영등포구",
-   "kind": "행복주택",
-   "posted": "2026-10-28",
-   "from": "2026-11-09",
-   "to": "2026-11-13",
-   "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21471&houseSn=1",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": true,
-   "dv": "752b04a0da",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-11-09"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-13"
-    },
-    {
-     "k": "announce",
-     "l": "당첨자 발표",
-     "d": "2027-03-05"
-    }
-   ],
-   "cr": null,
-   "ty": [
-    {
-     "n": "나라키움영등포복합청사 행복주택",
-     "a": null,
-     "dep": 4650,
-     "rent": 22.5
-    }
-   ],
-   "st": null,
-   "lm": "2026-11-08 21:21"
   },
   {
    "id": "elyes-Pk3JJo6YTuIi90Gdez7ojA",
