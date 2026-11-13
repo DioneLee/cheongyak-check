@@ -93,7 +93,6 @@
    "s": "2026-11-13||15:00"
   }
  },
- "elyes-CXflNfSUuSbQZlIiuL2HMw": {},
  "elyes-zETTp2QDf5U2zqyGgyj9ig": {},
  "lh-2015122300020843": {
   "end": {
@@ -235,16 +234,6 @@
    "s": "2026-11-01||"
   }
  },
- "elyes-unT1AbC7dURoZbQRbfFyiw": {
-  "start": {
-   "n": 0,
-   "s": "2026-10-30||"
-  },
-  "end": {
-   "n": 0,
-   "s": "2026-11-01||"
-  }
- },
  "elyes-_sh1K4UfAo2S9rSP1AiVTg": {
   "start": {
    "n": 0,
@@ -348,16 +337,6 @@
   }
  },
  "elyes-b6veplAKxphpm2ZEH1Wmdw": {
-  "start": {
-   "n": 0,
-   "s": "2026-11-06||"
-  },
-  "end": {
-   "n": 0,
-   "s": "2026-11-08||"
-  }
- },
- "elyes-qMNBO6Nxt9roC0DdPtzgLA": {
   "start": {
    "n": 0,
    "s": "2026-11-06||"
@@ -475,6 +454,36 @@
   "announce": {
    "n": 0,
    "s": "2026-11-20||18:00"
+  }
+ },
+ "elyes-U_apRuBYIx2idgz5WK-VoA": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-13||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-15||"
+  }
+ },
+ "elyes-ZnFqgHCpPQYDqQ58j7CbHw": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-13||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-15||"
+  }
+ },
+ "elyes-vItM44_JyUlvNrb9QEBxVw": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-13||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-15||"
   }
  }
 }
