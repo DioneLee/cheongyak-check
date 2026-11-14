@@ -68,7 +68,14 @@ await t('단지 목록: 구·이름·역·보증금/월세 범위 (만원) · �
   assert.deepEqual(list[0].dep, [4800, 21550]); assert.deepEqual(list[0].rent, [16, 77]); assert.equal(list[1].station, '선릉역'); assert.deepEqual(list[1].rent, [48, 122]);
   assert.ok(!JSON.stringify(list).includes('소개글')); assert.equal(list.length, 2); });
 await t('단지 상세: 시행사·홈페이지·대표전화 세 줄만', () => assert.deepEqual(D.parseView('<div><span>시행사 :</span><span>㈜대한묵동</span></div><p>홈페이지 :</p><a>https://8-place.com/</a><p>대표전화 :</p><p>02-3296-3598</p><p>본문 길게</p>'),
-  { dev: '㈜대한묵동', home: 'https://8-place.com/', tel: '02-3296-3598' }));
+  { dev: '㈜대한묵동', home: 'https://8-place.com/', tel: '02-3296-3598', ll: null }));
+await t('단지 상세: 화면 지도의 xpos·ypos → 건물 좌표 [위도, 경도] (서울 밖·이상한 값은 null)', () => {
+  assert.deepEqual(D.parseView('<script>\n var xpos = "126.9472346";\n var ypos = "37.5432718";\n</script><p>대표전화 :</p><p>02-1234-5678</p>').ll, [37.54327, 126.94723]);
+  assert.equal(D.parseView('<script>var xpos = "129.07";var ypos = "35.17";</script>').ll, null); assert.equal(D.parseView('<script>var xpos = "";var ypos = "";</script>').ll, null); });
+await t('건물 좌표: 새로 읽으면 바꾸고 · 못 읽은 날은 예전 값 · 좌표 칸이 없던 단지는 다음에 다시 읽음 · 엘리스 단지 6곳 좌표', () => {
+  const a = D.buildDanji({ danji: [] }, { list, views: { 1: { dev: '', home: '', tel: '', ll: [37.6, 127.06] } }, today: '2026-11-14' }), b = D.buildDanji(a, { list, today: '2026-11-15' });
+  assert.deepEqual(b.danji.find(d => d.id === '1').ll, [37.6, 127.06]); assert.equal('ll' in JSON.parse(JSON.stringify(b.danji.find(d => d.id === '2'))), false);
+  assert.equal(b.other.length, 6); assert.ok(b.other.every(o => D.seoulLl(...o.ll)), JSON.stringify(b.other.map(o => o.ll))); });
 const HIST = [{ id: 'b1', t: '[민간임대] 화랑대역 에이트플레이스 추가모집공고', d: '2026-11-05' }, { id: 'b2', t: '[민간임대] 화랑대역 에이트플레이스 입주자 모집공고', d: '2026-05-26' },
   { id: 'b3', t: '[민간임대] 선릉역 삼성동 마에스트로 모집공고', d: '2023-08-07' }, { id: 'b4', t: '[공공임대] 다른 단지 모집', d: '2026-01-01' }];
 await t('공고 이력 → 단지마다 공고 수·추가모집·최근·최초', () => { const c = D.countHistory(list, HIST);

@@ -1,4 +1,4 @@
-# 인수인계 — 청약 체크 (마지막 정리 2026-11-09)
+# 인수인계 — 청약 체크 (마지막 정리 2026-11-14)
 
 새 세션은 이 파일 → [변경기록.md](변경기록.md)(왜 이렇게 됐는지) → `docs/design/분리설계.md`(설계) 순서로 읽는다.
 
@@ -6,8 +6,9 @@
 
 - **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
 
-- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-12c`)
+- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-14a`)
 - 단지 탭 `#danji` + 단지 직접 공고(엘리스) (2026-11-09, `docs/design/단지.md`): 메뉴 "공고/단지/진단/설정" · 서울 청년안심주택 100곳 + 그 밖의 서울 민간임대 6곳 · 관심 단지 ★ → 새 공고 띠(앱은 알림)
+- 지도로 보기 (2026-11-13 · 건물 점 2026-11-14, `docs/design/지도로_보기.md`): 공고·단지 탭 '목록 / 지도' · 멀리 = 구별 동그라미(겹치지 않게 밀어 놓음) · 가까이 = 건물 점(단지 좌표 `danji.json` ll — 서울시·엘리스 단지 화면 지도 값) · 단지와 연결 안 된 공고(SH·LH)는 가까운 역 핀
 - 메뉴는 "공고/단지/진단" 3개 (2026-11-12) · 설정 `#settings` 는 맨 아래 '데이터 백업·옮기기' 링크로만 (백업·옮기기 + 접힌 고급)
 - 탭 (2026-11-09, `docs/design/탭과문구.md`): 공고 `#notices`(원문 사이트 4곳 · 공고 목록 세부 탭 진행 중/예정/완료 · 검색(이름·역·구 + 구 선택) · 관심 공고 · 캘린더 · 줄마다 '진단 →') · 진단 `#diag`(PDF 올리기 + 질문 + 결과) · 설정 `#settings`(AI 설정 · 데이터 옮기기 · 고급)
 - 캘린더 (2026-11-09 sw 09f): 시작·마감을 아는 공고는 '청약 기간' 한 일정(하루 종일 · 마감 시각은 제목 · 알림 2개) · 발표일은 청년안심(본문 발표 줄)·마이홈(API)만 · 구독 캘린더 = 청약 기간 + 발표 (마감됨 공고 빼고 · 단지 직접 공고는 제목에 단지 이름) · 카카오톡 안에서는 캘린더 버튼이 기본 브라우저로 넘김(`?cal=`, 2026-11-10 sw 10c)
@@ -15,7 +16,8 @@
 - 공고 출처: LH·마이홈포털 공공데이터 API + SH 공고 게시판 + 서울 청년안심주택 모집공고 목록 + 단지 직접(엘리스, `scripts/sources/`) (서울만)
   - 게시판(SH·청년안심)은 2026-11-09 부터 제목·기관·날짜·원문 링크만 (본문·공고문은 저장·AI 읽기 안 함) · 같은 사이트 요청 3초 간격 · 실행마다 robots.txt 확인 · 실제 실행 하루 약 4번
 - 공고 상세(신청 조건 요약): 2026-11-09 부터 마이홈 API 기본 정보만 (게시판 공고는 상세 없음 → '공고 원문 보기'). Gemini 자동 읽기 코드(detail.mjs)는 남아 있지만 지금 부르는 출처 없음
-- 검사 (2026-11-10 마지막): `python scripts/verify/check.py` 141/141 (판정 동등성은 기준 파일 있는 PC 에서만) · `node scripts/verify/tools_check.mjs` 33 · `detail_check.mjs` 57 · `feed_check.mjs` 25 · `danji_check.mjs` 28 · `app_bridge_check.mjs` 32 · `cron_check.mjs` 5 · `sw_redirect_check.mjs` 10 (Pages 308 + 서비스 워커)
+- 검사 (2026-11-14 마지막): `python scripts/verify/check.py` 165/165 (판정 동등성은 기준 파일 있는 PC 에서만) · `map_check.py` 32 · `csp_check.py` 7 · `node scripts/verify/tools_check.mjs` 33 · `detail_check.mjs` 57 · `feed_check.mjs` 25 · `danji_check.mjs` 30 · `app_bridge_check.mjs` 32 · `cron_check.mjs` 5 · `sw_redirect_check.mjs` 10 (Pages 308 + 서비스 워커)
+  - 한글 Windows 에서는 `PYTHONUTF8=1 PYTHONIOENCODING=utf-8` 를 붙여야 출력이 안 깨지고 check.py 가 cp949 오류를 안 냄
   - 판정 동등성 검사는 `../sjcu/index_v28_backup.html`(SUITABLE HOME 마지막 청약 버전)이 있는 PC 에서만 돈다
   - check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
 
@@ -26,7 +28,7 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
   scripts/feed.mjs     공고 목록 (LH·마이홈 API, SH 게시판, 청년안심주택 JSON + 본문의 청약신청·발표 줄) → 서울만 · 마감 지난 것은 30일까지(완료 탭) · 시작일만 아는 것은 7일까지 · 정정공고면 예전 것 숨김
   scripts/detail.mjs   공고 상세: PDF + 게시판 본문 → Gemini(첫 모델 하루 18번 · 새 공고는 lite) → feed/detail/{id}.json
   scripts/sources/elyes.mjs  단지 직접 공고 (엘리스 · 제목·날짜·링크만 · 별칭 표로 서울 단지만)
-  scripts/danji.mjs    단지 정보 하루 1번: 서울시 목록 · view.do(새 단지 매일·전체 7일) · 게시판 이력 → feed/danji.json · danji_bbs.json
+  scripts/danji.mjs    단지 정보 하루 1번: 서울시 목록 · view.do(새 단지·좌표 없는 단지 매일·전체 7일 · 시행사·홈페이지·전화·건물 좌표 ll) · 게시판 이력 → feed/danji.json · danji_bbs.json
   scripts/enrich.mjs   공개 정보 구조화: 일정(ev) · 자격 기준(cr) · 주택형(ty) · 역(st) → notices.json · 구독 캘린더 feed/calendar.ics
 사이트 index.html + lib/feed-tools.js (브라우저에서만): 신청 가능 배지 · 세부 탭·검색 · .ics 만들기 · 관심 공고(★) · 진단
 ```
@@ -62,7 +64,9 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
 
 - [ ] lite↔첫 모델 비교 며칠 모은 뒤 칸별 판단 (`feed/detail/_compare.jsonl`). 첫 4건(SH)은 첫 모델이 일정·비용을 더 적게 채움
 - [ ] 정기 실행 표 다시 보기 (21시간 멈춤 버그를 2026-11-08 19시쯤 고친 뒤 :17·:47 이 제대로 번갈아 도는지)
-- [ ] 역 거리 정확도: 국내 지오코더(브이월드·카카오) 키가 있으면 바꾸기 · 역 좌표를 서울시 공공데이터로 바꾸려면 인증키 필요 (지금은 OSM)
+- [ ] 역 거리 정확도: 국내 지오코더(브이월드·카카오) 키가 있으면 바꾸기 · 역 좌표를 서울시 공공데이터로 바꾸려면 인증키 필요 (지금은 OSM) · 단지는 이제 건물 좌표(ll)가 있으니 '가까운 역 거리'도 ll 로 다시 셀 수 있음
+- [ ] 엘리스 새 서울 단지가 생기면 `scripts/sources/elyes.mjs` 표에 `ll` 도 (엘리스 단지 화면 지도 값) · 없으면 그 단지는 역 핀
+- [ ] SH·LH 공고는 단지와 연결이 안 돼 지도에서 역 핀 (건물 점 아님)
 - [ ] 특이사항 점수: 한부모·부모 밑 세대·부모님 재정 등 공고별 가점을 판정에 넣을지 (실사용자 질문, 2026-11-06)
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 공고 JSON 도 읽기) · LH 공고문 PDF 찾기
 - [ ] 신청 가능 배지: '기타 조건'(청약자=계약자 동일인 등)은 판정하지 않음 → 이대로 둘지

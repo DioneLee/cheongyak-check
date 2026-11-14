@@ -191,11 +191,18 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 .mapbar { padding: 8px 0 0; } .mapbar .hint { margin: 0; } .mapok { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; cursor: pointer; } .mapok input { width: 20px; height: 20px; margin: 0; }
 .mapwrap { padding: 8px 0 4px; } .mapwrap .mapnote { margin: 8px 0 0; }
 .gmap { height: 440px; border-radius: var(--r1); border: 1px solid var(--line); background: var(--subtle); font-family: var(--sans); z-index: 0; }
-@media (max-width: 600px) { .gmap { height: 360px; } }
+@media (max-width: 600px) { .gmap { height: 360px; } .gmap .mgu span { min-height: 22px; padding: 2px 7px; font-size: 12px; } .gmap .mgu b { font-size: 11px; } }
 .gmap .mgu span, .gmap .mpin span { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 44px; min-height: 40px; padding: 2px 8px;
   border-radius: var(--r1); background: var(--accent); color: var(--on-accent); font: 700 15px/1.15 var(--sans); white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-up); }
 .gmap .mgu b, .gmap .mpin b { font-size: 11px; font-weight: 500; }
+/* 구 동그라미는 한 줄 작은 알약 '강서구 10' (2026-11-14 사용자: 너무 큼) */
+.gmap .mgu span { flex-direction: row; gap: 4px; min-width: 0; min-height: 26px; padding: 3px 9px; border-radius: var(--pill); font: 700 13px/1.2 var(--sans); }
+.gmap .mgu b { font-size: 12px; font-weight: 500; }
 .gmap .mpin span { background: var(--paper); color: var(--ink); border: 2px solid var(--accent); }
+.gmap .mbld span { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--on-accent);
+  border: 3px solid var(--paper); font: 700 13px/1 var(--sans); cursor: pointer; box-shadow: var(--shadow-up); }
+.gmap .mbld em { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); padding: 1px 6px; border-radius: 6px; background: var(--paper); color: var(--ink); font: 600 12px/1.4 var(--sans); font-style: normal; white-space: nowrap; box-shadow: var(--shadow); pointer-events: none; }
+.gmap .mbld { outline: none; } .gmap .mbld:focus-visible span { outline: 3px solid var(--ink); outline-offset: 2px; } .gmap .mhead { margin: 0 0 4px; font: 600 12px/1.4 var(--sans); color: var(--muted); }
 .gmap .mgu, .gmap .mpin { outline: none; } .gmap .mgu:focus-visible span, .gmap .mpin:focus-visible span { outline: 3px solid var(--ink); outline-offset: 2px; }
 .gmap .mlist { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; } .gmap .mlist li + li { border-top: 1px solid var(--line); }
 .gmap .mlist button { display: block; width: 100%; min-height: 44px; padding: 8px 4px; border: 0; background: none; color: var(--accent-deep); font: 600 14px/1.4 var(--sans); text-align: left; box-shadow: none; cursor: pointer; }
@@ -521,7 +528,7 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-13a"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-14a"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="#settings">데이터 백업·옮기기</a></p>
@@ -1174,10 +1181,11 @@ const setFeed = x => { subFeed = normFeed(x); render(); renderDanji(); };   // r
 // 관심 단지(★)는 공고 ★ 와 따로 이 기기에만. 관심 단지에 새 공고가 오면 공고 탭 맨 위 띠 (앱은 알림도 · bridge.js 가 cc-danji-new 를 듣는다)
 const DKEY = 'cheongyak-check-danji-stars', DSEEN = 'cheongyak-check-danji-seen';
 let danji = null, dStars = new Set(lget(DKEY, [])), dSeen = new Set(lget(DSEEN, [])); const dF = { gu: '', st: '', q: '' };
+const llOf = a => Array.isArray(a) && a.length === 2 && a[0] >= 37.41 && a[0] <= 37.72 && a[1] >= 126.76 && a[1] <= 127.19 ? [+a[0], +a[1]] : null;   // 서울 안 건물 좌표만
 function normDanji(x) {
   if (!x || !Array.isArray(x.danji)) return null; const s = (v, n = 80) => String(v ?? '').slice(0, n), n = v => Number.isFinite(v) ? v : null, r2 = a => Array.isArray(a) ? [n(a[0]), n(a[1])] : [null, null];
   const one = (d, other) => ({ id: s(d.id, 40), gu: s(d.gu, 10), name: s(d.name), line: s(d.line, 40), station: s(d.station, 30), walk: n(d.walk), m: n(d.m), dep: r2(d.dep), rent: r2(d.rent), dev: s(d.dev),
-    home: safeUrl(d.home) ? d.home : '', tel: /^[\d-]{7,14}$/.test(d.tel) ? d.tel : '', status: s(d.status, 10), first: isYmd(d.first) ? d.first : '', bbs: n(d.bbs) ?? 0, extra: n(d.extra) ?? 0, lastExtra: isYmd(d.lastExtra) ? d.lastExtra : '', other });
+    home: safeUrl(d.home) ? d.home : '', tel: /^[\d-]{7,14}$/.test(d.tel) ? d.tel : '', status: s(d.status, 10), first: isYmd(d.first) ? d.first : '', bbs: n(d.bbs) ?? 0, extra: n(d.extra) ?? 0, lastExtra: isYmd(d.lastExtra) ? d.lastExtra : '', ll: llOf(d.ll), other });
   return { updated: s(x.updated, 10), danji: x.danji.map(d => one(d, false)).filter(d => d.id && d.name), other: (Array.isArray(x.other) ? x.other : []).map(d => one(d, true)).filter(d => d.id && d.name) };
 }
 const selfOnly = (d, t) => !!d.first && d.extra === 0 && daysBetween(d.first, t) > 365;   // scripts/danji.mjs selfOnly 와 같은 규칙
@@ -1246,8 +1254,8 @@ $('#danjiBox').addEventListener('click', e => {
   lset(DKEY, [...dStars]); renderDanjiList(); renderDanjiNew();
 });
 $('#danjiBox').addEventListener('input', e => { const s = e.target.closest('[data-df]'); if (!s) return; dF[s.dataset.df] = s.value; renderDanjiList(); });
-// ---------- 지도로 보기 (공고·단지 탭, 2026-11-13): 멀리 = 구별 개수, 가까이 = 가까운 역 핀 ----------
-// 좌표는 위치 검색 없이: 구는 구청 근처 고정값(GU_XY) · 핀은 가까운 역(feed/stations.json, OSM). 건물 위치가 아니라 '○○역 근처'.
+// ---------- 지도로 보기 (공고·단지 탭, 2026-11-13): 멀리 = 구별 개수, 가까이 = 건물 점 (건물 좌표를 모르면 가까운 역 핀) ----------
+// 좌표는 위치 검색 없이: 구는 구청 근처 고정값(GU_XY) · 건물은 단지 좌표(danji.json ll — 서울시 단지 화면·엘리스 단지 화면의 지도 값, 2026-11-14) · 그 밖은 가까운 역(feed/stations.json, OSM) '○○역 근처'.
 // Leaflet·역 좌표는 지도를 처음 열 때만 받는다 (목록만 보는 사람·오프라인은 그대로) · 지금 고른 탭(진행 중·예정·완료)·구·검색을 그대로 쓴다
 let feedView = 'list', danjiView = 'list', mapOkOnly = false;
 const VIEW_BTNS = k => `<div class="vtoggle" role="group" aria-label="보기 방식"><button type="button" data-${k}="list">목록</button><button type="button" data-${k}="map">지도</button></div>`;
@@ -1264,7 +1272,7 @@ const loadMapLibs = () => mapLibs ??= Promise.all([
   fetch(`${SITE}feed/stations.json`).then(r => r.ok ? r.json() : {}).then(j => { STN = j.stations || {}; }).catch(() => {})
 ]).catch(e => { mapLibs = null; throw e; });   // 실패하면 다음에 다시 시도
 const maps = new Map();
-// pts: [{ gu, st, label, go }] → 멀리: 구별 동그라미(개수, 누르면 확대) · 가까이: 역 핀(같은 역은 한 핀, 누르면 이름 목록 → 목록에서 보기)
+// pts: [{ gu, st, ll, nm, label, go }] → 멀리: 구별 동그라미(개수, 누르면 확대 · 겹치면 살짝 밀어 놓음) · 가까이: 건물 점(같은 건물은 한 점) 또는 역 핀(같은 역은 한 핀) → 누르면 이름 목록 → 목록에서 보기
 async function drawMap(wrap, pts, note) {
   const key = wrap.id;
   if (!wrap.querySelector('.gmap')) wrap.innerHTML = '<div class="gmap" role="region" aria-label="지도 · 구를 누르면 확대돼요"></div><p class="hint mapnote"></p>';
@@ -1275,7 +1283,7 @@ async function drawMap(wrap, pts, note) {
     m = L.map(wrap.querySelector('.gmap'), { scrollWheelZoom: false, dragging: !L.Browser.mobile, zoomSnap: 0.5 }).setView([37.5565, 126.978], 11);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(m);
     m.on('click', () => m.scrollWheelZoom.enable()); wrap.addEventListener('mouseleave', () => m.scrollWheelZoom.disable());
-    m.on('zoomend', () => paintMap(m)); maps.set(key, m);
+    m.on('zoomend', () => paintMap(m)); m.on('dragend', () => { if (m.getZoom() < 13) paintMap(m); }); maps.set(key, m);   // 구 동그라미 자리는 보이는 화면 기준이라 끌어 옮기면 다시
   }
   const k2 = pts.map(p => p.go).join();
   m._pts = pts; m.invalidateSize();
@@ -1284,30 +1292,61 @@ async function drawMap(wrap, pts, note) {
 }
 function paintMap(m) {
   m._lay?.remove(); m._lay = L.layerGroup().addTo(m);
-  const near = m.getZoom() >= 13, groups = {};
+  const z = m.getZoom(), near = z >= 13, groups = {}, at = p => p.ll || STN[p.st];
   for (const p of m._pts) {
-    const xy = near && STN[p.st] ? STN[p.st] : GU_XY[p.gu]; if (!xy) continue;
-    const g = near ? (STN[p.st] ? p.st : `${p.gu} · 역 정보 없음`) : p.gu; (groups[g] ??= { xy, ps: [] }).ps.push(p);
+    let g, xy, kind = near ? 'stn' : 'gu';
+    if (!near) { xy = GU_XY[p.gu]; g = p.gu; }
+    else if (p.ll) { xy = p.ll; g = `b:${p.ll}`; kind = 'bld'; }
+    else if (STN[p.st]) { xy = STN[p.st]; g = p.st; }
+    else { xy = GU_XY[p.gu]; g = `${p.gu} · 역 정보 없음`; }
+    if (xy) (groups[g] ??= { xy, kind, name: kind === 'bld' ? p.nm : g, ps: [] }).ps.push(p);
   }
-  for (const [name, { xy, ps }] of Object.entries(groups)) {
-    const mk = L.marker(xy, { icon: L.divIcon({ className: near ? 'mpin' : 'mgu', html: `<span><b>${esc(near ? name.replace(/역$/, '역 근처') : name)}</b>${ps.length}</span>`, iconSize: [0, 0] }),
+  const G = Object.values(groups);
+  if (!near) unOverlap(m, G);
+  for (const { xy, kind, name, ps } of G) {
+    const html = kind === 'bld' ? `<span>${ps.length > 1 ? ps.length : ''}</span>${z >= 15 ? `<em>${esc(name)}</em>` : ''}`
+      : `<span><b>${esc(kind === 'stn' ? name.replace(/역$/, '역 근처') : name)}</b>${ps.length}</span>`;
+    const mk = L.marker(xy, { icon: L.divIcon({ className: { bld: 'mbld', stn: 'mpin', gu: 'mgu' }[kind], html, iconSize: [0, 0] }),
       title: near ? `${name} ${ps.length}건 · 눌러서 이름 보기` : `${name} ${ps.length}건 · 눌러서 확대` }).addTo(m._lay);
-    if (near) mk.bindPopup(`<ul class="mlist">${ps.map(p => `<li><button type="button" ${p.go}>${esc(p.label)}</button></li>`).join('')}</ul>`, { maxWidth: 260 });
-    else mk.on('click', () => { const b = ps.map(p => STN[p.st]).filter(Boolean);   // 휴대폰처럼 좁아도 핀이 보이는 확대(13) 이상으로
-      b.length > 1 ? m.setView(L.latLngBounds(b).getCenter(), Math.min(15, Math.max(13, m.getBoundsZoom(b, false, L.point(48, 48))))) : m.setView(b[0] || xy, 14); });
+    const head = kind === 'bld' ? `${name} · 건물 위치` : `${name.replace(/역$/, '역 근처')} · 건물 위치는 몰라요`;
+    if (near) mk.bindPopup(`<p class="mhead">${esc(head)}</p><ul class="mlist">${ps.map(p => `<li><button type="button" ${p.go}>${esc(p.label)}</button></li>`).join('')}</ul>`, { maxWidth: 260 });
+    else mk.on('click', () => { const b = ps.map(at).filter(Boolean);   // 휴대폰처럼 좁아도 점이 보이는 확대(13) 이상으로
+      b.length > 1 ? m.setView(L.latLngBounds(b).getCenter(), Math.min(15, Math.max(13, m.getBoundsZoom(b, false, L.point(48, 48))))) : m.setView(b[0] || xy, 15); });
   }
+}
+// 구 동그라미가 서로 덮지 않게 화면(픽셀)에서 조금씩 밀어 놓는다 — 두 중심을 잇는 방향으로만 밀어 구끼리 위아래·좌우 순서는 그대로 · 지도 밖으로는 안 나감
+// 크기는 구 이름 길이로 넉넉히 어림 (CSS .mgu 와 맞춤 · 좁은 화면은 작은 동그라미) · 120번까지
+function unOverlap(m, G) {
+  const narrow = m.getSize().x < 500, P = G.map(g => { const n = String(g.ps.length).length, [w, h] = [g.name.length * (narrow ? 11 : 12) + n * (narrow ? 8 : 9) + (narrow ? 20 : 24), narrow ? 24 : 28]; return { g, p: m.latLngToLayerPoint(g.xy), w: w / 2 + 2, h: h / 2 + 2 }; });
+  const lo = m.containerPointToLayerPoint([0, 0]), hi = m.containerPointToLayerPoint(m.getSize());
+  P.forEach(a => { a.in = a.p.x >= lo.x && a.p.x <= hi.x && a.p.y >= lo.y && a.p.y <= hi.y; });   // 화면 밖 구는 끌어들이지 않음
+  const clamp = a => { if (!a.in) return; a.p.x = Math.min(Math.max(a.p.x, lo.x + a.w), hi.x - a.w); a.p.y = Math.min(Math.max(a.p.y, lo.y + a.h), hi.y - a.h); };
+  for (let it = 0; it < 120; it++) { let moved = false;
+    for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+      const a = P[i], b = P[j], dx = b.p.x - a.p.x, dy = b.p.y - a.p.y, ox = a.w + b.w - Math.abs(dx), oy = a.h + b.h - Math.abs(dy);
+      if (ox <= 0 || oy <= 0) continue; moved = true;
+      const d = Math.hypot(dx, dy) || 1, ux = dx ? dx / d : 0, uy = dx || dy ? dy / d : 1;
+      const need = Math.min(ux ? ox / Math.abs(ux) : Infinity, uy ? oy / Math.abs(uy) : Infinity), s = Math.min(need, 40) / 2 * 0.6 + 0.5;
+      a.p.x -= ux * s; a.p.y -= uy * s; b.p.x += ux * s; b.p.y += uy * s;
+    }
+    P.forEach(clamp); if (!moved) break; }
+  for (const { g, p } of P) g.xy = m.layerPointToLatLng(p);
 }
 function mapFeed(box, L0, t, done) {
   const jr = i => FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }).st;
   const ok = done && window.FeedTools ? L0.filter(i => jr(i) === 'ok') : [], list = done && mapOkOnly ? ok : L0, noGu = list.filter(i => !GU_XY[guOf(i)]).length;
   box.querySelector('.mapbar').innerHTML = done ? `<label class="mapok"><input type="checkbox" data-mapok${mapOkOnly ? ' checked' : ''}> 기본 조건 맞아 보임만 (${ok.length}건)</label>`
     : '<p class="hint">내 조건을 넣으면 기본 조건이 맞아 보이는 공고만 볼 수 있어요 → <a href="#diag">진단</a></p>';
-  drawMap(box.querySelector('#feedMap'), list.map(i => ({ gu: guOf(i), st: i.st?.n || '', label: feedTitle(i), go: `data-mapgo="${esc(i.id)}"` })),
-    `${{ now: '진행 중', plan: '예정', done: '완료' }[feedTab]} 공고 ${list.length}건 · 핀은 건물이 아니라 가까운 역 위치예요${noGu ? ` · 구를 모르는 ${noGu}건은 지도에 없어요` : ''}`);
+  const dj = new Map(danji ? [...danji.danji, ...danji.other].map(d => [d.id, d]) : []);
+  const pts = list.map(i => { const d = dj.get(i.danji); return { gu: guOf(i), st: i.st?.n || '', ll: d?.ll || null, nm: d?.name || '', label: feedTitle(i), go: `data-mapgo="${esc(i.id)}"` }; });
+  const noLl = pts.filter(p => !p.ll && GU_XY[p.gu]).length;
+  drawMap(box.querySelector('#feedMap'), pts,
+    `${{ now: '진행 중', plan: '예정', done: '완료' }[feedTab]} 공고 ${list.length}건 · 확대하면 건물 위치에 점이 찍혀요${noLl ? ` · ${noLl}건은 건물 위치를 몰라 가까운 역 위치예요` : ''}${noGu ? ` · 구를 모르는 ${noGu}건은 지도에 없어요` : ''}`);
 }
 function mapDanji(wrap, L0, t, n) {
-  drawMap(wrap, L0.map(d => ({ gu: d.gu, st: d.station || '', label: `${d.name}${dStatus(d, t) ? ` · ${dStatus(d, t)}` : ''}`, go: `data-mapgod="${esc(d.id)}"` })),
-    `단지 ${n}곳 · 핀은 건물이 아니라 가까운 역 위치예요`);
+  const noLl = L0.filter(d => !d.ll).length;
+  drawMap(wrap, L0.map(d => ({ gu: d.gu, st: d.station || '', ll: d.ll, nm: d.name, label: `${d.name}${dStatus(d, t) ? ` · ${dStatus(d, t)}` : ''}`, go: `data-mapgod="${esc(d.id)}"` })),
+    `단지 ${n}곳 · 확대하면 건물 위치에 점이 찍혀요${noLl ? ` · ${noLl}곳은 건물 위치를 몰라 가까운 역 위치예요` : ''}`);
 }
 // 목록/지도 전환 · 지도 핀의 이름 → 목록에서 그 공고·단지로
 document.addEventListener('click', e => {

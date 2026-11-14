@@ -1,4 +1,4 @@
-"""지도로 보기 검사 (2026-11-13): 공고 탭·단지 탭의 '목록 / 지도' — 구별 동그라미(개수) · 역 핀 · 핀 이름 → 목록 · 기본 조건 맞아 보임만 · CSP 막힘 0.
+"""지도로 보기 검사 (2026-11-13 · 건물 점 2026-11-14): 공고 탭·단지 탭의 '목록 / 지도' — 구별 동그라미(개수 · 겹치지 않음) · 건물 점(단지 좌표 그대로)·역 핀 · 이름 → 목록 · 기본 조건 맞아 보임만 · CSP 막힘 0.
 _headers 머리를 붙여 주는 csp_check 의 테스트 서버(포트 8796) + 임시 Chrome 프로필. 저장소의 feed/*.json 만 쓰고 내 데이터는 없음.
 Leaflet(cdnjs)·지도 그림(OSM)은 인터넷에서 받는다.
 사용: python scripts/verify/map_check.py
@@ -30,12 +30,12 @@ const until = async (f, ms = 15000) => { for (let i = 0; i < ms / 200; i++) { if
     const L0 = fw.eval(`(() => { const t = todayYmd(); return subFeed.items.filter(i => i.region.startsWith('서울') && phaseOf(i, t) === feedTab).map(i => guOf(i)); })()`), withGu = L0.filter(g => fw.eval('GU_XY')[g]).length;
     ok(`${w}: '지도' → 목록 숨김 · 지도 보임 · 구별 동그라미 숫자 합 = 지금 탭 공고 중 구를 아는 것 ${withGu}건`, loaded && q('#subFeed #feedBody').hidden && !q('#feedMap').hidden && num('#feedMap .mgu') === withGu,
       `${qa('#feedMap .mgu').map(e => e.textContent).join(' / ')}`);
-    ok(`${w}: 안내 = '${fw.eval('feedTab')}' 공고 ${L0.length}건 · 가까운 역 위치 · 진단 안 했으면 진단 링크`, q('#feedMap .mapnote').textContent.includes(`공고 ${L0.length}건`) && /가까운 역 위치/.test(q('#feedMap .mapnote').textContent) && !!q('#subFeed .mapbar a[href="#diag"]'), q('#feedMap .mapnote').textContent);
+    ok(`${w}: 안내 = '${fw.eval('feedTab')}' 공고 ${L0.length}건 · 확대하면 건물 위치 · 진단 안 했으면 진단 링크`, q('#feedMap .mapnote').textContent.includes(`공고 ${L0.length}건`) && /확대하면 건물 위치/.test(q('#feedMap .mapnote').textContent) && !!q('#subFeed .mapbar a[href="#diag"]'), q('#feedMap .mapnote').textContent);
     // 동그라미 → 확대 → 역 핀 → 이름 → 목록
     const big = qa('#feedMap .mgu').sort((a, b) => +b.textContent.match(/\d+$/)[0] - +a.textContent.match(/\d+$/)[0])[0];
     big.click(); await W(1200);
-    ok(`${w}: 동그라미 누름 → 확대(13 이상) · 역 핀 ('○○역 근처 N' 또는 '구 · 역 정보 없음')`, m.getZoom() >= 13 && qa('#feedMap .mpin').length > 0, `zoom ${m.getZoom()} · ${qa('#feedMap .mpin').map(e => e.textContent).join(' / ')}`);
-    qa('#feedMap .mpin')[0].click(); await W(600);
+    ok(`${w}: 동그라미 누름 → 확대(13 이상) · 건물 점 또는 역 핀`, m.getZoom() >= 13 && qa('#feedMap .mbld, #feedMap .mpin').length > 0, `zoom ${m.getZoom()} · 점 ${qa('#feedMap .mbld').length} · 역 ${qa('#feedMap .mpin').map(e => e.textContent).join(' / ')}`);
+    qa('#feedMap .mbld, #feedMap .mpin')[0].click(); await W(600);
     const btn = q('#feedMap .leaflet-popup [data-mapgo]'), id = btn?.dataset.mapgo;
     ok(`${w}: 핀 누름 → 공고 이름 목록 (버튼)`, !!btn && btn.textContent.length > 0, btn?.textContent);
     btn.click(); await W(600);
@@ -61,11 +61,20 @@ const until = async (f, ms = 15000) => { for (let i = 0; i < ms / 200; i++) { if
     const dm = fw.eval('maps.get("danjiMap")'); prep(dm);
     const dn = fw.eval('[...danji.danji, ...danji.other].filter(d => GU_XY[d.gu]).length'), dAll = fw.eval('danji.danji.length + danji.other.length');
     ok(`${w}: 단지 탭 지도 → 동그라미 숫자 합 = 단지 ${dn}곳 · 안내 '단지 ${dAll}곳'`, num('#danjiMap .mgu') === dn && q('#danjiMap .mapnote').textContent.includes(`단지 ${dAll}곳`) && q('#danjiList').hidden, `${num('#danjiMap .mgu')}`);
+    const boxes = qa('#danjiMap .mgu span').map(e => e.getBoundingClientRect()), hit = [];
+    for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) { const a = boxes[i], b = boxes[j]; if (a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1) hit.push(i + '-' + j); }
+    ok(`${w}: 구 동그라미 ${boxes.length}개가 서로 덮지 않음`, boxes.length > 10 && !hit.length, hit.join(' '));
+    // 건물 점 = 단지 좌표 그대로 (서울시·엘리스 단지 화면 지도 값)
+    const withLl = fw.eval('[...danji.danji, ...danji.other].filter(d => d.ll).map(d => ({ id: d.id, ll: d.ll }))'), pick = withLl.find(x => x.id.startsWith('x-')) || withLl[0];
+    dm.setView(pick.ll, 16); await W(1000);
+    const at = dm._lay.getLayers().filter(k => k.options.icon?.options.className === 'mbld').map(k => k.getLatLng()), same = at.some(p => Math.abs(p.lat - pick.ll[0]) < 1e-9 && Math.abs(p.lng - pick.ll[1]) < 1e-9);
+    ok(`${w}: 단지 ${withLl.length}/${dAll}곳 건물 좌표 · 확대하면 '${pick.id}' 자리에 건물 점 · 이름 붙음(15 이상)`, withLl.length >= dAll - 10 && same && qa('#danjiMap .mbld em').length > 0, `${pick.id} ${pick.ll} · 점 ${at.length}`);
+    dm.setView([37.5565, 126.978], 11); await W(600);
     q('#danjiBox [data-df="gu"]').value = '강남구'; q('#danjiBox [data-df="gu"]').dispatchEvent(new fw.Event('input', { bubbles: true })); await W(600);
     const gn = fw.eval("[...danji.danji, ...danji.other].filter(d => d.gu === '강남구').length");
     ok(`${w}: 구 고르면 지도도 그 구만 (강남구 ${gn}곳)`, num('#danjiMap .mgu') === gn && qa('#danjiMap .mgu').length === 1, qa('#danjiMap .mgu').map(e => e.textContent).join(' / '));
     qa('#danjiMap .mgu')[0].click(); await W(1200);
-    qa('#danjiMap .mpin')[0].click(); await W(600);
+    qa('#danjiMap .mbld, #danjiMap .mpin')[0].click(); await W(600);
     const db = q('#danjiMap .leaflet-popup [data-mapgod]'), did = db?.dataset.mapgod; db?.click(); await W(600);
     ok(`${w}: 단지 핀 → 이름 → 목록의 그 단지`, !!did && d.activeElement === q(`#danjiBox [data-did="${did}"]`) && !q('#danjiList').hidden, did);
     q('#danjiBox [data-df="gu"]').value = ''; q('#danjiBox [data-df="gu"]').dispatchEvent(new fw.Event('input', { bubbles: true }));

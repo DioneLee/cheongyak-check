@@ -15,12 +15,13 @@ export const DANJI = {
   '용산원효루미니': { name: '남영역 용산 원효 루미니' }, '용산 원효 루미니': { name: '남영역 용산 원효 루미니' },
   '남영역 롯데캐슬': { name: '남영역 용산 남영역 롯데캐슬 헤리티지' }, '용산 남영역 롯데캐슬 헤리티지': { name: '남영역 용산 남영역 롯데캐슬 헤리티지' },
   '어바니엘 충정로': { name: '충정로역 어바니엘 위드 더 스타일 충정로' },
-  '문래 롯데캐슬': { other: { id: 'x-elyes-mullae', name: '문래 롯데캐슬', gu: '영등포구' } },
-  '독산역 롯데캐슬': { other: { id: 'x-elyes-doksan', name: '독산역 롯데캐슬', gu: '금천구' } },
-  '어바니엘 가산': { other: { id: 'x-elyes-gasan', name: '어바니엘 가산', gu: '금천구' } },
-  '어바니엘 염창': { other: { id: 'x-elyes-yeomchang', name: '어바니엘 염창', gu: '강서구' } },
-  '어바니엘 천호': { other: { id: 'x-elyes-cheonho', name: '어바니엘 천호', gu: '강동구', home: 'https://www.elyes.co.kr/complex/detail?pid=cheonho' } },   // 천호대로161길 21
-  '어바니엘 한강': { other: { id: 'x-elyes-hankang', name: '어바니엘 한강', gu: '동작구', home: 'https://www.elyes.co.kr/complex/detail?pid=hankang' } },   // 노량진로 190
+  // ll: 건물 좌표 [위도, 경도] — 엘리스 단지 화면(/complex/detail?pid=…) 지도에 찍힌 값을 손으로 옮김 (2026-11-14 · pid munrae·doksan·gasan·yeomchang·cheonho·hankang)
+  '문래 롯데캐슬': { other: { id: 'x-elyes-mullae', name: '문래 롯데캐슬', gu: '영등포구', ll: [37.51816, 126.88558] } },
+  '독산역 롯데캐슬': { other: { id: 'x-elyes-doksan', name: '독산역 롯데캐슬', gu: '금천구', ll: [37.46373, 126.89182] } },
+  '어바니엘 가산': { other: { id: 'x-elyes-gasan', name: '어바니엘 가산', gu: '금천구', ll: [37.48518, 126.88003] } },
+  '어바니엘 염창': { other: { id: 'x-elyes-yeomchang', name: '어바니엘 염창', gu: '강서구', ll: [37.54644, 126.87466] } },
+  '어바니엘 천호': { other: { id: 'x-elyes-cheonho', name: '어바니엘 천호', gu: '강동구', home: 'https://www.elyes.co.kr/complex/detail?pid=cheonho', ll: [37.53817, 127.12901] } },   // 천호대로161길 21
+  '어바니엘 한강': { other: { id: 'x-elyes-hankang', name: '어바니엘 한강', gu: '동작구', home: 'https://www.elyes.co.kr/complex/detail?pid=hankang', ll: [37.51315, 126.947] } },   // 노량진로 190
 };
 export const OTHERS = Object.values(DANJI).filter(d => d.other).map(d => ({ home: SOURCE.home, ...d.other, kind: '민간임대', src: SOURCE.label }));
 

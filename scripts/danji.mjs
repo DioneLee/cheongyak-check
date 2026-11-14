@@ -2,7 +2,7 @@
 //   처음 한 번: node scripts/danji.mjs --seed samples/danji_seoul_101.csv   (사용자가 정리한 표 + 단지 목록 요청 1번)
 // 받는 것은 공개된 단지 기본정보와 공고 제목·날짜뿐 — 본문·첨부·사진은 저장하지 않는다
 //  · 단지 목록 yoHomeListJson.json (요청 1번에 101개): 구 · 이름 · 역·도보 · 보증금/월세 범위
-//  · 단지 상세 view.do: 시행사 · 홈페이지 · 대표전화 — 새 단지는 바로, 나머지는 7일마다 (101번 × 3초)
+//  · 단지 상세 view.do: 시행사 · 홈페이지 · 대표전화 · 건물 좌표(화면 지도의 xpos·ypos) — 새 단지·좌표 아직 없는 단지는 바로, 나머지는 7일마다 (101번 × 3초)
 //  · 모집공고 게시판 bbsListJson.json: 제목·게시일만 → 단지마다 공고 수 · 추가모집 수 · 최근 추가모집 · 최초 공고 (처음엔 전부, 다음부터 새 글만)
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -39,12 +39,15 @@ export function parseList(data) {
       dep: [lo, money(r.fnMoneyDepositHigh) ?? lo], rent: [rlo, money(r.fnMoneyRentalHigh) ?? rlo] };
   });
 }
-// 단지 상세 화면에서 세 줄만 (나머지는 버림)
+// 서울 안 좌표만 (위도 37.41~37.72 · 경도 126.76~127.19) → [위도, 경도] 소수 5자리 · 아니면 null
+export const seoulLl = (lat, lng) => { const a = +lat, o = +lng; return a >= 37.41 && a <= 37.72 && o >= 126.76 && o <= 127.19 ? [Math.round(a * 1e5) / 1e5, Math.round(o * 1e5) / 1e5] : null; };
+// 단지 상세 화면에서 세 줄 + 건물 좌표만 (나머지는 버림) · 좌표는 서울시가 단지 지도에 찍는 값 (위치 검색 아님, 2026-11-14)
 export function parseView(html) {
+  const pos = k => String(html).match({ x: /var\s+xpos\s*=\s*["']([\d.]+)["']/, y: /var\s+ypos\s*=\s*["']([\d.]+)["']/ }[k])?.[1], ll = seoulLl(pos('y'), pos('x'));
   const txt = unHtml(String(html).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, '\n')).split('\n').map(l => l.trim()).filter(Boolean).join('\n');
   const after = k => txt.match(new RegExp(`${k}\\s*:\\s*\\n?([^\\n]+)`))?.[1].trim() || '';
   const home = after('홈페이지'), tel = after('대표전화').match(/[\d-]{7,}/)?.[0] || '';
-  return { dev: after('시행사').slice(0, 60), home: home.length <= 200 ? httpUrl(home) : '', tel };
+  return { dev: after('시행사').slice(0, 60), home: home.length <= 200 ? httpUrl(home) : '', tel, ll };
 }
 export const parseBbs = data => (data?.resultList ?? []).filter(r => r?.boardId && r.nttSj).map(r => ({ id: String(r.boardId), t: unHtml(r.nttSj).trim().slice(0, 160), d: String(r.optn1 || '').slice(0, 10) }));
 
@@ -99,7 +102,7 @@ export function buildDanji(prev, { list, views = {}, hist = null, openIds = new 
     // 공급상태: 접수 중 공고가 있으면 '청약중', 아니면 표(CSV) 값 base (지시서 확인 2026-11-09)
     const base = o.base ?? o.status ?? '', status = openIds.has(b.id) ? '청약중' : base;
     // 구: 사용자 표가 서울시 값과 다르면 표 값 (guFix · 2026-11-09 사용자 결정)
-    return { ...b, ...(o.guFix ? { gu: o.guFix, guFix: o.guFix } : {}), dev: v?.dev ?? o.dev ?? '', home: httpUrl(v?.home ?? o.home), tel: v?.tel ?? o.tel ?? '', viewAt: v ? today : o.viewAt || '',
+    return { ...b, ...(o.guFix ? { gu: o.guFix, guFix: o.guFix } : {}), dev: v?.dev ?? o.dev ?? '', home: httpUrl(v?.home ?? o.home), tel: v?.tel ?? o.tel ?? '', ll: v ? v.ll : o.ll, viewAt: v ? today : o.viewAt || '',
       base, status, first: c?.first || o.first || '', bbs: c ? c.bbs : o.bbs ?? 0, extra: c ? c.extra : o.extra ?? 0, lastExtra: c ? c.lastExtra : o.lastExtra || '' };
   }).sort((a, b) => a.gu.localeCompare(b.gu, 'ko') || a.name.localeCompare(b.name, 'ko'));
   return { updated: today, source: '서울시 청년안심주택 단지 정보 · 모집공고 게시판 (soco.seoul.go.kr)', danji, other: OTHERS };
@@ -112,7 +115,7 @@ export async function refreshDanji({ openIds = new Set(), force = false } = {}) 
   const today = todayKst(); if (!force && prev?.updated === today) return { prev, wrote: false, note: '오늘 이미 갱신' };
   const list = await fetchList(), old = new Map((prev?.danji ?? []).map(d => [d.id, d])), views = {}, stale = todayKst(-VIEW_DAYS);
   let viewN = 0, viewBad = 0;
-  for (const b of list) { const o = old.get(b.id); if (o?.viewAt && o.viewAt > stale) continue;
+  for (const b of list) { const o = old.get(b.id); if (o?.viewAt && o.viewAt > stale && o.ll !== undefined) continue;   // 좌표 칸이 아직 없으면(2026-11-14 전 데이터) 한 번 더
     try { views[b.id] = await fetchView(b.id); viewN++; } catch { viewBad++; } }
   let hist = null;
   try { const got = await fetchBbs(new Set(bbs.items.map(i => i.id)), { maxPages: bbs.complete ? 10 : 80 });
