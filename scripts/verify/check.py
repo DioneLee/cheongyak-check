@@ -87,9 +87,9 @@ const q = s => d.querySelector(s), qa = s => [...d.querySelectorAll(s)];
 ok('기존 데이터 없으면 가져오기 숨김 (진단 배너 · 공고 탭 한 줄)', q('#importBanner').hidden && q('#importHint').hidden);
 ok('맨 위는 서울 진행중 공고 (원문 사이트 4곳)', q('h1').textContent.includes('진행중 공고') && qa('#linksSec .src-grid a[target="_blank"]').length === 4);
 // 탭 4개 (#notices · #danji · #diag · #settings)
-const vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join(), cur = () => qa('[aria-current="page"]').map(a => a.dataset.tabLink).join();
+const vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join(), cur = () => q('[data-tab]:not([hidden]) [data-kind-link][aria-current="true"]')?.dataset.kindLink || qa('header [aria-current="page"]').map(a => a.dataset.tabLink).join(), kl = k => q(`[data-tab]:not([hidden]) [data-kind-link="${k}"]`);
 const foot = () => q('footer').offsetHeight > 0 && q('footer').textContent.includes('참고용');
-ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/단지/진단" 3개 (설정은 메뉴에 없음) · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/단지/내 점수계산' && !q('header a[href="#settings"]') && foot(), vis() + ' ' + cur());
+ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "청약 공고/내 점수계산" 2개 (설정은 메뉴에 없음) · 안쪽 탭 "공고/민간 임대" · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && q('header [aria-current="page"]')?.textContent === '청약 공고' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '청약 공고/내 점수계산' && qa('#linksSec [data-kind-link]').map(a => a.textContent).join('/') === '공고/민간 임대' && !q('header a[href="#settings"]') && foot(), vis() + ' ' + cur());
 fw.scrollTo(0, 400); q('[data-tab-link="diag"]').click(); await W(150);
 ok('탭: 진단 링크 → 진단 탭만 · 맨 위로 · 제목에 포커스 · 맨 아래 안내 그대로', vis() === 'diag' && cur() === 'diag' && fw.scrollY === 0 && d.activeElement === q('#h-diag') && foot(), vis() + ' ' + fw.scrollY + ' ' + d.activeElement?.id);
 { const fl = q('footer a[href="#settings"]');
@@ -287,9 +287,9 @@ ok('확인하면 불러온 내용으로', fw.eval('state.subs.notices.length') =
   fw.eval('ON_OLD = false; renderMoved()'); }
 // ---------- 단지 탭 (실제 feed/danji.json) · 단지 직접 공고 · 관심 단지 새 공고 ----------
 const APP = '앱을 열면 관심 단지 새 공고를 알려 드려요', OTH = '청년안심주택이 아니라 자격이 다를 수 있어요 · 공고문 확인';
-fw.location.hash = 'notices'; await W(150); q('[data-tab-link="danji"]').click(); await W(300);
+fw.location.hash = 'notices'; await W(150); kl('danji').click(); await W(300);
 const cards = () => qa('#danjiList li[data-did]'), main = () => qa('#danjiList .flist')[0]?.children.length ?? 0;
-ok('단지 탭: 메뉴 → #danji · 단지 탭만 · 제목 포커스 · 지금 탭 표시', fw.location.hash === '#danji' && vis() === 'danji' && cur() === 'danji' && d.activeElement === q('#h-danji'), vis() + ' ' + d.activeElement?.id);
+ok('단지 탭: 안쪽 탭 "민간 임대" → #danji · 단지 탭만 · 제목 포커스 · 지금 탭 표시 · 위 메뉴는 그대로 "청약 공고"', fw.location.hash === '#danji' && vis() === 'danji' && cur() === 'danji' && q('header [aria-current="page"]')?.textContent === '청약 공고' && d.activeElement === q('#h-danji'), vis() + ' ' + d.activeElement?.id);
 ok('단지 탭: 청년안심주택 100곳 + "그 밖의 서울 민간임대" 6곳 (서울 밖 없음 · 단지 아닌 글 없음)', main() === 100 && !/모집공고/.test(qa('#danjiList .flist')[0].textContent) && /그 밖의 서울 민간임대 6곳/.test(q('#danjiList .fgroup')?.textContent) && qa('#danjiList .flist')[1].children.length === 6 && !/부산|양산|김포|화성/.test(q('#danjiList').textContent), main());
 ok('단지 탭: 그 밖의 민간임대 카드마다 "' + OTH + '"', qa('#danjiList .flist')[1].querySelectorAll('.dj-other').length === 6 && [...qa('#danjiList .flist')[1].querySelectorAll('.dj-other')].every(p => p.textContent === OTH) && !qa('#danjiList .flist')[0].querySelector('.dj-other'));
 ok('단지 탭에만 정확히 "' + APP + '" (설정에서는 뺌)', [...q('#danjiSec').querySelectorAll('p')].some(p => p.textContent.trim() === APP) && !q('[data-tab="settings"]').textContent.includes(APP));
@@ -336,7 +336,7 @@ const mix = items => fw.eval('setFeed')({ updated: '', source: '', items }); awa
 ok('공고 출처: 맨 아래 안내에 "롯데건설 엘리스(제목·링크)"', q('footer').textContent.includes('롯데건설 엘리스(제목·링크)'));
 ok('관심 단지 띠: ★ 한 뒤에 올라온 공고 → 띠', !q('#danjiNew').hidden && !!q('#danjiNew [data-dnseen="elyes-a1"]'), q('#danjiNew').textContent);
 q('#danjiNew [data-dnseen="elyes-a1"]').click(); await W(80);
-q('[data-tab-link="danji"]').click(); await W(150); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); q('[data-tab-link="notices"]').click(); await W(150);
+kl('danji').click(); await W(150); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); q('#danjiList [data-dstar="x-elyes-yeomchang"]').click(); await W(50); kl('notices').click(); await W(150);
 ok('관심 단지 띠: ★ 다시 눌러도 이미 본 공고는 그대로 숨김', q('#danjiNew').hidden);
 const evs = []; fw.addEventListener('cc-danji-new', e => evs.push(e.detail));
 const el3 = { ...el1, id: 'elyes-a3', title: '[어바니엘 염창] 재임대 모집공고 (접수기간: 12/1~12/3)', to: '2099-03-03', from: T }; await mix([fi('o1', '2099-01-01'), el2, el1, el3]); await W(120);
@@ -354,7 +354,7 @@ await open('#notices'); { const qq = s => d.querySelector(s), tipN = () => qq('[
   qq('#subFeed [data-star="b1"]').click(); await W(60); qq('#subFeed [data-star="b2"]').click(); await W(60);
   ok('백업 안내: ★ 2개면 안 뜸', tipN().hidden && tipD().hidden);
   fw.location.hash = 'danji'; await W(250); qq('#danjiList [data-dstar]').click(); await W(80);
-  ok('백업 안내: 3개째 ★ 를 누른 단지 탭 맨 위에만 · "가끔 백업해 두세요 · 백업 받기"', !tipD().hidden && tipN().hidden && tipD().textContent.includes('가끔 백업해 두세요') && !!tipD().querySelector('[data-backup-go]') && qq('#danjiSec').firstElementChild.nextElementSibling === tipD());
+  ok('백업 안내: 3개째 ★ 를 누른 단지 탭 맨 위에만 · "가끔 백업해 두세요 · 백업 받기"', !tipD().hidden && tipN().hidden && tipD().textContent.includes('가끔 백업해 두세요') && !!tipD().querySelector('[data-backup-go]') && qq('#h-danji').nextElementSibling === tipD());
   tipD().querySelector('[data-backup-no]').click(); await W(60);
   ok('백업 안내: 닫기 → 숨김 · 기억', tipD().hidden && JSON.parse(fw.localStorage.getItem('cheongyak-check-backup-tip')) === 'closed'); }
 await open('#notices'); { const qq = s => d.querySelector(s);
@@ -389,7 +389,7 @@ const q = s => d.querySelector(s), before = localStorage.getItem('newlywed-home-
 const qa = s => [...d.querySelectorAll(s)], vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join();
 ok('390 첫 화면은 공고 탭 (다른 탭 숨김)', q('h1').getBoundingClientRect().bottom <= fw.innerHeight && vis() === 'notices');
 { const ls = qa('[data-tab-link]'), nav = q('.chips');
-  ok('390 메뉴 3개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 3 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
+  ok('390 메뉴 2개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 2 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
 ok('기존 사이트 입력 발견 → 진단 탭 맨 위 배너 + 공고 탭 위 한 줄', !q('#importBanner').hidden && q('#h-diag').nextElementSibling === q('#importBanner') && !q('#importHint').hidden && q('#importHint').textContent.includes('SUITABLE HOME 조건 가져오기 → 내 점수계산') && q('#importHint').getAttribute('href') === '#diag');
 { fw.eval('CAN_READ_SH = false; renderImport()');

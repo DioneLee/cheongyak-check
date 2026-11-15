@@ -6,9 +6,10 @@
 
 - **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
 
-- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-15a`)
+- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-15b`)
 - 단지 탭 `#danji` + 단지 직접 공고(엘리스) (2026-11-09, `docs/design/단지.md`): 메뉴 "공고/단지/진단/설정" · 서울 청년안심주택 100곳 + 그 밖의 서울 민간임대 6곳 · 관심 단지 ★ → 새 공고 띠(앱은 알림)
 - 지도로 보기 (2026-11-13 · 건물 점 2026-11-14, `docs/design/지도로_보기.md`): 공고·단지 탭 '목록 / 지도' · 멀리 = 구별 동그라미(겹치지 않게 밀어 놓음) · 가까이 = 건물 점(단지 좌표 `danji.json` ll — 서울시·엘리스 단지 화면 지도 값) · 단지와 연결 안 된 공고(SH·LH)는 가까운 역 핀
+- 메뉴는 '청약 공고 / 내 점수계산' 2칸 · 청약 공고 안쪽 탭 '공고(#notices) / 민간 임대(#danji)' (2026-11-15) · 단지 칸 제목 '서울 민간 임대 단지'
 - 진단 탭 이름은 화면에서 '내 점수계산' (2026-11-15 · 주소는 그대로 `#diag`) · 스토어 문구(`docs/store/스토어.md`)는 아직 '예비 진단'
 - 메뉴는 "공고/단지/진단" 3개 (2026-11-12) · 설정 `#settings` 는 맨 아래 '데이터 백업·옮기기' 링크로만 (백업·옮기기 + 접힌 고급)
 - 탭 (2026-11-09, `docs/design/탭과문구.md`): 공고 `#notices`(원문 사이트 4곳 · 공고 목록 세부 탭 진행 중/예정/완료 · 검색(이름·역·구 + 구 선택) · 관심 공고 · 캘린더 · 줄마다 '진단 →') · 진단 `#diag`(PDF 올리기 + 질문 + 결과) · 설정 `#settings`(AI 설정 · 데이터 옮기기 · 고급)
