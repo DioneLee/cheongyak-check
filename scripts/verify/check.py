@@ -191,11 +191,11 @@ ok('나이 초과로 바꾸면 어려워 보임', q('#subFeed [data-why="youth-6
 fw.eval(`state.subs.me.a.birth = '1997-03-01'; state.subs.seen = {}; render()`); await W(50);
 ok('자동차 없음(기본값)을 확인하지 않았으면 확인 필요', q('#subFeed [data-why="youth-6720"]')?.textContent === '확인 필요');
 fw.eval(`state.subs.seen = { hasCar: true }; render()`); await W(50);
-ok('구독 링크 옆 구글 캘린더 안내', q('#subFeed .fcalnote')?.textContent.includes('구글 캘린더는 구독 갱신이 하루까지 늦고 알림을 적용하지 않아요'));
+ok('공고 목록 위에 "캘린더 구독" 링크·구독 안내 없음 (관심 공고 캘린더로 받기만)', !q('#subFeed .facts a') && !q('#subFeed .fcalnote') && !!q('#subFeed [data-starics]') && !q('#subFeed').textContent.includes('캘린더 구독'));
 fw.eval(`state.subs.me.a.birth = '1997-03-01'; state.subs.wizard.done = false; render()`); await W(50);
 ok('진단 전이면 배지 대신 안내 한 줄', !q('#subFeed .jb') && q('#subFeed .fhint')?.textContent.includes('내 조건 넣고 가능 여부 보기'));
 fw.eval(`state.subs.wizard.done = true; render()`); await W(50);
-ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공고 원문에서" · 구독 링크 webcal://', !!q('#subFeed [data-ics="youth-6720"]') && q('#subFeed [data-fid="lh-77"] .nocal')?.textContent === '일정은 공고 원문에서' && /^webcal:\/\/.+\/feed\/calendar\.ics$/.test(q('#subFeed .facts a').getAttribute('href')));
+ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공고 원문에서" ', !!q('#subFeed [data-ics="youth-6720"]') && q('#subFeed [data-fid="lh-77"] .nocal')?.textContent === '일정은 공고 원문에서');
 { let blob = null, name = ''; const ou = fw.URL.createObjectURL, oc = fw.HTMLAnchorElement.prototype.click; fw.URL.createObjectURL = b => { blob = b; return 'blob:x'; }; fw.HTMLAnchorElement.prototype.click = function () { name = this.download; };
   const rf2 = fw.fetch; fw.fetch = async (u, o) => String(u).includes('feed/detail/youth-6720.json') ? new fw.Response(JSON.stringify({ apply: '인터넷 신청: https://naver.me/GUTJuhOO', supply: [{ type: '25A 1510호' }, { type: '25B 529호' }, { type: '52A 2007호' }] })) : rf2(u, o);
   q('#subFeed [data-ics="youth-6720"]').click(); for (let n = 0; n < 20 && !blob; n++) await W(50);
