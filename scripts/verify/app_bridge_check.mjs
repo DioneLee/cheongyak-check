@@ -11,7 +11,7 @@ const REPO = join(dirname(fileURLToPath(import.meta.url)), '..', '..'), SRC = re
 const rows = []; const ok = (n, c, g = '') => rows.push([c ? 'OK' : 'NG', n, c ? '' : String(g)]);
 const tick = () => new Promise(r => setTimeout(r, 20));
 
-function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true } = {}) {
+function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true, platform = 'android' } = {}) {
   class Storage { constructor(o) { this._ = { ...o }; } getItem(k) { return k in this._ ? this._[k] : null; } setItem(k, v) { this._[k] = String(v); } clear() { this._ = {}; } }
   const local = new Storage(ls), log = { reload: 0, scheduled: [], cancelled: [], asked: 0, shared: [], exit: 0, types: null }, listeners = {}, wl = {};
   const P = {
@@ -25,7 +25,7 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true }
   const feedTxt = JSON.stringify({ items: [{ id: 'a', title: '[정정] 가 공고', to: '2099-03-10', time: '17:00' }, { id: 'b', title: '나 공고', to: '2099-03-11', startOnly: true }, { id: 'c', title: '다 공고', to: '2000-01-02' }] });
   const loc = { hash: '#settings', reload() { log.reload++; }, replace(h) { this.hash = h; } };
   const win = {
-    Capacitor: native ? { isNativePlatform: () => true, Plugins: P } : undefined, localStorage: local, location: loc,
+    Capacitor: native ? { isNativePlatform: () => true, getPlatform: () => platform, Plugins: P } : undefined, localStorage: local, location: loc,
     fetch: async u => { if (!net) throw new TypeError('offline'); return new Response(String(u).includes('notices.json') ? feedTxt : String(u).includes('danji.json') ? '{"danji":[1]}' : 'x'); },
     addEventListener: (e, f) => { wl[e] = f; },
   };
@@ -36,7 +36,9 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true }
 }
 
 // 웹(앱 아님): 아무것도 안 바꿈
-{ const b = boot({ native: false }); ok('웹에서는 아무것도 안 함 (fetch·setItem 그대로)', !b.win.__ccAlarms && b.local.setItem === b.ctx.Storage.prototype.setItem); }
+{ const b = boot({ native: false }); ok('웹에서는 아무것도 안 함 (fetch·setItem 그대로)', !b.win.__ccAlarms && b.local.setItem === b.ctx.Storage.prototype.setItem && !b.win.CC_MAP_ENGINE); }
+// 지도 엔진 (2026-11-15): Android 는 정하지 않음(화면이 네이버 지도) · iOS 는 'leaflet' (네이버가 capacitor:// 에서 지도 파일을 http 로 불러 iOS 가 막음)
+{ const a = boot({ platform: 'android' }), i = boot({ platform: 'ios' }); ok("지도: Android 는 네이버(정하지 않음) · iOS 는 CC_MAP_ENGINE = 'leaflet'", a.win.CC_MAP_ENGINE === undefined && i.win.CC_MAP_ENGINE === 'leaflet', `${a.win.CC_MAP_ENGINE} / ${i.win.CC_MAP_ENGINE}`); }
 // 1) 되살리기
 { const b = boot({ prefs: { 'cheongyak-check-v1': '{"saved":1}' } }); await tick();
   ok('localStorage 가 비었고 Preferences 에 있으면 되살리고 다시 읽음', b.local.getItem('cheongyak-check-v1') === '{"saved":1}' && b.log.reload === 1); }

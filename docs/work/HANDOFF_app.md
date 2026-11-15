@@ -111,3 +111,7 @@ npx cap open ios                  # Xcode: Signing & Capabilities 에서 Team �
 
 - 시스템 PATH·환경 변수는 바꾸지 않았다 (스크립트가 그 창 안에서만 지정)
 - Android SDK 약관: 사용자 동의 후 스크립트가 처리 (새 명령줄 도구는 약관 단계 없음)
+
+## 지도 (2026-11-15)
+- Android 앱은 네이버 지도 (화면 주소 `https://localhost` → 네이버 콘솔에 등록한 `localhost` 로 인증 · 지도 파일 https) · **다음 빌드부터 반영** → 휴대폰에서 '지도' 눌러 네이버 지도·구 알약·건물 점 확인
+- iOS 앱은 OpenStreetMap: `app/bridge.js` 가 `CC_MAP_ENGINE = 'leaflet'` (네이버 maps.js 는 https 화면이 아니면 지도 파일을 http 로 부르고 iOS ATS 가 막음). 네이버로 하려면 ATS 예외가 필요해서 보류

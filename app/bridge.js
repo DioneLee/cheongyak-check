@@ -5,9 +5,11 @@
 //  3) 관심 공고(★) 마감 하루 전 오전 9시 로컬 알림 · 알림 허용은 처음 ★를 누를 때 묻는다
 //  4) 파일 받기(.ics · 내보내기 JSON): WebView 는 blob 다운로드를 못 해서 → 앱 임시 폴더에 쓰고 공유 시트로
 //  5) Android 뒤로 버튼으로 탭 되돌아가기
+//  (지도) iOS 는 CC_MAP_ENGINE = 'leaflet': 네이버 지도가 capacitor:// 화면에서는 지도 파일을 http 로 불러 iOS 가 막음 → OpenStreetMap 지도 · Android 는 네이버 지도 (2026-11-15)
 //  6) 관심 단지 새 공고 알림: 앱을 열거나 다시 볼 때 화면이 cc-danji-new 를 보내면 바로 알림 한 번 · 알림의 '이 공고 마감 알림도 받기' → 공고 ★ (백그라운드 확인은 없음)
 (() => {
   const C = window.Capacitor; if (!C?.isNativePlatform?.()) return;
+  if (C.getPlatform?.() === 'ios') window.CC_MAP_ENGINE = 'leaflet';   // 화면(index.html)보다 먼저 돌아서 지도 엔진을 정해 둔다
   const P = C.Plugins, KEY = 'cheongyak-check-v1', STARS = 'cheongyak-check-stars', FEED = 'cheongyak-check-app-feed', ASKED = 'cheongyak-check-app-notif-asked',
     DSTARS = 'cheongyak-check-danji-stars', NOTIFIED = 'cheongyak-check-app-danji-notified', CACHE = { notices: FEED, danji: 'cheongyak-check-app-danji' };
   const ls = window.localStorage, setItem = Storage.prototype.setItem, get = k => { try { return ls.getItem(k); } catch (e) { return null; } };
