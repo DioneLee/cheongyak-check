@@ -203,10 +203,13 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 .gmap .mgu span { flex-direction: row; gap: 4px; min-width: 0; min-height: 26px; padding: 3px 9px; border-radius: var(--pill); font: 700 13px/1.2 var(--sans); }
 .gmap .mgu b { font-size: 12px; font-weight: 500; }
 .gmap .mpin span { background: var(--paper); color: var(--ink); border: 2px solid var(--accent); }
-.gmap .mbld span { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--on-accent);
-  border: 3px solid var(--paper); font: 700 13px/1 var(--sans); cursor: pointer; box-shadow: var(--shadow-up); }
-.gmap .mbld em { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); padding: 1px 6px; border-radius: 6px; background: var(--paper); color: var(--ink); font: 600 12px/1.4 var(--sans); font-style: normal; white-space: nowrap; box-shadow: var(--shadow); pointer-events: none; }
-.gmap .mbld { outline: none; } .gmap .mbld:focus-visible span { outline: 3px solid var(--ink); outline-offset: 2px; } .gmap .mhead { margin: 0 0 4px; font: 600 12px/1.4 var(--sans); color: var(--muted); }
+/* 건물 점 = 네이버 지도처럼 집 모양 핀 (끝이 건물 자리) · 이름은 배경 없이 글자만(흰 테두리로 지도 위에서도 읽힘) · 같은 건물 공고가 여럿이면 핀 위 숫자 (2026-11-15) */
+.gmap .mbld span { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); display: block; width: 34px; height: 42px; cursor: pointer; filter: drop-shadow(0 2px 3px rgba(0, 27, 55, 0.3)); }
+.gmap .mbld svg { display: block; width: 34px; height: 42px; } .gmap .mbld .pin { fill: var(--accent); stroke: var(--paper); stroke-width: 2.5; } .gmap .mbld .home { fill: var(--on-accent); }
+.gmap .mbld i { position: absolute; top: -5px; right: -8px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--ink); color: var(--paper); font: 700 11px/18px var(--sans); font-style: normal; text-align: center; }
+.gmap .mbld em { position: absolute; left: 0; top: 3px; transform: translateX(-50%); color: var(--ink); font: 700 12px/1.3 var(--sans); font-style: normal; white-space: nowrap; pointer-events: none;
+  text-shadow: 0 0 2px var(--paper), 0 0 2px var(--paper), 0 0 3px var(--paper), 1px 1px 0 var(--paper), -1px -1px 0 var(--paper), 1px -1px 0 var(--paper), -1px 1px 0 var(--paper); }
+.gmap .mbld { outline: none; } .gmap .mbld:focus-visible svg { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 50%; } .gmap .mhead { margin: 0 0 4px; font: 600 12px/1.4 var(--sans); color: var(--muted); }
 .gmap .mgu, .gmap .mpin { outline: none; } .gmap .mgu:focus-visible span, .gmap .mpin:focus-visible span { outline: 3px solid var(--ink); outline-offset: 2px; }
 .gmap .mlist { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; } .gmap .mlist li + li { border-top: 1px solid var(--line); }
 .gmap .mlist button { display: block; width: 100%; min-height: 44px; padding: 8px 4px; border: 0; background: none; color: var(--accent-deep); font: 600 14px/1.4 var(--sans); text-align: left; box-shadow: none; cursor: pointer; }
@@ -539,7 +542,7 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-15f"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-15g"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. '지도'를 누를 때만 네이버 지도를 불러와요(내 조건은 보내지 않아요). AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="#settings">데이터 백업·옮기기</a></p>
@@ -1314,7 +1317,7 @@ function leafletMap(el, moved) {
     zoom: () => r.getZoom(), center: () => { const c = r.getCenter(); return [c.lat, c.lng]; }, size: () => r.getSize(),
     view: (ll, z) => r.setView(ll, z, { animate: m.anim }), resize: () => r.invalidateSize(), destroy: () => r.remove(),
     marker(ll, cls, html, title, onClick) { const k = L.marker(ll, { icon: L.divIcon({ className: cls, html, iconSize: [0, 0] }), title }).addTo(r); k.on('click', onClick); return { ll, cls, rm: () => k.remove() }; },
-    pop(ll, html) { pop = L.popup({ maxWidth: 260 }).setLatLng(ll).setContent(`<div class="mpop">${html}</div>`).openOn(r); },
+    pop(ll, up, html) { pop = L.popup({ maxWidth: 260, offset: [0, 25 - up] }).setLatLng(ll).setContent(`<div class="mpop">${html}</div>`).openOn(r); },   // up: 점 위로 띄울 px (집 핀은 핀 위로)
     closePop() { pop?.remove(); pop = null; } });
   return m;
 }
@@ -1336,7 +1339,7 @@ function naverMap(el, moved) {
       const k = new N.Marker({ map: r, position: at(ll), icon: { content: e, anchor: new N.Point(0, 0) }, clickable: false, zIndex: cls === 'mbld' ? 20 : 10 });   // 누르기는 위 DOM 처리기가 (네이버 마커 클릭 처리는 끔)
       return { ll, cls, rm: () => k.setMap(null) };
     },
-    pop(ll, html) { const e = document.createElement('div'); e.className = 'mpop nv'; e.innerHTML = `${html}<button type="button" class="mx" aria-label="닫기">×</button>`;
+    pop(ll, up, html) { win.setOptions('pixelOffset', new N.Point(0, -up)); const e = document.createElement('div'); e.className = 'mpop nv'; e.innerHTML = `${html}<button type="button" class="mx" aria-label="닫기">×</button>`;
       e.addEventListener('click', ev => { const g = ev.target.closest('[data-mapgo], [data-mapgod]'); if (g) { ev.stopPropagation(); win.close(); mapGo(g); } });
       e.querySelector('.mx').addEventListener('click', () => win.close()); win.setContent(e); win.open(r, at(ll)); },
     closePop: () => win.close() });
@@ -1363,6 +1366,7 @@ async function drawMap(wrap, pts, note) {
   if (m._key !== k2) { m._key = k2; const b = pts.map(p => GU_XY[p.gu]).filter(Boolean); b.length > 1 ? m.fit(b, 40, 9, 12) : m.view(b[0] || [37.5565, 126.978], 12); }
   paintMap(m);
 }
+const HOUSE = '<svg viewBox="0 0 34 42" aria-hidden="true"><path class="pin" d="M17 40.5S3.5 26.6 3.5 16.2a13.5 13.5 0 0 1 27 0C30.5 26.6 17 40.5 17 40.5z"/><path class="home" d="M17 8.6 8.6 15.6h2.3v7.6h4.4v-4.6h3.4v4.6h4.4v-7.6h2.3z"/></svg>';   // 집 모양 핀 (끝 = 건물 자리)
 function paintMap(m) {
   m.clear(); const z = m._z = m.zoom(), near = z >= 13, groups = {}, at = p => p.ll || STN[p.st];
   for (const p of m._pts) {
@@ -1376,11 +1380,11 @@ function paintMap(m) {
   const G = Object.values(groups);
   if (!near) unOverlap(m, G);
   for (const { xy, kind, name, ps } of G) {
-    const html = kind === 'bld' ? `<span>${ps.length > 1 ? ps.length : ''}</span>${z >= 15 ? `<em>${esc(name)}</em>` : ''}`
+    const html = kind === 'bld' ? `<span>${HOUSE}${ps.length > 1 ? `<i>${ps.length}</i>` : ''}</span>${z >= 15 ? `<em>${esc(name)}</em>` : ''}`
       : `<span><b>${esc(kind === 'stn' ? name.replace(/역$/, '역 근처') : name)}</b>${ps.length}</span>`;
     const head = kind === 'bld' ? `${name} · 건물 위치` : `${name.replace(/역$/, '역 근처')} · 건물 위치는 몰라요`;
     m.marks.push(m.marker(xy, { bld: 'mbld', stn: 'mpin', gu: 'mgu' }[kind], html, near ? `${name} ${ps.length}건 · 눌러서 이름 보기` : `${name} ${ps.length}건 · 눌러서 확대`,
-      near ? () => m.pop(xy, `<p class="mhead">${esc(head)}</p><ul class="mlist">${ps.map(p => `<li><button type="button" ${p.go}>${esc(p.label)}</button></li>`).join('')}</ul>`)
+      near ? () => m.pop(xy, kind === 'bld' ? 46 : 18, `<p class="mhead">${esc(head)}</p><ul class="mlist">${ps.map(p => `<li><button type="button" ${p.go}>${esc(p.label)}</button></li>`).join('')}</ul>`)
         : () => { const b = ps.map(at).filter(Boolean); b.length > 1 ? m.fit(b, 24, 13, 15) : m.view(b[0] || xy, 15); }));   // 휴대폰처럼 좁아도 점이 보이는 확대(13) 이상으로
   }
 }
