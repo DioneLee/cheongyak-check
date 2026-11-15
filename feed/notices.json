@@ -1,36 +1,7 @@
 {
- "updated": "2026-11-15T03:49:11+09:00",
+ "updated": "2026-11-16T03:49:10+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
-  {
-   "id": "lh-2015122300020843",
-   "org": "LH",
-   "title": "[서울지역본부] 26년 2차 비분양전환형 든든전세주택 입주자 모집공고",
-   "region": "서울",
-   "kind": "매입임대",
-   "posted": "2026-10-01",
-   "from": "",
-   "to": "2026-10-16",
-   "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancInfo.do?panId=2015122300020843&ccrCnntSysDsCd=03&uppAisTpCd=13&aisTpCd=26&mi=1026",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-16"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
   {
    "id": "elyes-W-BEFcY7mOGtwhIkAGoa7g",
    "org": "엘리스",
@@ -63,52 +34,6 @@
    "cr": null,
    "ty": [],
    "st": null,
-   "lm": ""
-  },
-  {
-   "id": "youth-6700",
-   "org": "청년안심",
-   "title": "[민간임대] 화곡역 포르투나블루 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-15",
-   "from": "2026-10-16",
-   "to": "2026-10-19",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6700&menuNo=400008",
-   "time": "23:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000412",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-16"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-19",
-     "t": "23:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-20",
-     "t": "11:00"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": {
-    "n": "화곡역",
-    "m": null,
-    "w": null,
-    "src": "name"
-   },
    "lm": ""
   },
   {
