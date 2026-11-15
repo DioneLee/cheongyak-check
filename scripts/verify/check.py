@@ -89,7 +89,7 @@ ok('맨 위는 서울 진행중 공고 (원문 사이트 4곳)', q('h1').textCon
 // 탭 4개 (#notices · #danji · #diag · #settings)
 const vis = () => qa('[data-tab]').filter(s => !s.hidden).map(s => s.dataset.tab).join(), cur = () => qa('[aria-current="page"]').map(a => a.dataset.tabLink).join();
 const foot = () => q('footer').offsetHeight > 0 && q('footer').textContent.includes('참고용');
-ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/단지/진단" 3개 (설정은 메뉴에 없음) · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/단지/진단' && !q('header a[href="#settings"]') && foot(), vis() + ' ' + cur());
+ok('탭: 처음 주소 → #notices · 공고 탭만 보임 · 메뉴 "공고/단지/진단" 3개 (설정은 메뉴에 없음) · 지금 탭 표시', fw.location.hash === '#notices' && vis() === 'notices' && cur() === 'notices' && qa('[data-tab-link]').map(a => a.textContent).join('/') === '공고/단지/내 점수계산' && !q('header a[href="#settings"]') && foot(), vis() + ' ' + cur());
 fw.scrollTo(0, 400); q('[data-tab-link="diag"]').click(); await W(150);
 ok('탭: 진단 링크 → 진단 탭만 · 맨 위로 · 제목에 포커스 · 맨 아래 안내 그대로', vis() === 'diag' && cur() === 'diag' && fw.scrollY === 0 && d.activeElement === q('#h-diag') && foot(), vis() + ' ' + fw.scrollY + ' ' + d.activeElement?.id);
 { const fl = q('footer a[href="#settings"]');
@@ -391,7 +391,7 @@ ok('390 첫 화면은 공고 탭 (다른 탭 숨김)', q('h1').getBoundingClient
 { const ls = qa('[data-tab-link]'), nav = q('.chips');
   ok('390 메뉴 3개가 한 줄 · 넘침 없음 · 터치 높이 40px 이상', ls.length === 3 && new Set(ls.map(a => Math.round(a.getBoundingClientRect().top))).size === 1 && nav.scrollWidth <= nav.clientWidth && ls.every(a => a.getBoundingClientRect().height >= 40) && ls.every(a => a.getBoundingClientRect().right <= fw.innerWidth), ls.map(a => Math.round(a.getBoundingClientRect().right)).join()); }
 ok('390 가로 넘침 없음 (첫 화면)', d.documentElement.scrollWidth <= fw.innerWidth, d.documentElement.scrollWidth);
-ok('기존 사이트 입력 발견 → 진단 탭 맨 위 배너 + 공고 탭 위 한 줄', !q('#importBanner').hidden && q('#h-diag').nextElementSibling === q('#importBanner') && !q('#importHint').hidden && q('#importHint').textContent.includes('SUITABLE HOME 조건 가져오기 → 진단') && q('#importHint').getAttribute('href') === '#diag');
+ok('기존 사이트 입력 발견 → 진단 탭 맨 위 배너 + 공고 탭 위 한 줄', !q('#importBanner').hidden && q('#h-diag').nextElementSibling === q('#importBanner') && !q('#importHint').hidden && q('#importHint').textContent.includes('SUITABLE HOME 조건 가져오기 → 내 점수계산') && q('#importHint').getAttribute('href') === '#diag');
 { fw.eval('CAN_READ_SH = false; renderImport()');
   const ln = [...q('#importLinks').querySelectorAll('a')];
   ok('새 주소(저장 공간이 다름): 1클릭 가져오기 대신 작은 링크 "SUITABLE HOME 쓰셨나요? 조건 불러오기 →" · "예전 주소에서 옮기셨나요? 옮긴 파일 불러오기 →" (#ioSet) · 공고 탭 한 줄 숨김', q('#importBanner').hidden && !q('#importLinks').hidden && ln.map(a => a.textContent).join('|') === 'SUITABLE HOME 쓰셨나요? 조건 불러오기 →|예전 주소에서 옮기셨나요? 옮긴 파일 불러오기 →' && ln.every(a => a.getAttribute('href') === '#ioSet') && q('#importHint').hidden && localStorage.getItem('newlywed-home-v1') === before);
