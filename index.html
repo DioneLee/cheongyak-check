@@ -210,6 +210,9 @@ input:focus, select:focus, textarea:focus { outline: none; background: var(--pap
 .gmap .mgu, .gmap .mpin { outline: none; } .gmap .mgu:focus-visible span, .gmap .mpin:focus-visible span { outline: 3px solid var(--ink); outline-offset: 2px; }
 .gmap .mlist { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; } .gmap .mlist li + li { border-top: 1px solid var(--line); }
 .gmap .mlist button { display: block; width: 100%; min-height: 44px; padding: 8px 4px; border: 0; background: none; color: var(--accent-deep); font: 600 14px/1.4 var(--sans); text-align: left; box-shadow: none; cursor: pointer; }
+/* 네이버 지도 이름 목록 칸 (Leaflet 은 .leaflet-popup 이 감쌈) */
+.gmap .mpop.nv { position: relative; min-width: 200px; max-width: 260px; padding: 12px 34px 8px 14px; border-radius: 12px; background: var(--paper); color: var(--ink); box-shadow: 0 6px 20px rgba(0, 27, 55, 0.18); }
+.gmap .mpop .mx { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 20px; line-height: 1; box-shadow: none; cursor: pointer; }
 .flist li.flash { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: var(--r1); }
 .dj-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 16px 0 12px; border-bottom: 1px solid var(--line); }
 .dj-tools input { grid-column: 1 / -1; } .dj-tools select, .dj-tools input { margin: 0; min-height: 40px; font-size: 14px; padding: 6px 12px; }
@@ -536,9 +539,9 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-15c"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-15d"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
-  <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
+  <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. '지도'를 누를 때만 네이버 지도를 불러와요(내 조건은 보내지 않아요). AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="#settings">데이터 백업·옮기기</a></p>
   <p>본 서비스에서 제공하는 실제 월 부담·대출(LTV) 계산 및 청약 자격 판정은 의사결정을 돕기 위한 참고용 시뮬레이션이며 법적·금융적 효력이 없습니다. 실제 청약 신청 및 부동산 계약 전에는 반드시 모집공고문 원본과 금융기관을 통해 최종 확인하시기 바랍니다.</p>
 </div></footer>
@@ -1263,7 +1266,7 @@ $('#danjiBox').addEventListener('click', e => {
 $('#danjiBox').addEventListener('input', e => { const s = e.target.closest('[data-df]'); if (!s) return; dF[s.dataset.df] = s.value; renderDanjiList(); });
 // ---------- 지도로 보기 (공고·단지 탭, 2026-11-13): 멀리 = 구별 개수, 가까이 = 건물 점 (건물 좌표를 모르면 가까운 역 핀) ----------
 // 좌표는 위치 검색 없이: 구는 구청 근처 고정값(GU_XY) · 건물은 단지 좌표(danji.json ll — 서울시 단지 화면·엘리스 단지 화면의 지도 값, 2026-11-14) · 그 밖은 가까운 역(feed/stations.json, OSM) '○○역 근처'.
-// Leaflet·역 좌표는 지도를 처음 열 때만 받는다 (목록만 보는 사람·오프라인은 그대로) · 지금 고른 탭(진행 중·예정·완료)·구·검색을 그대로 쓴다
+// 지도 부품(네이버 지도 · 안 되면 Leaflet)·역 좌표는 지도를 처음 열 때만 받는다 (목록만 보는 사람·오프라인은 그대로) · 지금 고른 탭(진행 중·예정·완료)·구·검색을 그대로 쓴다
 let feedView = 'list', danjiView = 'list', mapOkOnly = false;
 const VIEW_BTNS = k => `<div class="vtoggle" role="group" aria-label="보기 방식"><button type="button" data-${k}="list">목록</button><button type="button" data-${k}="map">지도</button></div>`;
 const setView = (box, k, v) => box.querySelectorAll(`[data-${k}]`).forEach(b => b.setAttribute('aria-pressed', b.dataset[k] === v));
@@ -1271,35 +1274,96 @@ const GU_XY = { 강남구: [37.5172, 127.0473], 강동구: [37.5301, 127.1238], 
   금천구: [37.4569, 126.8955], 노원구: [37.6542, 127.0568], 도봉구: [37.6688, 127.0471], 동대문구: [37.5744, 127.0400], 동작구: [37.5124, 126.9393], 마포구: [37.5663, 126.9019], 서대문구: [37.5791, 126.9368],
   서초구: [37.4837, 127.0324], 성동구: [37.5633, 127.0371], 성북구: [37.5894, 127.0167], 송파구: [37.5145, 127.1059], 양천구: [37.5170, 126.8665], 영등포구: [37.5264, 126.8962], 용산구: [37.5326, 126.9905],
   은평구: [37.6027, 126.9291], 종로구: [37.5735, 126.9790], 중구: [37.5641, 126.9979], 중랑구: [37.6066, 127.0927] };
+// 지도 엔진 (2026-11-15): 웹은 네이버 지도(한국 지도 품질) · 앱이거나 네이버가 안 되면(스크립트 차단·인증 실패) Leaflet + OpenStreetMap 으로 바로 바꾼다
+// 네이버 Client ID 는 공개 값: 페이지에 보이는 값이고 네이버 콘솔에 등록한 주소(pages.dev · github.io · localhost)에서만 동작 · 하루 20만·월 600만 건 한도(넘으면 막힘, 과금 없음). Client Secret 은 쓰지 않는다
+// 네이버가 보내는 사용 기록(kr-col-ext.nelo.navercorp.com)은 CSP connect-src 에 넣지 않아 막힌다 (지도는 그대로 됨)
+const NAVER_ID = 'd0ypffc1md', NV = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${NAVER_ID}`;
 const LF = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min';
-let mapLibs = null, STN = {};
-const loadMapLibs = () => mapLibs ??= Promise.all([
-  new Promise((ok, no) => { const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = LF + '.css'; document.head.append(c);
-    const s = document.createElement('script'); s.src = LF + '.js'; s.onload = ok; s.onerror = no; document.head.append(s); }),
-  fetch(`${SITE}feed/stations.json`).then(r => r.ok ? r.json() : {}).then(j => { STN = j.stations || {}; }).catch(() => {})
-]).catch(e => { mapLibs = null; throw e; });   // 실패하면 다음에 다시 시도
-const maps = new Map();
+let mapEng = IS_APP ? 'leaflet' : 'naver', STN = {}, stnP = null;
+const mapLibs = {}, maps = new Map();
+const addJs = src => new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.append(s); });
+const loadEng = e => mapLibs[e] ??= (e === 'naver' ? addJs(NV).then(() => { if (!window.naver?.maps?.Map) throw new Error('naver'); })
+  : (() => { const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = LF + '.css'; document.head.append(c); return addJs(LF + '.js'); })()).catch(err => { delete mapLibs[e]; throw err; });   // 실패하면 다음에 다시 시도
+const loadStn = () => stnP ??= fetch(`${SITE}feed/stations.json`).then(r => r.ok ? r.json() : {}).then(j => { STN = j.stations || {}; }).catch(() => { stnP = null; });
+// 네이버 인증 실패(등록 안 된 주소 · 한도 초과 등) → 만든 네이버 지도를 지우고 Leaflet 으로 다시 그림
+window.navermap_authFailure = () => { if (mapEng !== 'naver') return; mapEng = 'leaflet'; for (const m of maps.values()) try { m.destroy(); } catch { /* 이미 없음 */ }
+  maps.clear(); document.querySelectorAll('.gmap').forEach(e => e.remove()); if (feedView === 'map') renderFeed(); if (danjiView === 'map') renderDanjiList(); };
+// 화면(px) ↔ 좌표는 직접 계산: 두 엔진 모두 웹 메르카토르 · 256px 타일 · 확대 단계가 같다 (네이버 확대 11 = Leaflet 11)
+const WX = (ll, z) => { const n = 256 * 2 ** z, la = Math.max(-85, Math.min(85, ll[0])) * Math.PI / 180; return { x: (ll[1] + 180) / 360 * n, y: (1 - Math.log(Math.tan(Math.PI / 4 + la / 2)) / Math.PI) / 2 * n }; };
+const XW = (p, z) => { const n = 256 * 2 ** z; return [Math.atan(Math.sinh(Math.PI * (1 - 2 * p.y / n))) * 180 / Math.PI, p.x / n * 360 - 180]; };
+function mapApi(m) {   // 엔진마다 zoom·center·size·view·marker·pop 만 다르고 나머지는 같이 쓴다
+  m.toPx = ll => { const z = m.zoom(), c = WX(m.center(), z), p = WX(ll, z), s = m.size(); return { x: p.x - c.x + s.x / 2, y: p.y - c.y + s.y / 2 }; };
+  m.toLL = q => { const z = m.zoom(), c = WX(m.center(), z), s = m.size(); return XW({ x: q.x + c.x - s.x / 2, y: q.y + c.y - s.y / 2 }, z); };
+  m.fit = (lls, pad, lo, hi) => {   // 점들이 다 보이는 가운데·확대 (pad: 가장자리 여백 px · lo~hi 로 묶음)
+    const P = lls.map(ll => WX(ll, 0)), xs = P.map(p => p.x), ys = P.map(p => p.y), s = m.size(), dx = Math.max(...xs) - Math.min(...xs) || 1e-9, dy = Math.max(...ys) - Math.min(...ys) || 1e-9;
+    const z = Math.floor(Math.log2(Math.min((s.x - 2 * pad) / dx, (s.y - 2 * pad) / dy)) / m.step) * m.step;
+    m.view(XW({ x: (Math.max(...xs) + Math.min(...xs)) / 2, y: (Math.max(...ys) + Math.min(...ys)) / 2 }, 0), Math.min(hi, Math.max(lo, z)));
+  };
+  m.marks = []; m.anim = true;
+  m.clear = () => { m.marks.forEach(k => k.rm()); m.marks = []; m.closePop(); };
+  return m;
+}
+function leafletMap(el, moved) {
+  const L = window.L, r = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, zoomSnap: 0.5 }).setView([37.5565, 126.978], 11);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(r);
+  r.on('click', () => r.scrollWheelZoom.enable()); el.addEventListener('mouseleave', () => r.scrollWheelZoom.disable());
+  r.on('moveend', moved);
+  let pop = null;
+  const m = mapApi({ eng: 'leaflet', raw: r, step: 0.5,
+    zoom: () => r.getZoom(), center: () => { const c = r.getCenter(); return [c.lat, c.lng]; }, size: () => r.getSize(),
+    view: (ll, z) => r.setView(ll, z, { animate: m.anim }), resize: () => r.invalidateSize(), destroy: () => r.remove(),
+    marker(ll, cls, html, title, onClick) { const k = L.marker(ll, { icon: L.divIcon({ className: cls, html, iconSize: [0, 0] }), title }).addTo(r); k.on('click', onClick); return { ll, cls, rm: () => k.remove() }; },
+    pop(ll, html) { pop = L.popup({ maxWidth: 260 }).setLatLng(ll).setContent(`<div class="mpop">${html}</div>`).openOn(r); },
+    closePop() { pop?.remove(); pop = null; } });
+  return m;
+}
+function naverMap(el, moved) {
+  const N = naver.maps, touch = matchMedia('(pointer: coarse)').matches;   // 휴대폰은 한 손가락으로 끌면 페이지가 내려가게 (지도는 +/− · 구 누르기 · 두 손가락)
+  const r = new N.Map(el, { center: new N.LatLng(37.5565, 126.978), zoom: 11, minZoom: 9, maxZoom: 19, scrollWheel: false, draggable: !touch, pinchZoom: true, keyboardShortcuts: false,
+    zoomControl: true, zoomControlOptions: { style: N.ZoomControlStyle.SMALL, position: N.Position.TOP_LEFT }, scaleControl: false, logoControl: true, mapDataControl: true });
+  const win = new N.InfoWindow({ content: '', borderWidth: 0, backgroundColor: 'transparent', disableAnchor: true, pixelOffset: new N.Point(0, -18) });
+  N.Event.addListener(r, 'click', () => { r.setOptions('scrollWheel', true); win.close(); }); el.addEventListener('mouseleave', () => r.setOptions('scrollWheel', false));
+  N.Event.addListener(r, 'idle', moved);
+  const at = ll => new N.LatLng(ll[0], ll[1]);
+  const m = mapApi({ eng: 'naver', raw: r, step: 1,
+    zoom: () => r.getZoom(), center: () => { const c = r.getCenter(); return [c.lat(), c.lng()]; }, size: () => { const s = r.getSize(); return { x: s.width, y: s.height }; },
+    view: (ll, z) => { z = Math.round(z); if (m.anim) r.morph(at(ll), z); else { r.setZoom(z, false); r.setCenter(at(ll)); } },
+    resize: () => { if (el.clientWidth) r.setSize(new N.Size(el.clientWidth, el.clientHeight)); }, destroy: () => { win.close(); r.destroy(); },
+    marker(ll, cls, html, title, onClick) {   // Leaflet divIcon 과 같은 모양: 크기 0 칸 · 안쪽 span 이 가운데로
+      const e = document.createElement('div'); e.className = cls; e.innerHTML = html; e.title = title; e.tabIndex = 0; e.setAttribute('role', 'button'); e.style.cssText = 'width:0;height:0';
+      e.addEventListener('click', ev => { ev.stopPropagation(); onClick(); }); e.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); onClick(); } });
+      const k = new N.Marker({ map: r, position: at(ll), icon: { content: e, anchor: new N.Point(0, 0) }, clickable: false, zIndex: cls === 'mbld' ? 20 : 10 });   // 누르기는 위 DOM 처리기가 (네이버 마커 클릭 처리는 끔)
+      return { ll, cls, rm: () => k.setMap(null) };
+    },
+    pop(ll, html) { const e = document.createElement('div'); e.className = 'mpop nv'; e.innerHTML = `${html}<button type="button" class="mx" aria-label="닫기">×</button>`;
+      e.addEventListener('click', ev => { const g = ev.target.closest('[data-mapgo], [data-mapgod]'); if (g) { ev.stopPropagation(); win.close(); mapGo(g); } });
+      e.querySelector('.mx').addEventListener('click', () => win.close()); win.setContent(e); win.open(r, at(ll)); },
+    closePop: () => win.close() });
+  return m;
+}
 // pts: [{ gu, st, ll, nm, label, go }] → 멀리: 구별 동그라미(개수, 누르면 확대 · 겹치면 살짝 밀어 놓음) · 가까이: 건물 점(같은 건물은 한 점) 또는 역 핀(같은 역은 한 핀) → 누르면 이름 목록 → 목록에서 보기
 async function drawMap(wrap, pts, note) {
   const key = wrap.id;
   if (!wrap.querySelector('.gmap')) wrap.innerHTML = '<div class="gmap" role="region" aria-label="지도 · 구를 누르면 확대돼요"></div><p class="hint mapnote"></p>';
   wrap.querySelector('.mapnote').textContent = note;
-  try { await loadMapLibs(); } catch (e) { wrap.querySelector('.mapnote').textContent = "지도를 불러오지 못했어요. 인터넷 연결을 확인하고 '지도'를 다시 눌러 주세요."; return; }
   let m = maps.get(key);
   if (!m) {
-    m = L.map(wrap.querySelector('.gmap'), { scrollWheelZoom: false, dragging: !L.Browser.mobile, zoomSnap: 0.5 }).setView([37.5565, 126.978], 11);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(m);
-    m.on('click', () => m.scrollWheelZoom.enable()); wrap.addEventListener('mouseleave', () => m.scrollWheelZoom.disable());
-    m.on('zoomend', () => paintMap(m)); m.on('dragend', () => { if (m.getZoom() < 13) paintMap(m); }); maps.set(key, m);   // 구 동그라미 자리는 보이는 화면 기준이라 끌어 옮기면 다시
+    const eng = mapEng;
+    try { await Promise.all([loadEng(eng), loadStn()]); }
+    catch { if (eng === 'naver') { if (mapEng === 'naver') mapEng = 'leaflet'; return drawMap(wrap, pts, note); }   // 네이버 스크립트가 막힘 → Leaflet
+      wrap.querySelector('.mapnote').textContent = "지도를 불러오지 못했어요. 인터넷 연결을 확인하고 '지도'를 다시 눌러 주세요."; return; }
+    if (eng !== mapEng || !wrap.querySelector('.gmap')) return drawMap(wrap, pts, note);   // 기다리는 동안 엔진이 바뀜(인증 실패)
+    m = maps.get(key);
+    if (!m) { const moved = () => { if (m._pts && (m.zoom() !== m._z || m.zoom() < 13)) paintMap(m); };   // 확대가 바뀌면 다시 · 멀리서는 끌어 옮겨도 다시(구 동그라미 자리가 보이는 화면 기준)
+      m = (eng === 'naver' ? naverMap : leafletMap)(wrap.querySelector('.gmap'), () => moved()); maps.set(key, m); }
   }
   const k2 = pts.map(p => p.go).join();
-  m._pts = pts; m.invalidateSize();
-  if (m._key !== k2) { m._key = k2; const b = pts.map(p => GU_XY[p.gu]).filter(Boolean); b.length > 1 ? m.fitBounds(b, { padding: [40, 40], maxZoom: 12 }) : m.setView(b[0] || [37.5565, 126.978], 12); }
+  m._pts = pts; m.resize();
+  if (m._key !== k2) { m._key = k2; const b = pts.map(p => GU_XY[p.gu]).filter(Boolean); b.length > 1 ? m.fit(b, 40, 9, 12) : m.view(b[0] || [37.5565, 126.978], 12); }
   paintMap(m);
 }
 function paintMap(m) {
-  m._lay?.remove(); m._lay = L.layerGroup().addTo(m);
-  const z = m.getZoom(), near = z >= 13, groups = {}, at = p => p.ll || STN[p.st];
+  m.clear(); const z = m._z = m.zoom(), near = z >= 13, groups = {}, at = p => p.ll || STN[p.st];
   for (const p of m._pts) {
     let g, xy, kind = near ? 'stn' : 'gu';
     if (!near) { xy = GU_XY[p.gu]; g = p.gu; }
@@ -1313,21 +1377,18 @@ function paintMap(m) {
   for (const { xy, kind, name, ps } of G) {
     const html = kind === 'bld' ? `<span>${ps.length > 1 ? ps.length : ''}</span>${z >= 15 ? `<em>${esc(name)}</em>` : ''}`
       : `<span><b>${esc(kind === 'stn' ? name.replace(/역$/, '역 근처') : name)}</b>${ps.length}</span>`;
-    const mk = L.marker(xy, { icon: L.divIcon({ className: { bld: 'mbld', stn: 'mpin', gu: 'mgu' }[kind], html, iconSize: [0, 0] }),
-      title: near ? `${name} ${ps.length}건 · 눌러서 이름 보기` : `${name} ${ps.length}건 · 눌러서 확대` }).addTo(m._lay);
     const head = kind === 'bld' ? `${name} · 건물 위치` : `${name.replace(/역$/, '역 근처')} · 건물 위치는 몰라요`;
-    if (near) mk.bindPopup(`<p class="mhead">${esc(head)}</p><ul class="mlist">${ps.map(p => `<li><button type="button" ${p.go}>${esc(p.label)}</button></li>`).join('')}</ul>`, { maxWidth: 260 });
-    else mk.on('click', () => { const b = ps.map(at).filter(Boolean);   // 휴대폰처럼 좁아도 점이 보이는 확대(13) 이상으로
-      b.length > 1 ? m.setView(L.latLngBounds(b).getCenter(), Math.min(15, Math.max(13, m.getBoundsZoom(b, false, L.point(48, 48))))) : m.setView(b[0] || xy, 15); });
+    m.marks.push(m.marker(xy, { bld: 'mbld', stn: 'mpin', gu: 'mgu' }[kind], html, near ? `${name} ${ps.length}건 · 눌러서 이름 보기` : `${name} ${ps.length}건 · 눌러서 확대`,
+      near ? () => m.pop(xy, `<p class="mhead">${esc(head)}</p><ul class="mlist">${ps.map(p => `<li><button type="button" ${p.go}>${esc(p.label)}</button></li>`).join('')}</ul>`)
+        : () => { const b = ps.map(at).filter(Boolean); b.length > 1 ? m.fit(b, 24, 13, 15) : m.view(b[0] || xy, 15); }));   // 휴대폰처럼 좁아도 점이 보이는 확대(13) 이상으로
   }
 }
-// 구 동그라미가 서로 덮지 않게 화면(픽셀)에서 조금씩 밀어 놓는다 — 두 중심을 잇는 방향으로만 밀어 구끼리 위아래·좌우 순서는 그대로 · 지도 밖으로는 안 나감
+// 구 동그라미가 서로 덮지 않게 화면(px)에서 조금씩 밀어 놓는다 — 두 중심을 잇는 방향으로만 밀어 구끼리 위아래·좌우 순서는 그대로 · 지도 밖으로는 안 나감
 // 크기는 구 이름 길이로 넉넉히 어림 (CSS .mgu 와 맞춤 · 좁은 화면은 작은 동그라미) · 120번까지
 function unOverlap(m, G) {
-  const narrow = m.getSize().x < 500, P = G.map(g => { const n = String(g.ps.length).length, [w, h] = [g.name.length * (narrow ? 11 : 12) + n * (narrow ? 8 : 9) + (narrow ? 20 : 24), narrow ? 24 : 28]; return { g, p: m.latLngToLayerPoint(g.xy), w: w / 2 + 2, h: h / 2 + 2 }; });
-  const lo = m.containerPointToLayerPoint([0, 0]), hi = m.containerPointToLayerPoint(m.getSize());
-  P.forEach(a => { a.in = a.p.x >= lo.x && a.p.x <= hi.x && a.p.y >= lo.y && a.p.y <= hi.y; });   // 화면 밖 구는 끌어들이지 않음
-  const clamp = a => { if (!a.in) return; a.p.x = Math.min(Math.max(a.p.x, lo.x + a.w), hi.x - a.w); a.p.y = Math.min(Math.max(a.p.y, lo.y + a.h), hi.y - a.h); };
+  const hi = m.size(), narrow = hi.x < 500, P = G.map(g => { const n = String(g.ps.length).length, [w, h] = [g.name.length * (narrow ? 11 : 12) + n * (narrow ? 8 : 9) + (narrow ? 20 : 24), narrow ? 24 : 28]; return { g, p: m.toPx(g.xy), w: w / 2 + 2, h: h / 2 + 2 }; });
+  P.forEach(a => { a.in = a.p.x >= 0 && a.p.x <= hi.x && a.p.y >= 0 && a.p.y <= hi.y; });   // 화면 밖 구는 끌어들이지 않음
+  const clamp = a => { if (!a.in) return; a.p.x = Math.min(Math.max(a.p.x, a.w), hi.x - a.w); a.p.y = Math.min(Math.max(a.p.y, a.h), hi.y - a.h); };
   for (let it = 0; it < 120; it++) { let moved = false;
     for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
       const a = P[i], b = P[j], dx = b.p.x - a.p.x, dy = b.p.y - a.p.y, ox = a.w + b.w - Math.abs(dx), oy = a.h + b.h - Math.abs(dy);
@@ -1337,7 +1398,7 @@ function unOverlap(m, G) {
       a.p.x -= ux * s; a.p.y -= uy * s; b.p.x += ux * s; b.p.y += uy * s;
     }
     P.forEach(clamp); if (!moved) break; }
-  for (const { g, p } of P) g.xy = m.layerPointToLatLng(p);
+  for (const { g, p } of P) g.xy = m.toLL(p);
 }
 function mapFeed(box, L0, t, done) {
   const jr = i => FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }).st;
@@ -1359,13 +1420,15 @@ function mapDanji(wrap, L0, t, n) {
 document.addEventListener('click', e => {
   const v = e.target.closest('[data-fview], [data-dview]');
   if (v) { if (v.dataset.fview) { feedView = v.dataset.fview; renderFeed(); } else { danjiView = v.dataset.dview; renderDanjiList(); } return; }
-  const g = e.target.closest('[data-mapgo], [data-mapgod]'); if (!g) return;
+  const g = e.target.closest('[data-mapgo], [data-mapgod]'); if (g) mapGo(g);
+});
+function mapGo(g) {   // 지도 이름 목록의 이름 → 목록에서 그 공고·단지 (네이버 지도 칸은 클릭이 문서까지 안 올라와서 칸에서 직접 부름)
   let sel;
   if (g.dataset.mapgo) { feedView = 'list'; feedAll = true; renderFeed(); sel = `#subFeed [data-fid="${CSS.escape(g.dataset.mapgo)}"]`; }
   else { danjiView = 'list'; renderDanjiList(); sel = `#danjiBox [data-did="${CSS.escape(g.dataset.mapgod)}"]`; }
   const li = document.querySelector(sel); if (!li) return;
   li.tabIndex = -1; li.scrollIntoView({ block: 'center' }); li.focus({ preventScroll: true }); li.classList.add('flash'); setTimeout(() => li.classList.remove('flash'), 2000);
-});
+}
 document.addEventListener('change', e => { if (e.target.matches('[data-mapok]')) { mapOkOnly = e.target.checked; renderFeed(); } });
 const loadFeeds = () => Promise.all([
   fetch(`${SITE}feed/notices.json`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(setFeed).catch(() => {}),

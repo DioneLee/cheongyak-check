@@ -29,6 +29,8 @@ tracked = [p for p in REPO.rglob("*") if p.is_file() and ".git" not in p.parts a
 _csp = subprocess.run([sys.executable, str(REPO / "scripts" / "csp.py")], capture_output=True, text=True, encoding="utf-8")
 ok("CSP: _headers 의 인라인 스크립트 해시가 지금 index.html 과 같음 (다르면 python scripts/csp.py --write)", _csp.returncode == 0, _csp.stdout.strip())
 ok("API 키(AIza…) 없음", not any("AIza" in p.read_text(encoding="utf-8", errors="ignore") for p in tracked if p.name != "check.py"))
+# 네이버 지도: Client ID(공개 값 · 주소 제한)는 index.html 한 곳에만 · Client Secret·API Gateway 키 이름은 어디에도 없음 (2026-11-15)
+ok("네이버 지도 Client ID 는 index.html 한 곳 · Client Secret 없음", src.count("d0ypffc1md") == 1 and not any(re.search(r"ncpKeySecret|ncpClientSecret|X-NCP-APIGW-API-KEY(?!-ID)|client_secret", p.read_text(encoding="utf-8", errors="ignore"), re.I) for p in tracked if p.name != "check.py"))
 _swv = re.search(r"VERSION = 'cheongyak-check-([\w-]+)'", (REPO / "sw.js").read_text(encoding="utf-8")).group(1)
 ok("lib/feed-tools.js?v= 가 sw.js VERSION 과 같음 (배포 직후 옛 lib 가 섞이지 않게)", f'lib/feed-tools.js?v={_swv}"' in src, _swv)
 ok("방문자 분석·광고 도구 없음", not re.search(r"googletagmanager|gtag\(|google-analytics|clarity\.ms|hotjar|mixpanel|amplitude|plausible", src))

@@ -14,45 +14,47 @@ const asc = o => JSON.stringify(o).replace(/[<>&]/g, c => '\\u' + c.charCodeAt(0
 const W = ms => new Promise(r => setTimeout(r, ms)), out = [], ok = (name, cond, got) => { out.push([cond ? 'OK' : 'NG', name, String(got ?? '')]); document.title = 'AT ' + asc(out); };
 const until = async (f, ms = 15000) => { for (let i = 0; i < ms / 200; i++) { if (f()) return true; await W(200); } return false; };
 (async () => {
-  for (const w of [1280, 390]) {
+  for (const [w, eng] of [[1280, 'naver'], [390, 'naver'], [1280, 'leaflet']]) {   // 웹 = 네이버 지도 · 앱·네이버 안 될 때 = Leaflet
     const f = document.createElement('iframe'); f.style.cssText = `border:0;width:${w}px;height:900px`; f.src = '/#notices'; document.body.append(f);
     await new Promise(r => f.onload = r); await W(1500);
     const d = f.contentDocument, fw = f.contentWindow, q = s => d.querySelector(s), qa = s => [...d.querySelectorAll(s)];
     const errs = [], csp = []; fw.addEventListener('error', e => errs.push(e.message)); d.addEventListener('securitypolicyviolation', e => csp.push(e.blockedURI + ' ' + e.violatedDirective));
     await until(() => q('#subFeed [data-fview]'));
     const num = s => qa(s).reduce((a, e) => a + +e.textContent.match(/\d+$/)[0], 0);
-    const prep = m => { m._zoomAnimated = false; };   // 하네스 iframe 에선 확대 애니메이션(requestAnimationFrame)이 안 돌 때가 있음
-    ok(`${w}: 공고 탭 '목록 / 지도' · 기본은 목록 · Leaflet 은 아직 안 받음`, q('#subFeed [data-fview="list"]').getAttribute('aria-pressed') === 'true' && q('#feedMap').hidden && typeof fw.L === 'undefined', '');
+    const prep = m => { m.anim = false; };   // 하네스 iframe 에선 확대 애니메이션(requestAnimationFrame)이 안 돌 때가 있음
+    fw.eval(`mapEng = '${eng}'`);
+    ok(`${w} ${eng}: 공고 탭 '목록 / 지도' · 기본은 목록 · 지도 부품은 아직 안 받음`, q('#subFeed [data-fview="list"]').getAttribute('aria-pressed') === 'true' && q('#feedMap').hidden && typeof fw.L === 'undefined' && typeof fw.naver === 'undefined', '');
     q('#subFeed [data-fview="map"]').click();
     const loaded = await until(() => qa('#feedMap .mgu').length);
     await W(1500);   // 처음 맞춤(확대 애니메이션)이 끝나 동그라미가 다시 그려진 뒤에 고름
     const m = fw.eval('maps.get("feedMap")'); if (m) prep(m);
+    ok(`${w} ${eng}: 지도 엔진 = ${eng}${eng === 'naver' ? ' (인증 통과 · Leaflet 안 받음)' : ''}`, m?.eng === eng && fw.eval('mapEng') === eng && (eng !== 'naver' || (typeof fw.L === 'undefined' && !!q('#feedMap .gmap').querySelector('img, canvas'))), `${m?.eng} · ${fw.eval('mapEng')}`);
     const L0 = fw.eval(`(() => { const t = todayYmd(); return subFeed.items.filter(i => i.region.startsWith('서울') && phaseOf(i, t) === feedTab).map(i => guOf(i)); })()`), withGu = L0.filter(g => fw.eval('GU_XY')[g]).length;
-    ok(`${w}: '지도' → 목록 숨김 · 지도 보임 · 구별 동그라미 숫자 합 = 지금 탭 공고 중 구를 아는 것 ${withGu}건`, loaded && q('#subFeed #feedBody').hidden && !q('#feedMap').hidden && num('#feedMap .mgu') === withGu,
+    ok(`${w} ${eng}: '지도' → 목록 숨김 · 지도 보임 · 구별 동그라미 숫자 합 = 지금 탭 공고 중 구를 아는 것 ${withGu}건`, loaded && q('#subFeed #feedBody').hidden && !q('#feedMap').hidden && num('#feedMap .mgu') === withGu,
       `${qa('#feedMap .mgu').map(e => e.textContent).join(' / ')}`);
-    ok(`${w}: 안내 = '${fw.eval('feedTab')}' 공고 ${L0.length}건 · 확대하면 건물 위치 · 진단 안 했으면 진단 링크`, q('#feedMap .mapnote').textContent.includes(`공고 ${L0.length}건`) && /확대하면 건물 위치/.test(q('#feedMap .mapnote').textContent) && !!q('#subFeed .mapbar a[href="#diag"]'), q('#feedMap .mapnote').textContent);
+    ok(`${w} ${eng}: 안내 = '${fw.eval('feedTab')}' 공고 ${L0.length}건 · 확대하면 건물 위치 · 진단 안 했으면 진단 링크`, q('#feedMap .mapnote').textContent.includes(`공고 ${L0.length}건`) && /확대하면 건물 위치/.test(q('#feedMap .mapnote').textContent) && !!q('#subFeed .mapbar a[href="#diag"]'), q('#feedMap .mapnote').textContent);
     // 동그라미 → 확대 → 역 핀 → 이름 → 목록
     const big = qa('#feedMap .mgu').sort((a, b) => +b.textContent.match(/\d+$/)[0] - +a.textContent.match(/\d+$/)[0])[0];
     big.click(); await W(1200);
-    ok(`${w}: 동그라미 누름 → 확대(13 이상) · 건물 점 또는 역 핀`, m.getZoom() >= 13 && qa('#feedMap .mbld, #feedMap .mpin').length > 0, `zoom ${m.getZoom()} · 점 ${qa('#feedMap .mbld').length} · 역 ${qa('#feedMap .mpin').map(e => e.textContent).join(' / ')}`);
+    ok(`${w} ${eng}: 동그라미 누름 → 확대(13 이상) · 건물 점 또는 역 핀`, m.zoom() >= 13 && qa('#feedMap .mbld, #feedMap .mpin').length > 0, `zoom ${m.zoom()} · 점 ${qa('#feedMap .mbld').length} · 역 ${qa('#feedMap .mpin').map(e => e.textContent).join(' / ')}`);
     qa('#feedMap .mbld, #feedMap .mpin')[0].click(); await W(600);
-    const btn = q('#feedMap .leaflet-popup [data-mapgo]'), id = btn?.dataset.mapgo;
-    ok(`${w}: 핀 누름 → 공고 이름 목록 (버튼)`, !!btn && btn.textContent.length > 0, btn?.textContent);
+    const btn = q('#feedMap .mpop [data-mapgo]'), id = btn?.dataset.mapgo;
+    ok(`${w} ${eng}: 핀 누름 → 공고 이름 목록 (버튼)`, !!btn && btn.textContent.length > 0, btn?.textContent);
     btn.click(); await W(600);
     const li = q(`#subFeed [data-fid="${id}"]`);
-    ok(`${w}: 이름 누름 → 목록으로 돌아와 그 공고에 초점 · 표시`, fw.eval('feedView') === 'list' && !q('#subFeed #feedBody').hidden && q('#feedMap').hidden && d.activeElement === li && li.classList.contains('flash'), d.activeElement?.dataset?.fid);
+    ok(`${w} ${eng}: 이름 누름 → 목록으로 돌아와 그 공고에 초점 · 표시`, fw.eval('feedView') === 'list' && !q('#subFeed #feedBody').hidden && q('#feedMap').hidden && d.activeElement === li && li.classList.contains('flash'), d.activeElement?.dataset?.fid);
     // 탭 바꿔도 지도 유지 · 진단 마친 상태 → 기본 조건 맞아 보임만
     q('#subFeed [data-fview="map"]').click(); await W(400);
     fw.eval("state.subs.wizard.done = true; state.subs.me = demoMe(state.subs.tab); renderFeed()"); await W(400);
     const okN = fw.eval(`(() => { const t = todayYmd(); return subFeed.items.filter(i => i.region.startsWith('서울') && phaseOf(i, t) === feedTab && FeedTools.judge(state.subs.me, i.cr, { tier: state.subs.tab, today: t, seen: state.subs.seen || {} }).st === 'ok').filter(i => GU_XY[guOf(i)]).length; })()`);
-    m.setZoom(11); await W(600);
+    m.view(m.center(), 11); await W(600);
     const cb = q('#subFeed [data-mapok]'); cb.click(); await W(800);
-    ok(`${w}: 맞아 보임만 → 동그라미 숫자 합 ${okN}`, num('#feedMap .mgu') === okN && /맞아 보임만 \(\d+건\)/.test(q('#subFeed .mapok').textContent), `${num('#feedMap .mgu')} · ${q('#subFeed .mapok').textContent}`);
+    ok(`${w} ${eng}: 맞아 보임만 → 동그라미 숫자 합 ${okN}`, num('#feedMap .mgu') === okN && /맞아 보임만 \(\d+건\)/.test(q('#subFeed .mapok').textContent), `${num('#feedMap .mgu')} · ${q('#subFeed .mapok').textContent}`);
     q('#subFeed [data-mapok]').click(); await W(400);
     q('#subFeed [data-ftab="plan"]').click(); await W(600);
-    ok(`${w}: 지도에서 '예정' 탭 → 지도 그대로 · 안내가 예정으로`, fw.eval('feedView') === 'map' && /예정 공고/.test(q('#feedMap .mapnote').textContent), q('#feedMap .mapnote').textContent);
+    ok(`${w} ${eng}: 지도에서 '예정' 탭 → 지도 그대로 · 안내가 예정으로`, fw.eval('feedView') === 'map' && /예정 공고/.test(q('#feedMap .mapnote').textContent), q('#feedMap .mapnote').textContent);
     q('#subFeed [data-fview="list"]').click(); await W(300);
-    ok(`${w}: '목록' → 지도·막대 숨김`, q('#feedMap').hidden && q('#subFeed .mapbar').hidden && !q('#subFeed #feedBody').hidden, '');
+    ok(`${w} ${eng}: '목록' → 지도·막대 숨김`, q('#feedMap').hidden && q('#subFeed .mapbar').hidden && !q('#subFeed #feedBody').hidden, '');
     // 단지 탭
     fw.location.hash = 'danji'; await W(600);
     q('#danjiBox [data-dview="map"]').click();
@@ -60,26 +62,32 @@ const until = async (f, ms = 15000) => { for (let i = 0; i < ms / 200; i++) { if
     await W(1500);
     const dm = fw.eval('maps.get("danjiMap")'); prep(dm);
     const dn = fw.eval('[...danji.danji, ...danji.other].filter(d => GU_XY[d.gu]).length'), dAll = fw.eval('danji.danji.length + danji.other.length');
-    ok(`${w}: 단지 탭 지도 → 동그라미 숫자 합 = 단지 ${dn}곳 · 안내 '단지 ${dAll}곳'`, num('#danjiMap .mgu') === dn && q('#danjiMap .mapnote').textContent.includes(`단지 ${dAll}곳`) && q('#danjiList').hidden, `${num('#danjiMap .mgu')}`);
+    ok(`${w} ${eng}: 단지 탭 지도 → 동그라미 숫자 합 = 단지 ${dn}곳 · 안내 '단지 ${dAll}곳'`, num('#danjiMap .mgu') === dn && q('#danjiMap .mapnote').textContent.includes(`단지 ${dAll}곳`) && q('#danjiList').hidden, `${num('#danjiMap .mgu')}`);
     const boxes = qa('#danjiMap .mgu span').map(e => e.getBoundingClientRect()), hit = [];
     for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) { const a = boxes[i], b = boxes[j]; if (a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1) hit.push(i + '-' + j); }
-    ok(`${w}: 구 동그라미 ${boxes.length}개가 서로 덮지 않음`, boxes.length > 10 && !hit.length, hit.join(' '));
+    ok(`${w} ${eng}: 구 동그라미 ${boxes.length}개가 서로 덮지 않음`, boxes.length > 10 && !hit.length, hit.join(' '));
     // 건물 점 = 단지 좌표 그대로 (서울시·엘리스 단지 화면 지도 값)
     const withLl = fw.eval('[...danji.danji, ...danji.other].filter(d => d.ll).map(d => ({ id: d.id, ll: d.ll }))'), pick = withLl.find(x => x.id.startsWith('x-')) || withLl[0];
-    dm.setView(pick.ll, 16); await W(1000);
-    const at = dm._lay.getLayers().filter(k => k.options.icon?.options.className === 'mbld').map(k => k.getLatLng()), same = at.some(p => Math.abs(p.lat - pick.ll[0]) < 1e-9 && Math.abs(p.lng - pick.ll[1]) < 1e-9);
-    ok(`${w}: 단지 ${withLl.length}/${dAll}곳 건물 좌표 · 확대하면 '${pick.id}' 자리에 건물 점 · 이름 붙음(15 이상)`, withLl.length >= dAll - 10 && same && qa('#danjiMap .mbld em').length > 0, `${pick.id} ${pick.ll} · 점 ${at.length}`);
-    dm.setView([37.5565, 126.978], 11); await W(600);
+    dm.view(pick.ll, 16); await W(1000);
+    const at = dm.marks.filter(k => k.cls === 'mbld').map(k => k.ll), same = at.some(p => Math.abs(p[0] - pick.ll[0]) < 1e-9 && Math.abs(p[1] - pick.ll[1]) < 1e-9);
+    ok(`${w} ${eng}: 단지 ${withLl.length}/${dAll}곳 건물 좌표 · 확대하면 '${pick.id}' 자리에 건물 점 · 이름 붙음(15 이상)`, withLl.length >= dAll - 10 && same && qa('#danjiMap .mbld em').length > 0, `${pick.id} ${pick.ll} · 점 ${at.length}`);
+    dm.view([37.5565, 126.978], 11); await W(600);
     q('#danjiBox [data-df="gu"]').value = '강남구'; q('#danjiBox [data-df="gu"]').dispatchEvent(new fw.Event('input', { bubbles: true })); await W(600);
     const gn = fw.eval("[...danji.danji, ...danji.other].filter(d => d.gu === '강남구').length");
-    ok(`${w}: 구 고르면 지도도 그 구만 (강남구 ${gn}곳)`, num('#danjiMap .mgu') === gn && qa('#danjiMap .mgu').length === 1, qa('#danjiMap .mgu').map(e => e.textContent).join(' / '));
+    ok(`${w} ${eng}: 구 고르면 지도도 그 구만 (강남구 ${gn}곳)`, num('#danjiMap .mgu') === gn && qa('#danjiMap .mgu').length === 1, qa('#danjiMap .mgu').map(e => e.textContent).join(' / '));
     qa('#danjiMap .mgu')[0].click(); await W(1200);
     qa('#danjiMap .mbld, #danjiMap .mpin')[0].click(); await W(600);
-    const db = q('#danjiMap .leaflet-popup [data-mapgod]'), did = db?.dataset.mapgod; db?.click(); await W(600);
-    ok(`${w}: 단지 핀 → 이름 → 목록의 그 단지`, !!did && d.activeElement === q(`#danjiBox [data-did="${did}"]`) && !q('#danjiList').hidden, did);
+    const db = q('#danjiMap .mpop [data-mapgod]'), did = db?.dataset.mapgod; db?.click(); await W(600);
+    ok(`${w} ${eng}: 단지 핀 → 이름 → 목록의 그 단지`, !!did && d.activeElement === q(`#danjiBox [data-did="${did}"]`) && !q('#danjiList').hidden, did);
     q('#danjiBox [data-df="gu"]').value = ''; q('#danjiBox [data-df="gu"]').dispatchEvent(new fw.Event('input', { bubbles: true }));
-    ok(`${w}: CSP 막힘 0 (Leaflet·지도 그림·역 좌표) · 콘솔 오류 0`, !csp.length && !errs.length, [...csp, ...errs].join(' | '));
-    ok(`${w}: 가로 넘침 없음`, d.documentElement.scrollWidth <= w, d.documentElement.scrollWidth);
+    const csp2 = csp.filter(c => !/nelo\.navercorp\.com/.test(c));   // 네이버 사용 기록 전송은 일부러 막음 (connect-src 에 없음)
+    ok(`${w} ${eng}: CSP 막힘 0 (지도 부품·지도 그림·역 좌표 · 네이버 사용 기록 전송만 막힘) · 콘솔 오류 0`, !csp2.length && !errs.length, [...csp2, ...errs].join(' | '));
+    ok(`${w} ${eng}: 가로 넘침 없음`, d.documentElement.scrollWidth <= w, d.documentElement.scrollWidth);
+    if (eng === 'naver' && w === 1280) {   // 네이버 인증 실패(등록 안 된 주소·한도 초과) → 그 자리에서 Leaflet 지도로
+      q('#danjiBox [data-dview="map"]').click(); await until(() => qa('#danjiMap .mgu').length); await W(800);
+      fw.navermap_authFailure(); await until(() => fw.eval('maps.get("danjiMap")')?.eng === 'leaflet' && qa('#danjiMap .mgu').length); await W(800);
+      ok(`${w} ${eng}: 네이버 인증 실패 → Leaflet 지도로 바뀌고 동그라미 그대로`, fw.eval('mapEng') === 'leaflet' && fw.eval('maps.get("danjiMap")')?.eng === 'leaflet' && num('#danjiMap .mgu') === dn && !!q('#danjiMap .leaflet-container'), `${fw.eval('mapEng')} · ${num('#danjiMap .mgu')}`);
+    }
     f.remove();
   }
   document.title = 'DONE ' + asc(out);
