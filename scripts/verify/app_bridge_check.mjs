@@ -110,7 +110,9 @@ function boot({ ls = {}, prefs = {}, native = true, net = true, granted = true, 
 execFileSync(process.execPath, [join(REPO, 'app/sync-web.mjs')]);
 const web = readFileSync(join(REPO, 'index.html'), 'utf8'), app = readFileSync(join(REPO, 'app/www/index.html'), 'utf8');
 ok('sync-web: 앱 화면에만 app-bridge.js 한 번 · 웹 index.html 에는 없음', app.split('app-bridge.js').length === 2 && !web.includes('app-bridge') && existsSync(join(REPO, 'app/www/app-bridge.js')) && !existsSync(join(REPO, 'app/www/sw.js')));
-ok('sync-web: 앱 화면은 웹과 같은 내용 (bridge 한 줄만 다름)', app.replace('\n<script src="app-bridge.js"></script>', '') === web);
+const appCsp = app.match(/\n<meta http-equiv="Content-Security-Policy" content="([^"]*)">/), webCsp = readFileSync(join(REPO, '_headers'), 'utf8').match(/Content-Security-Policy: (.+)/)[1].trim();
+ok('sync-web: 앱 화면은 웹과 같은 내용 (CSP meta · bridge 두 줄만 다름)', !!appCsp && app.replace(appCsp[0], '').replace('\n<script src="app-bridge.js"></script>', '') === web);
+ok('sync-web: 앱 CSP = _headers 의 script-src 그대로(인라인 해시 포함) · frame-ancestors 없음 · connect-src 에 새 주소·blob:', !!appCsp && appCsp[1].split(';')[0] === webCsp.split(';')[0] && !appCsp[1].includes('frame-ancestors') && appCsp[1].includes("connect-src 'self' https://seoul-cheongyak-check.pages.dev blob:"), appCsp?.[1]);
 const cfg = JSON.parse(readFileSync(join(REPO, 'app/capacitor.config.json'), 'utf8')), gradle = join(REPO, 'app/android/app/build.gradle');
 ok('앱 ID: capacitor.config.json 한 곳 → Android applicationId', !existsSync(gradle) || readFileSync(gradle, 'utf8').includes(`applicationId "${cfg.appId}"`), cfg.appId);
 

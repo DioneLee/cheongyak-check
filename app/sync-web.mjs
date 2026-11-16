@@ -15,7 +15,14 @@ for (const f of FILES) { mkdirSync(dirname(join(OUT, f)), { recursive: true }); 
 cpSync(join(APP, 'bridge.js'), join(OUT, 'app-bridge.js'));
 const ip = join(OUT, 'index.html'), html = readFileSync(ip, 'utf8'), MARK = '<meta charset="utf-8">';
 if (html.split(MARK).length !== 2) throw new Error(`index.html 에 ${MARK} 가 정확히 한 번 있어야 해요`);
-writeFileSync(ip, html.replace(MARK, `${MARK}\n<script src="app-bridge.js"></script>`));
+// 앱 화면 CSP: _headers(웹사이트용, 앱 WebView 에는 안 걸림)의 CSP 를 meta 로 · frame-ancestors 는 meta 에서 안 됨 → 뺌
+// connect-src 에 새 주소(피드를 거기서 받음) · blob:(bridge.js 가 내보낼 파일을 읽음) 추가
+// Capacitor 기능 코드는 WebView 가 CSP 밖에서 넣음(addDocumentStartJavaScript) · 아주 옛 WebView 면 앱 기능(알림 등)만 꺼지고 화면은 됨
+const csp = readFileSync(join(WEB, '_headers'), 'utf8').match(/Content-Security-Policy: (.+)/)?.[1]?.trim();
+if (!csp?.includes('script-src')) throw new Error('_headers 에서 CSP 를 못 찾음');
+const appCsp = csp.replace(/;\s*frame-ancestors [^;]*/, '').replace(/connect-src 'self'/, "connect-src 'self' https://seoul-cheongyak-check.pages.dev blob:");
+if (appCsp === csp || !appCsp.includes('seoul-cheongyak-check.pages.dev')) throw new Error('앱 CSP 만들기 실패');
+writeFileSync(ip, html.replace(MARK, `${MARK}\n<meta http-equiv="Content-Security-Policy" content="${appCsp}">\n<script src="app-bridge.js"></script>`));
 
 const cfg = JSON.parse(readFileSync(join(APP, 'capacitor.config.json'), 'utf8')), id = cfg.appId, name = cfg.appName;
 if (!/^[a-z][\w]*(\.[a-z][\w]*)+$/.test(id)) throw new Error(`appId 형식이 이상해요: ${id}`);

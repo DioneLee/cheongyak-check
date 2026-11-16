@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 공유 시트로 넘기는 파일(.ics · 내보내기 JSON)은 앱 임시 폴더(CACHE)에만 씀 → 그 폴더만 공유 (외부 저장소 전체 external-path 는 뺌) -->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="my_images" path="." />
     <cache-path name="my_cache_images" path="." />
 </paths>
