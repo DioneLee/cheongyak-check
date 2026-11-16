@@ -33,6 +33,7 @@ ok("API 키(AIza…) 없음", not any("AIza" in p.read_text(encoding="utf-8", er
 ok("네이버 지도 Client ID 는 index.html 한 곳 · Client Secret 없음", src.count("d0ypffc1md") == 1 and not any(re.search(r"ncpKeySecret|ncpClientSecret|X-NCP-APIGW-API-KEY(?!-ID)|client_secret", p.read_text(encoding="utf-8", errors="ignore"), re.I) for p in tracked if p.name != "check.py"))
 _swv = re.search(r"VERSION = 'cheongyak-check-([\w-]+)'", (REPO / "sw.js").read_text(encoding="utf-8")).group(1)
 ok("lib/feed-tools.js?v= 가 sw.js VERSION 과 같음 (배포 직후 옛 lib 가 섞이지 않게)", f'lib/feed-tools.js?v={_swv}"' in src, _swv)
+ok("맨 아래 '의견 보내기 ↗' = Google 설문지 (새 창) · 개인정보처리방침에 같은 설명", re.search(r'<a href="https://docs\.google\.com/forms/d/e/[\w-]+/viewform" target="_blank" rel="noopener noreferrer">의견 보내기 ↗</a>', src) is not None and "의견 보내기" in (REPO / "privacy.html").read_text(encoding="utf-8"))
 ok("방문자 분석·광고 도구 없음", not re.search(r"googletagmanager|gtag\(|google-analytics|clarity\.ms|hotjar|mixpanel|amplitude|plausible", src))
 try:
     changed = subprocess.run(["git", "-C", str(REPO), "diff", "--name-only", "HEAD"], capture_output=True, text=True).stdout.split()
@@ -312,6 +313,14 @@ ok('단지 탭: 그 밖의 민간임대 카드마다 "' + OTH + '"', qa('#danjiL
 ok('단지 탭에만 정확히 "' + APP + '" (설정에서는 뺌)', [...q('#danjiSec').querySelectorAll('p')].some(p => p.textContent.trim() === APP) && !q('[data-tab="settings"]').textContent.includes(APP));
 { const c = q('#danjiList li[data-did="20000413"]') || qa('#danjiList li[data-did]').find(l => l.textContent.includes('마에스트로')), ln = c.querySelector('.dj-links a[href^="http"]');
   ok('단지 카드: 이름 · 구 · 역 · 보증금/월세 · 홈페이지 ↗(새 창) · 전화', !!c.querySelector('.nm') && /구 · .*보증금 .*월세 /.test(c.querySelector('.finfo').textContent) && (!ln || (ln.target === '_blank' && ln.textContent === '홈페이지 ↗')) && qa('#danjiList a[href^="tel:"]').length > 50, c.textContent.slice(0, 120)); }
+{ const did = fw.eval('danji.danji[0].id'), add = (id, to, url) => fw.eval(`subFeed.items.push({ id: ${JSON.stringify(id)}, danji: ${JSON.stringify(did)}, title: 'x', to: ${JSON.stringify(to)}, url: ${JSON.stringify(url)}, closed: false })`);
+  add('youth-zz1', '2099-01-02', 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=991'); fw.eval('renderDanji()'); await W(60);
+  const ln = () => [...q(`#danjiList li[data-did="${did}"] .dj-links`).querySelectorAll('a')].filter(a => a.textContent.startsWith('공고 보기'));
+  const one = ln();
+  ok('단지 카드 "공고 보기": 그 단지의 접수 중 공고 원문으로 (새 창) · 공고 탭으로 안 감', one.length === 1 && one[0].href === 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=991' && one[0].target === '_blank' && one[0].textContent === '공고 보기 ↗', one.map(a => a.href + ' ' + a.textContent).join(' | '));
+  add('youth-zz2', '2099-01-05', 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=992'); fw.eval('renderDanji()'); await W(60);
+  ok('단지 카드 "공고 보기": 접수 중 공고가 여럿이면 하나씩 · 마감일 붙임', ln().length === 2 && ln().every(a => / 마감\) ↗$/.test(a.textContent)), ln().map(a => a.textContent).join(' | '));
+  fw.eval("subFeed.items = subFeed.items.filter(i => !/^youth-zz/.test(i.id)); renderDanji()"); await W(60); }
 ok("단지 카드: '자체 사이트에서만 공고' 배지 (1년 넘음 · 추가모집 0번 단지에만)", qa('#danjiList .dd').some(b => b.textContent === '자체 사이트에서만 공고') && fw.eval(`danji.danji.filter(x => selfOnly(x, todayYmd())).every(x => x.extra === 0 && x.first)`), qa('#danjiList .dd').filter(b => b.textContent === '자체 사이트에서만 공고').length);
 { const rk = li => { const b = [...li.querySelectorAll('.dd')].map(x => x.textContent); return b.includes('청약중') ? 0 : b.includes('청약예정') ? 1 : li.querySelector('[data-dstar]').getAttribute('aria-pressed') === 'true' ? 2 : 3; };
   const main = [...qa('#danjiList .flist')[0].children], rs = main.map(rk), last = main.filter(li => rk(li) === 3);
