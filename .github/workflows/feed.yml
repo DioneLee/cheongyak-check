@@ -30,7 +30,7 @@ concurrency:
 jobs:
   feed:
     runs-on: ubuntu-latest
-    timeout-minutes: 20   # 공고 상세 읽기(Gemini) 포함
+    timeout-minutes: 45   # 공고 상세 읽기(Gemini) 포함 · 새 공고 40개 × 요약·진단용 값 2번이면 20분을 넘을 수 있음 (2026-11-16)
     steps:
       - name: 정기 실행이 겹치면 건너뜀
         id: guard
