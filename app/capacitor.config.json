@@ -1,5 +1,5 @@
 {
-  "appId": "io.github.dionelee.cheongyakcheck.dev",
+  "appId": "io.github.dionelee.cheongyakcheck",
   "appName": "청약 체크",
   "webDir": "www",
   "android": { "allowMixedContent": false },

@@ -6,7 +6,7 @@
 
 - **방식: Capacitor 8** (Android·iOS 같은 코드). Bubblewrap/TWA·assetlinks.json·`dionelee.github.io` 저장소는 하지 않음
   - Capacitor 로 정한 이유: ① 관심 공고 마감 알림을 기기 안에서 정해진 시각에 확실히 울릴 수 있음(TWA 는 웹 알림뿐 → 서버에 구독 저장이 필요해 '서버 저장 없음' 원칙과 충돌) ② iOS 도 (b) 방식(앱 안 화면 + 앱 기능)이라 두 앱 코드가 같음 ③ 도메인 확인 파일·새 저장소가 필요 없음 (2026-11-09 사용자 결정)
-- **앱 ID: 테스트용 `io.github.dionelee.cheongyakcheck.dev`** — 정식 ID 는 도메인을 정한 뒤. 바꾸는 곳은 `app/capacitor.config.json` 의 `appId` **한 곳**. `sync-web` 이 Android `build.gradle`·`strings.xml`, iOS `project.pbxproj` 에 반영
+- **앱 ID: `io.github.dionelee.cheongyakcheck`** (2026-11-16 Play 첫 업로드 전 `.dev` 뺌 · 한 번 올리면 못 바꿈). 바꾸는 곳은 `app/capacitor.config.json` 의 `appId` **한 곳**. `sync-web` 이 Android `build.gradle`·`strings.xml`, iOS `project.pbxproj` 에 반영
   - Android `namespace`(자바 패키지 경로)는 처음 만든 값 그대로 둔다 — 스토어 ID 와 상관없음
 - **iOS: (b) 방식** — 화면 파일은 앱 안, 공고 피드는 인터넷(github.io), 앱 기능 = 마감 알림·기기 저장 백업·공유 시트·오프라인 목록
 - **알림**: 관심 공고(★)만 · 마감 하루 전 오전 9시 · 처음 ★ 를 켤 때 허용을 묻는다 · 정확한 알람 권한은 뺌(Play 정책) → "9시쯤"
@@ -46,8 +46,8 @@ sh app/setup-mac.sh            # JDK 21(~/.cheongyak-app) · Android SDK(~/Libra
 ```sh
 sh app/build-android.sh                    # 디버그 apk → app/dist/
 emulator -avd cheongyak36 &                # (setup 이 만든 에뮬레이터) · PATH 는 . app/env-mac.sh 후
-adb install -r app/dist/io.github.dionelee.cheongyakcheck.dev-debug.apk
-adb shell monkey -p io.github.dionelee.cheongyakcheck.dev 1
+adb install -r app/dist/io.github.dionelee.cheongyakcheck-debug.apk
+adb shell monkey -p io.github.dionelee.cheongyakcheck 1
 node scripts/verify/app_cdp.mjs "location.hash"   # 앱 화면 안에서 JS (디버그 빌드)
 ```
 
