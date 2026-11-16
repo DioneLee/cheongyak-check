@@ -106,8 +106,6 @@
   "n": "건대입구역",
   "exit": "6"
  },
- "noticeTry": 1,
- "noticeWhy": "진단용 값이 모자람",
  "seq": {
   "start": {
    "n": 0,
@@ -133,5 +131,189 @@
    "n": 0,
    "s": "2026-11-17|2026-11-20|"
   }
+ },
+ "notice": {
+  "kind": "임대",
+  "name": "건대입구역 청년안심주택 더포디엄 830 입주자 추가 모집공고",
+  "noticeDate": "2026-11-05",
+  "incomeBase": [
+   381.3,
+   586.6,
+   816.8,
+   880.2,
+   932.7
+  ],
+  "rules": {
+   "newlywed": {
+    "general": {
+     "age": [
+      19,
+      39
+     ],
+     "marriageDays": 2555,
+     "preMarried": true,
+     "single": false
+    },
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "marriageDays": 2555,
+     "preMarried": true,
+     "single": false
+    }
+   },
+   "youth": {
+    "general": {
+     "age": [
+      19,
+      39
+     ],
+     "single": true
+    },
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "single": true
+    }
+   }
+  },
+  "types": [
+   {
+    "area": 20.17,
+    "fee": null,
+    "id": "25A",
+    "prices": {
+     "general": [
+      [
+       9300,
+       647.2
+      ]
+     ]
+    },
+    "rooms": null,
+    "tier": "youth",
+    "units": {
+     "general": 1,
+     "special": null
+    }
+   },
+   {
+    "area": 20.4,
+    "fee": null,
+    "id": "25B",
+    "prices": {
+     "general": [
+      [
+       9300,
+       649.21
+      ]
+     ]
+    },
+    "rooms": null,
+    "tier": "youth",
+    "units": {
+     "general": 1,
+     "special": null
+    }
+   },
+   {
+    "area": 42.17,
+    "fee": null,
+    "id": "52A",
+    "prices": {
+     "general": [
+      [
+       17300,
+       1214.54
+      ]
+     ]
+    },
+    "rooms": null,
+    "tier": "youth",
+    "units": {
+     "general": 1,
+     "special": null
+    }
+   },
+   {
+    "area": 42.25,
+    "fee": null,
+    "id": "52B",
+    "prices": {
+     "general": [
+      [
+       15100,
+       1311
+      ],
+      [
+       17300,
+       1212.66
+      ],
+      [
+       17300,
+       1212.66
+      ],
+      [
+       17300,
+       1210.78
+      ]
+     ]
+    },
+    "rooms": null,
+    "tier": "youth",
+    "units": {
+     "general": 4,
+     "special": null
+    }
+   }
+  ],
+  "addr": "서울특별시 광진구 아차산로 212",
+  "city": "서울",
+  "contractPct": null,
+  "id": "thepodium830-2026-1105",
+  "incomeExtra": 57.9,
+  "notes": [
+   "1인 1주택형(타입)에 대해서만 청약 신청 가능",
+   "기존 계약자는 신청 불가"
+  ],
+  "parking": null,
+  "ratios": [
+   100
+  ],
+  "region": "광진구",
+  "schedule": [
+   {
+    "from": "2026-11-09",
+    "key": "apply",
+    "label": "청약 접수",
+    "to": "2026-11-10"
+   },
+   {
+    "from": "2026-11-11",
+    "key": "announce",
+    "label": "서류심사 대상자 발표",
+    "to": "2026-11-11"
+   },
+   {
+    "from": "2026-11-12",
+    "key": "docSubmit",
+    "label": "당첨자 서류 사본 제출",
+    "to": "2026-11-13"
+   },
+   {
+    "from": "2026-11-17",
+    "key": "contract",
+    "label": "계약체결 및 원본서류제출",
+    "to": "2026-11-20"
+   }
+  ],
+  "short": "더포디엄 830",
+  "station": "건대입구역",
+  "summary": "건대입구역 청년안심주택 더포디엄 830 공공지원민간임대 추가모집공고",
+  "url": "https://thepodium830.com"
  }
 }

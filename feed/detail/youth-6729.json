@@ -80,8 +80,6 @@
   "n": "상봉역",
   "exit": "4"
  },
- "noticeTry": 1,
- "noticeWhy": "gemini-3.5-flash-lite: JSON 아님",
  "seq": {
   "end": {
    "n": 0,
@@ -95,5 +93,121 @@
    "n": 0,
    "s": "2026-11-23||17:00"
   }
+ },
+ "notice": {
+  "kind": "임대",
+  "name": "세이지움 상봉 예비입주자 모집공고",
+  "noticeDate": "2026-11-12",
+  "incomeBase": [
+   381.3,
+   586.6,
+   816.8,
+   880.2,
+   932.7
+  ],
+  "rules": {
+   "newlywed": null,
+   "youth": {
+    "general": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    },
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    }
+   }
+  },
+  "types": [
+   {
+    "area": 23.98,
+    "fee": null,
+    "id": "29",
+    "prices": {
+     "general": [
+      [
+       4700,
+       74
+      ],
+      [
+       7100,
+       65
+      ],
+      [
+       9500,
+       55
+      ]
+     ],
+     "special": []
+    },
+    "rooms": null,
+    "tier": "youth",
+    "units": {
+     "general": null,
+     "special": null
+    }
+   }
+  ],
+  "addr": "서울특별시 중랑구 상봉동 503",
+  "cite": null,
+  "city": "서울",
+  "contractPct": null,
+  "id": "se이지움상봉-2026-11-12",
+  "incomeExtra": 57.9,
+  "notes": [
+   "공공지원 민간임대 예비자 모집",
+   "전세대 전액 보증보험 가입 완료"
+  ],
+  "parking": null,
+  "ratios": [
+   20,
+   30,
+   40
+  ],
+  "region": "중랑구",
+  "schedule": [
+   {
+    "from": "2026-11-12",
+    "key": "notice",
+    "label": "입주자 모집공고",
+    "to": "2026-11-12"
+   },
+   {
+    "from": "2026-11-16",
+    "key": "apply",
+    "label": "청약신청",
+    "to": "2026-11-16"
+   },
+   {
+    "from": "2026-11-23",
+    "key": "winner",
+    "label": "서류심사 대상자 발표",
+    "to": "2026-11-23"
+   }
+  ],
+  "short": "세이지움 상봉",
+  "station": "상봉역",
+  "summary": "상봉역 세이지움 상봉 청년안심주택 공공지원 민간임대 예비입주자 모집",
+  "url": "https://seizium-sb.com"
  }
 }
