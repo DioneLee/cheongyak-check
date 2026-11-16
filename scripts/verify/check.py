@@ -249,6 +249,20 @@ delete fw.__today;
   ok('기본 조건 정보가 없는 공고 → "예비 판정을 못 해요" 안내 · 카드는 그 공고로 바뀜', !df.hidden && dq('[data-from-name]').textContent === '기준 없는 공고' && /기본 조건 정보가 없어 예비 판정을 못 해요/.test(dq('[data-from-judge]').textContent), dq('[data-from-judge]').textContent);
   fw.location.hash = 'notices'; await W(120); fw.location.hash = 'diag'; await W(120);
   ok('다른 탭에 갔다 오면 그 카드는 사라지고 결과가 다시 보임', q('#diagFrom').hidden && !q('#subJudge').hidden); }
+// 자동 갱신이 미리 읽은 진단용 값(feed/detail 의 notice): 검사를 통과하면 PDF 없이 바로 진단 · 모자라면 지금처럼 PDF 올리기 카드 (2026-11-16)
+{ const yn = fw.eval('state.subs.notices[0]'), sel0 = fw.eval('state.subs.sel'), n0 = fw.eval('state.subs.notices.length'), rf3 = fw.fetch;
+  fw.fetch = async (u, o) => /feed\/detail\/(sh-x3|sh-x4)\.json/.test(String(u)) ? new fw.Response(JSON.stringify({ id: 'x', read: '2026-11-16', target: '청년', eligibility: ['무주택'],
+    notice: String(u).includes('sh-x3') ? { ...yn, id: 'ai-made', name: '미리 읽은 행복주택', short: '미리 읽은 행복주택', url: '' } : { ...yn, types: [] } })) : rf3(u, o);
+  fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('sh-x3', '2099-01-04'), title: '[SH] 미리읽음 행복주택 입주자모집공고', url: 'https://www.i-sh.co.kr/x?seq=3', detail: true, dv: 'abc333' }, { ...fi('sh-x4', '2099-01-05'), title: '[SH] 덜읽음 행복주택 입주자모집공고', url: 'https://www.i-sh.co.kr/x?seq=4', detail: true, dv: 'abc444' }] });
+  fw.location.hash = 'notices'; await W(120); q('#subFeed [data-diag="sh-x3"]').click(); await W(300);
+  const nx = fw.eval('state.subs.notices').find(n => n.id === 'sh-x3');
+  ok('미리 읽은 진단용 값이 있는 공고 "진단 →" → PDF 없이 바로 결과 (내 공고에 넣음 · AI 표시 · 원문 주소)', fw.location.hash === '#diag' && q('#diagFrom').hidden && !q('#subJudge').hidden && fw.eval('state.subs.sel') === 'sh-x3' && nx?.src === 'ai' && nx?.url === 'https://www.i-sh.co.kr/x?seq=3' && !!q('#subJudge .basis.ai'), JSON.stringify({ sel: fw.eval('state.subs.sel'), src: nx?.src, from: q('#diagFrom').hidden }));
+  fw.location.hash = 'notices'; await W(120); q('#subFeed [data-diag="sh-x3"]').click(); await W(200);
+  ok('다시 누르면 같은 공고를 고름 (두 번 넣지 않음)', fw.eval('state.subs.notices').filter(n => n.id === 'sh-x3').length === 1 && fw.eval('state.subs.sel') === 'sh-x3');
+  fw.location.hash = 'notices'; await W(120); q('#subFeed [data-diag="sh-x4"]').click(); await W(300);
+  ok('진단용 값이 모자라면(주택형 없음) 쓰지 않고 지금처럼 PDF 올리기 카드', !q('#diagFrom').hidden && !fw.eval('state.subs.notices').some(n => n.id === 'sh-x4') && /PDF를 올려 주세요/.test(q('#diagFrom .df-next').textContent));
+  fw.fetch = rf3; fw.eval(`state.subs.notices = state.subs.notices.filter(n => n.id !== 'sh-x3'); state.subs.sel = ${JSON.stringify(sel0)}; diagFrom = null; render()`); fw.location.hash = 'notices'; await W(120);
+  ok('(정리) 검사용 공고를 빼고 처음 상태로', fw.eval('state.subs.notices.length') === n0); }
 // AI 공고 PDF 읽기 (가짜 Worker 응답)
 const yong = await (await fetch('samples/notice_yongsan.json')).json(), calls = [];
 const pdf = await (await fetch('samples/notice_example.pdf')).blob(), dt = new fw.DataTransfer(); dt.items.add(new fw.File([pdf], 'notice_example.pdf', { type: 'application/pdf' }));

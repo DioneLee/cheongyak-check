@@ -18,7 +18,7 @@
 - 판정 문구는 "입력한 조건으로는 … 보여요" + 예비 판정 줄 · 처음 결과 볼 때 이용약관(`terms.html`) 확인 한 번 (키 `cheongyak-check-terms`)
 - 공고 출처: LH·마이홈포털 공공데이터 API + SH 공고 게시판 + 서울 청년안심주택 모집공고 목록 + 단지 직접(엘리스, `scripts/sources/`) (서울만)
   - 게시판(SH·청년안심)은 목록에서 제목·기관·날짜·원문 링크 · 2026-11-16 부터 공고문 PDF 를 받아 Gemini 요약을 상세로 저장(PDF 원본은 저장 안 함) · 같은 사이트 요청 3초 간격 · 실행마다 robots.txt 확인 · 실제 실행 하루 약 4번
-- 공고 상세(신청 조건 요약): 마이홈은 API 기본 정보 · SH·청년안심은 공고문 PDF → Gemini 요약(2026-11-16 다시 켬, `docs/design/공고상세.md`) · 엘리스·LH 는 공고문 경로 없음 → '공고 원문 보기'
+- 공고 상세(신청 조건 요약): 마이홈은 API 기본 정보 · SH·청년안심은 공고문 PDF → Gemini 요약 + 진단용 값(notice → '진단 →' 바로 결과) (2026-11-16, `docs/design/공고상세.md`) · 엘리스·LH 는 공고문 경로 없음 → '공고 원문 보기'
 - 사용자 PDF 올리기(진단용 값 읽기): 15MB 까지 (사이트 + sjcu Worker `MAX_PDF` · 2026-11-16, Worker 배포는 사용자)
 - 검사 (2026-11-15 마지막): `python scripts/verify/check.py` 165/165 (판정 동등성은 기준 파일 있는 PC 에서만) · `map_check.py` 32 · `csp_check.py` 7 · `node scripts/verify/tools_check.mjs` 33 · `detail_check.mjs` 57 · `feed_check.mjs` 25 · `danji_check.mjs` 30 · `app_bridge_check.mjs` 32 · `cron_check.mjs` 5 · `sw_redirect_check.mjs` 10 (Pages 308 + 서비스 워커)
   - 한글 Windows 에서는 `PYTHONUTF8=1 PYTHONIOENCODING=utf-8` 를 붙여야 출력이 안 깨지고 check.py 가 cp949 오류를 안 냄

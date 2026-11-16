@@ -5,7 +5,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only'; process.env.DETAIL_TEST = '1'; delete process.env.GITHUB_ACTIONS; delete process.env.DETAIL_ALLOW_REAL; process.env.DETAIL_RETRY_MS = '20';   // 503 뒤 기다림 (실제 30초)
 process.env.DETAIL_GAP_PRIMARY_MS = '40'; process.env.DETAIL_GAP_LITE_MS = '15';   // 호출 간격 (실제 13초 · 5초)
-process.env.SCRAPE_GAP_MS = '30';   // 게시판 요청 간격 (실제 3000)
+process.env.SCRAPE_GAP_MS = '30';
+process.env.DETAIL_MAX_FRESH = '5'; process.env.DETAIL_NOTICE = '0';   // 기존 검사: lite 새 공고 5개 · 진단용 값 읽기는 끔 (아래 '진단용 값' 검사에서만 켬)   // 게시판 요청 간격 (실제 3000)
 process.env.DETAIL_DEFER_LOG = join(tmpdir(), `detail-check-${process.pid}-미룸.md`);   // 저장소의 docs/work/미룸.md 는 건드리지 않음
 const D = await import('../detail.mjs');
 let ok = 0; const t = async (name, fn) => { await fn(); ok++; console.log('OK', name); };
@@ -233,5 +234,25 @@ await t('첫 모델 순서: 마감 3일 이내 다시 읽기(23·22) → 원문(
 await t('상세 도장(dv): 상세가 있으면 내용 해시 · 내용이 바뀌면 도장도 바뀜', async () => { const a = oi.find(i => i.id === 'youth-23'); assert.match(a.dv, /^[0-9a-f]{10}$/); assert.equal(oi.find(i => i.id === 'lh-9').dv, '');
   await writeFile(od + 'youth-23.json', '{"id":"youth-23","target":"바뀜"}'); assert.notEqual(await D.detailStamp(od + 'youth-23.json'), a.dv); });
 await rm(od, { recursive: true });
+// 진단용 값 (2026-11-16): 상세가 있는 게시판 공고는 같은 PDF 로 사이트 'PDF 올리기'와 같은 지시문(index.html AI_SPEC)을 lite 로 한 번 더
+const NOTICE = { kind: '임대', name: '가 공고', noticeDate: '2026-11-10', incomeBase: [381.3, 586.6], rules: { youth: { special: { age: [19, 39] } } }, types: [{ id: '16A', tier: 'youth', area: 16.5, prices: { special: [[3000, 45]] } }] };
+await t('진단용 값 지시문은 index.html 의 AI_SPEC 그대로 (SUB_PROMPT · NOTICE_SCHEMA)', async () => { const s = await D.noticeSpec(), h = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
+  assert.ok(h.includes(s.prompt.slice(0, 200))); assert.deepEqual(s.schema.required, ['kind', 'name', 'noticeDate', 'incomeBase', 'rules', 'types']); });
+await t('진단용 값 검사(noticeOk): 주택형·소득 기준·가격이 있어야 함', async () => { assert.ok(D.noticeOk(NOTICE)); assert.ok(!D.noticeOk(FULL)); assert.ok(!D.noticeOk({ ...NOTICE, types: [{ id: 'a', area: 16 }] })); assert.ok(!D.noticeOk({ ...NOTICE, incomeBase: [] })); });
+{ const nd = await mkdtemp(join(tmpdir(), 'det-n-')) + '/', nrd = async id => JSON.parse(await readFile(nd + id + '.json', 'utf8')), isN = o => String(o?.body).includes('임대주택 입주자 모집공고문을 읽고');
+  let nbad = false; gem = (u, o) => J(isN(o) ? (nbad ? { ...NOTICE, types: [] } : NOTICE) : FULL);
+  calls.length = 0; let r = await D.addDetails([yi(91), yi(92)], { dir: nd, log: () => {}, notices: true });
+  await t('진단용 값: 상세를 읽은 공고마다 lite 로 한 번 더 → 상세 파일의 notice', async () => { assert.equal(r.madeNew, 2); assert.equal(r.madeNotice, 2);
+    assert.deepEqual((await nrd('youth-91')).notice, NOTICE); assert.equal((await nrd('youth-91')).target, '청년'); assert.ok(gcalls().filter(c => isN(c.o)).every(c => mdl(c) === 'lite')); assert.equal(gcalls().filter(c => isN(c.o)).length, 2); });
+  calls.length = 0; r = await D.addDetails([yi(91), yi(92)], { dir: nd, log: () => {}, notices: true });
+  await t('진단용 값: 이미 있으면 다시 읽지 않음 (상세 요약의 첫 모델 다시 읽기는 따로)', async () => { assert.equal(gcalls().filter(c => isN(c.o)).length, 0); assert.equal(r.madeNotice, 0); });
+  nbad = true; calls.length = 0; r = await D.addDetails([yi(93)], { dir: nd, log: () => {}, notices: true });
+  await t('진단용 값: 모자라면 저장 안 함 · 실패 횟수 기록 (상세는 그대로)', async () => { const d = await nrd('youth-93'); assert.equal(d.notice, undefined); assert.equal(d.noticeTry, 1); assert.match(d.noticeWhy, /모자람/); assert.equal(d.target, '청년'); });
+  for (let k = 0; k < 3; k++) await D.addDetails([yi(93)], { dir: nd, log: () => {}, notices: true });
+  calls.length = 0; await D.addDetails([yi(93)], { dir: nd, log: () => {}, notices: true });
+  await t('진단용 값: 3번 실패하면 그만 부름', async () => { assert.equal((await nrd('youth-93')).noticeTry, 3); assert.equal(gcalls().filter(c => isN(c.o)).length, 0); });
+  nbad = false; gem = (u, o) => isN(o) ? new Response('{}', { status: 429 }) : J(FULL); calls.length = 0; r = await D.addDetails([yi(94)], { dir: nd, log: () => {}, notices: true });
+  await t('진단용 값: 사용량 다 참(429)이면 실패로 안 세고 다음 갱신에', async () => { const d = await nrd('youth-94'); assert.equal(d.notice, undefined); assert.equal(d.noticeTry, undefined); });
+  await rm(nd, { recursive: true }); }
 await rm(dir, { recursive: true });
 console.log(`${ok}개 모두 OK`);

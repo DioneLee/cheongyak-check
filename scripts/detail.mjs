@@ -11,7 +11,7 @@ import { polite, robotsOk } from './net.mjs';
 export const DETAIL_DIR = fileURLToPath(new URL('../feed/detail/', import.meta.url));
 export const DEFER_LOG = process.env.DETAIL_DEFER_LOG || fileURLToPath(new URL('../docs/work/미룸.md', import.meta.url));   // 검사는 DETAIL_DEFER_LOG 로 임시 파일에   // 마감까지 계속 미뤄진 공고 (인수인계 문서에서 링크)
 const MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash-lite'];   // 사이트 AI_MODELS 와 같은 순서
-const MAX_NEW = 5, MAX_TRY = 3, MAX_PDF = 15 * 1048576, MAX_TEXT = 6000;
+const MAX_NEW = 5, MAX_FRESH = Number(process.env.DETAIL_MAX_FRESH ?? 40), MAX_TRY = 3, MAX_PDF = 15 * 1048576, MAX_TEXT = 6000;
 export const DETAIL_V = 5;   // 읽는 방법을 바꾸면 올린다 → 예전 상세는 다시 읽음 (v2: 게시판 본문도 함께 보냄 · v3: 신청 방법·입주 기간·부담 비용·호수 · v4: 문의·신청 페이지를 본문에서 채움 · v5: 비용 예시 · 모델 기록)
 const UA = { 'User-Agent': 'Mozilla/5.0 (cheongyak-check feed)' };
 const RETRY_MS = Number(process.env.DETAIL_RETRY_MS ?? 30000);   // 503(붐빔) 뒤 한 번 더 기다리는 시간 (검사는 짧게)
@@ -31,6 +31,18 @@ export const DETAIL_PROMPT = `첨부한 주택 입주자 모집공고문을 읽�
 - contact: 문의처 한 줄 (전화번호 포함).
 - addr: 주택(단지) 소재지 주소 한 줄 (도로명이나 지번, 예: '서울특별시 광진구 아차산로 212'). 여러 곳이면 첫 번째.
 - 함께 보내는 '게시판 본문'에도 일정·문의·신청 방법이 적혀 있을 수 있다. schedule 과 contact 는 공고문이나 본문 어디든 있으면 반드시 채운다.`;
+// 진단용 값(공고 JSON): 사이트 'PDF 올리기'와 같은 지시문·형식 — index.html 의 AI_SPEC 블록을 그대로 읽어 쓴다 (한 곳에서만 고침)
+// MAX_FRESH: lite 로 읽는 새 공고·진단용 값 한 번에 몇 개 (lite 무료 RPM 15·RPD 500 · 5초 간격이면 40개도 몇 분) · MAX_NEW: 첫 모델 다시 읽기 (하루 예산 18)
+let spec;
+export async function noticeSpec() {
+  if (spec) return spec;
+  const h = await readFile(fileURLToPath(new URL('../index.html', import.meta.url)), 'utf8'), b = h.split('// ==== AI_SPEC 시작')[1]?.split('// ==== AI_SPEC 끝')[0];
+  if (!b) throw Object.assign(new Error('index.html 에 AI_SPEC 블록이 없음'), { stop: true });
+  return spec = new Function(`${b.slice(b.indexOf('\n'))}\nreturn { prompt: SUB_PROMPT, schema: NOTICE_SCHEMA };`)();
+}
+// 사이트 noticeProblems 와 같은 최소 조건 (사이트가 쓰기 전에 한 번 더 검사)
+export const noticeOk = n => !!n && n.kind === '임대' && /^\d{4}-\d{2}-\d{2}$/.test(n.noticeDate || '') && Array.isArray(n.incomeBase) && n.incomeBase.length > 0 && !!n.rules
+  && Array.isArray(n.types) && n.types.length > 0 && n.types.every(x => +x?.area > 0 && (x?.prices?.special?.length || x?.prices?.general?.length));
 const S = { type: 'STRING', nullable: true }, SA = { type: 'ARRAY', items: { type: 'STRING' } };
 export const DETAIL_SCHEMA = { type: 'OBJECT', required: ['target', 'eligibility'], properties: {
   target: S, eligibility: SA, income: S, asset: S, car: S,
@@ -115,11 +127,11 @@ async function pace(m) { const w = (lastAt[m] || 0) + (GAP[m] ?? 0) - Date.now()
 // 로컬(이 Mac 등) 실행은 실제 Gemini 를 부르지 않는다: GitHub Actions(GITHUB_ACTIONS=true)나 검사(DETAIL_TEST=1, 가짜 fetch)만 부름.
 // 꼭 실제로 불러야 하면 DETAIL_ALLOW_REAL=1 — 그 호출도 addDetails 가 _quota.json 에 더하니, 끝나면 _quota.json 을 커밋·push 해서 Actions 와 맞춘다
 export const realCallAllowed = () => process.env.GITHUB_ACTIONS === 'true' || process.env.DETAIL_TEST === '1' || process.env.DETAIL_ALLOW_REAL === '1';
-export async function askGemini(pdf, text = '', { models = MODELS } = {}) {
+export async function askGemini(pdf, text = '', { models = MODELS, prompt = DETAIL_PROMPT, schema = DETAIL_SCHEMA } = {}) {
   const key = geminiKey(); if (!key) throw Object.assign(new Error('GEMINI_API_KEY 없음'), { stop: true });
   if (!realCallAllowed()) throw Object.assign(new Error('로컬 실행: 실제 Gemini 를 부르지 않음 (Actions 에서만 · 꼭 필요하면 DETAIL_ALLOW_REAL=1 · _quota.json 커밋)'), { stop: true });
-  const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: DETAIL_PROMPT }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }, ...(text ? [{ text: `게시판 본문:\n${text}` }] : [])] }],
-    generationConfig: { responseMimeType: 'application/json', responseSchema: DETAIL_SCHEMA } });
+  const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }, { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } }, ...(text ? [{ text: `게시판 본문:\n${text}` }] : [])] }],
+    generationConfig: { responseMimeType: 'application/json', responseSchema: schema } });
   const end = [];   // 모델마다 끝난 까닭: 'spent'(429·오늘 예산) · 'busy'(503 두 번·연결) · 'err'
   let last = '';
   for (const m of models) {
@@ -187,7 +199,7 @@ const nowKst = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 16
 // · 새 공고 먼저, 그다음 다시 읽기(예전 방법 v < DETAIL_V, 또는 첫 모델이 아닌 모델이 읽은 것) — 합쳐서 한 번에 max 개
 // · 다시 읽기는 첫 모델로만 · 첫 모델 사용량이 다 차면 다시 읽기는 건너뜀(실패로 안 셈)
 // 실패 분류: 연결 실패·시간 초과·503·429(사용량)·HTTP 5xx = 미룸 (실패로 안 셈, 횟수는 _fail.json 의 defer 와 상세 파일 defer 에) · 404·403·PDF 아님·AI 가 못 읽음 = 실패 (3번이면 그만)
-export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log = console.log, basics = new Map(), deferLog = DEFER_LOG } = {}) {
+export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, maxFresh = MAX_FRESH, notices = process.env.DETAIL_NOTICE !== '0', log = console.log, basics = new Map(), deferLog = DEFER_LOG } = {}) {
   spent.clear(); for (const k in used) delete used[k]; for (const k in lastAt) delete lastAt[k];
   await mkdir(dir, { recursive: true });
   const quotaFile = `${dir}_quota.json`, day = ptDay(); quota = await readJson(quotaFile, { day: '', used: {} }); if (quota.day !== day) quota = { day, used: {} };   // 태평양 날짜가 바뀌면 0부터
@@ -217,7 +229,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
     log(`상세 · ${it.id}: 미룸 ${fail[it.id].defer}회째 (${why})`); };
   for (const it of todo) {
     const re = have.has(it.id);
-    if (!safeId(it.id) || stopped || (re ? madeRe : madeNew) >= max || (fail[it.id]?.n || 0) >= MAX_TRY || basics.has(it.id)) continue;
+    if (!safeId(it.id) || stopped || (re ? madeRe >= max : madeNew >= maxFresh) || (fail[it.id]?.n || 0) >= MAX_TRY || basics.has(it.id)) continue;
     if (re && blocked(MODELS[0])) { defer(it, spent.has(MODELS[0]) ? `${MODELS[0]} 429 사용량 다 참` : `${MODELS[0]} 오늘 예산 다 씀 (${PRIMARY_BUDGET}/${PRIMARY_BUDGET})`); continue; }
     try {
       const p = await findPdf(it); if (!p) { fail[it.id] = { ...fail[it.id], n: MAX_TRY, why: '공고문 PDF 를 찾지 못함' }; log(`상세 · ${it.id}: PDF 없음`); continue; }
@@ -235,11 +247,27 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
         const c = compareDetail(old, neu); log(`상세 · ${it.id}: lite↔첫 모델 비교 · ${c.text}`);
         await appendFile(`${dir}_compare.jsonl`, JSON.stringify({ at: nowKst(), id: it.id, same, lite: old.readAt || old.read || '', ...c, text: undefined }) + '\n', 'utf8'); }
       const { d, kept } = mergeDetail(same ? { ...Object.fromEntries(LINE_KEYS.map(k => [k, old[k] || null])), ...pickLists(old) } : null, neu);
-      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, att: p.att, ...d, ...(old?.seq ? { seq: old.seq } : {}) }, null, 1) + '\n', 'utf8');
+      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ id: it.id, v: DETAIL_V, read: nowKst().slice(0, 10), readAt: nowKst(), model, src, att: p.att, ...d, ...(same && old?.notice ? { notice: old.notice } : {}), ...(old?.seq ? { seq: old.seq } : {}) }, null, 1) + '\n', 'utf8');
       have.add(it.id); delete fail[it.id]; made++; re ? madeRe++ : madeNew++; log(`상세 · ${it.id}: ${re ? '다시 ' : ''}읽음 (${model}${old && !same ? ' · 원문이 바뀌어 새로 교체' : ''}${kept.length ? ` · 예전 값 유지: ${kept.join(', ')}` : ''})`);
     } catch (e) {
       const why = scrubKey(e.message); if (e.skip || e.transient) { defer(it, why); continue; } if (e.stop) { stopped = why; log(`상세 · 멈춤: ${why}`); continue; }
       fail[it.id] = { ...fail[it.id], n: (fail[it.id]?.n || 0) + 1, why }; log(`상세 · ${it.id}: 실패 ${fail[it.id].n}회째 (${why})`);
+    }
+  }
+  // 진단용 값: 상세가 있고 진단용 값이 없는 게시판 공고 → 같은 PDF 로 lite 한 번 더 (원문이 바뀌면 위에서 지워져 다시) · 마감 가까운 순 · 한 번에 maxFresh 개 · 3번 실패면 그만
+  let madeNotice = 0;
+  for (const it of items.filter(i => have.has(i.id)).sort(byDue)) {
+    if (!notices || stopped || madeNotice >= maxFresh || !safeId(it.id)) continue;
+    const o = await readJson(`${dir}${it.id}.json`, null); if (!o || o.source === 'api' || o.notice || (o.noticeTry || 0) >= MAX_TRY) continue;
+    try {
+      const p = await findPdf(it); if (!p) continue;
+      const { data } = await askGemini(await downloadPdf(p), p.text, { models: [MODELS[1]], ...(await noticeSpec()) });
+      if (!noticeOk(data)) throw new Error('진단용 값이 모자람');
+      const { noticeTry, noticeWhy, ...rest } = o;
+      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ ...rest, notice: data }, null, 1) + '\n', 'utf8'); madeNotice++; log(`상세 · ${it.id}: 진단용 값 읽음`);
+    } catch (e) {
+      const why = scrubKey(e.message); if (e.skip || e.transient) { log(`상세 · 진단용 값은 다음 갱신에 (${why})`); break; } if (e.stop) { stopped = why; continue; }
+      await writeFile(`${dir}${it.id}.json`, JSON.stringify({ ...o, noticeTry: (o.noticeTry || 0) + 1, noticeWhy: why }, null, 1) + '\n', 'utf8'); log(`상세 · ${it.id}: 진단용 값 실패 (${why})`);
     }
   }
   if (skipped) log(`상세 · ${skipped}건은 다음 갱신에 (사용량·붐빔)`);
@@ -257,7 +285,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, log =
     log(`상세 · 마감까지 미뤄진 공고 ${gone.length}건 → ${deferLog.split('/').slice(-3).join('/')}`); }
   await writeFile(failFile, JSON.stringify(fail, null, 1) + '\n', 'utf8');
   for (const it of items) { it.detail = have.has(it.id); it.dv = it.detail ? await detailStamp(`${dir}${it.id}.json`) : ''; }
-  return { made, madeRe, madeNew, stopped, skipped, have: have.size, use: geminiUse(), today: { day, ...quota.used } };
+  return { made, madeRe, madeNew, madeNotice, stopped, skipped, have: have.size, use: geminiUse(), today: { day, ...quota.used } };
 }
 // 원문 해시(src): PDF 내용 + 게시판 본문의 '글 내용' 줄만 (다음글/이전글 뒤는 버리고, 조회수·등록일·목록·인쇄·공유·첨부 같은 주변 줄은 뺀다)
 // → 같으면 다시 읽은 결과와 합치고, 다르면 교체
