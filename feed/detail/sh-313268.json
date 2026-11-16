@@ -109,7 +109,7 @@
  "contact": "동작구청 주택과 임대주택관리팀 02-820-9384",
  "addr": "서울특별시 동작구 여의대방로24길 113",
  "near": null,
- "noticeTry": 1,
+ "noticeTry": 2,
  "noticeWhy": "진단용 값이 모자람",
  "seq": {
   "start": {
