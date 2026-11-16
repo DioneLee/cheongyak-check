@@ -18,8 +18,9 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:youth-6730-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261116T220000
 DTEND;TZID=Asia/Seoul:20261116T230000
 SUMMARY:[청약] 동묘앞역 청계로벤하임 · 청약 마감 (23:00까
@@ -41,8 +42,9 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6730-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261117T170000
 DTEND;TZID=Asia/Seoul:20261117T180000
 SUMMARY:[청약] 동묘앞역 청계로벤하임 · 서류심사 대상자 
@@ -53,9 +55,24 @@ URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6730&menuN
  o=400008
 END:VEVENT
 BEGIN:VEVENT
-UID:youth-6729-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+UID:youth-6730-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
+DTSTART;TZID=Asia/Seoul:20261117T170000
+DTEND;TZID=Asia/Seoul:20261117T180000
+SUMMARY:[청약] 동묘앞역 청계로벤하임 · 서류심사대상자 
+ 발표
+DESCRIPTION:일정: 서류심사대상자 발표\n공고 원문: https://so
+ co.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6730&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6730&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
+UID:youth-6729-end@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261116T220000
 DTEND;TZID=Asia/Seoul:20261116T230000
 SUMMARY:[청약] 상봉역 세이지움 상봉 · 청약 마감 (23:00까
@@ -77,8 +94,23 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6729-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
+DTSTART;TZID=Asia/Seoul:20261123T170000
+DTEND;TZID=Asia/Seoul:20261123T180000
+SUMMARY:[청약] 상봉역 세이지움 상봉 · 서류심사 대상자 
+ 발표
+DESCRIPTION:일정: 서류심사 대상자 발표\n공고 원문: https://s
+ oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6729&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6729&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
+UID:youth-6729-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261123T170000
 DTEND;TZID=Asia/Seoul:20261123T180000
 SUMMARY:[청약] 상봉역 세이지움 상봉 · 서류심사 대상자 
@@ -90,8 +122,9 @@ URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6729&menuN
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6726-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261116T150000
 DTEND;TZID=Asia/Seoul:20261116T160000
 SUMMARY:[청약] 종암경찰서역(예정) 라온프라이빗 종암 · 
@@ -115,8 +148,23 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6726-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
+DTSTART;TZID=Asia/Seoul:20261117T160000
+DTEND;TZID=Asia/Seoul:20261117T170000
+SUMMARY:[청약] 종암경찰서역(예정) 라온프라이빗 종암 · 
+ 서류심사 대상자 발표
+DESCRIPTION:일정: 서류심사 대상자 발표\n공고 원문: https://s
+ oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6726&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6726&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
+UID:youth-6726-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261117T160000
 DTEND;TZID=Asia/Seoul:20261117T170000
 SUMMARY:[청약] 종암경찰서역(예정) 라온프라이빗 종암 · 
@@ -128,8 +176,9 @@ URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6726&menuN
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6725-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261116T150000
 DTEND;TZID=Asia/Seoul:20261116T160000
 SUMMARY:[청약] 서울대입구역 BX201 · 청약 마감 (16:00까지)
@@ -150,8 +199,9 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6725-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261117T160000
 DTEND;TZID=Asia/Seoul:20261117T170000
 SUMMARY:[청약] 서울대입구역 BX201 · 서류심사 대상자 발표
@@ -161,9 +211,23 @@ URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6725&menuN
  o=400008
 END:VEVENT
 BEGIN:VEVENT
+UID:youth-6725-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
+DTSTART;TZID=Asia/Seoul:20261117T160000
+DTEND;TZID=Asia/Seoul:20261117T170000
+SUMMARY:[청약] 서울대입구역 BX201 · 서류심사 당첨자 발표
+DESCRIPTION:일정: 서류심사 당첨자 발표\n공고 원문: https://s
+ oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6725&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6725&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
 UID:youth-6731-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:1
+LAST-MODIFIED:20261116T030200Z
 DTSTART;VALUE=DATE:20261116
 DTEND;VALUE=DATE:20261118
 SUMMARY:[청약] 상봉역 상봉생활 · 청약 기간 (11/17 18:00 마
@@ -186,8 +250,22 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6731-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
+DTSTART;TZID=Asia/Seoul:20261118T160000
+DTEND;TZID=Asia/Seoul:20261118T170000
+SUMMARY:[청약] 상봉역 상봉생활 · 서류심사 대상자 발표
+DESCRIPTION:일정: 서류심사 대상자 발표\n공고 원문: https://s
+ oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6731&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6731&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
+UID:youth-6731-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030200Z
 DTSTART;TZID=Asia/Seoul:20261118T160000
 DTEND;TZID=Asia/Seoul:20261118T170000
 SUMMARY:[청약] 상봉역 상봉생활 · 서류심사 대상자 발표
@@ -198,8 +276,9 @@ URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6731&menuN
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6728-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:1
+LAST-MODIFIED:20261116T030300Z
 DTSTART;VALUE=DATE:20261116
 DTEND;VALUE=DATE:20261118
 SUMMARY:[청약] 숭곡초교역(예정) 성북펠릭스 · 청약 기간 (
@@ -223,8 +302,9 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6728-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030300Z
 DTSTART;TZID=Asia/Seoul:20261118T170000
 DTEND;TZID=Asia/Seoul:20261118T180000
 SUMMARY:[청약] 숭곡초교역(예정) 성북펠릭스 · 서류심사 
@@ -235,8 +315,22 @@ URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6728&menuN
  o=400008
 END:VEVENT
 BEGIN:VEVENT
+UID:youth-6728-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030300Z
+DTSTART;VALUE=DATE:20261118
+DTEND;VALUE=DATE:20261119
+SUMMARY:[청약] 숭곡초교역(예정) 성북펠릭스 · 서류심사 
+ 대상자 발표
+DESCRIPTION:일정: 서류심사 대상자 발표\n공고 원문: https://s
+ oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6728&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6728&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
 UID:elyes-J_ewjncH3OguPpR-9KveyA-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
 DTSTART;VALUE=DATE:20261117
 DTEND;VALUE=DATE:20261118
@@ -261,8 +355,9 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6732-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:1
+LAST-MODIFIED:20261116T030300Z
 DTSTART;VALUE=DATE:20261116
 DTEND;VALUE=DATE:20261119
 SUMMARY:[청약] 공덕역 e·seo(이서) · 청약 기간 (11/18 23:00 마
@@ -285,8 +380,22 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6732-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030300Z
+DTSTART;TZID=Asia/Seoul:20261119T170000
+DTEND;TZID=Asia/Seoul:20261119T180000
+SUMMARY:[청약] 공덕역 e·seo(이서) · 서류심사 대상자 발표
+DESCRIPTION:일정: 서류심사 대상자 발표\n공고 원문: https://s
+ oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6732&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6732&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
+UID:youth-6732-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030300Z
 DTSTART;TZID=Asia/Seoul:20261119T170000
 DTEND;TZID=Asia/Seoul:20261119T180000
 SUMMARY:[청약] 공덕역 e·seo(이서) · 서류심사 대상자 발표
@@ -297,8 +406,9 @@ URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6732&menuN
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6727-end@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:1
+LAST-MODIFIED:20261116T030300Z
 DTSTART;VALUE=DATE:20261118
 DTEND;VALUE=DATE:20261120
 SUMMARY:[청약] 화곡역 보눔하우스 화곡 · 청약 기간 (11/19 1
@@ -321,8 +431,9 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:youth-6727-announce@dionelee.github.io
-DTSTAMP:20261115T184910Z
+DTSTAMP:20261116T031308Z
 SEQUENCE:0
+LAST-MODIFIED:20261116T030300Z
 DTSTART;TZID=Asia/Seoul:20261120T180000
 DTEND;TZID=Asia/Seoul:20261120T190000
 SUMMARY:[청약] 화곡역 보눔하우스 화곡 · 서류심사 대상자
@@ -331,5 +442,232 @@ DESCRIPTION:일정: 서류심사 대상자 발표\n공고 원문: https://s
  oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6727&menuNo=400008
 URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6727&menuN
  o=400008
+END:VEVENT
+BEGIN:VEVENT
+UID:youth-6727-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030300Z
+DTSTART;TZID=Asia/Seoul:20261120T180000
+DTEND;TZID=Asia/Seoul:20261120T190000
+SUMMARY:[청약] 화곡역 보눔하우스 화곡 · 서류심사 대상자
+  발표
+DESCRIPTION:일정: 서류심사 대상자 발표\n공고 원문: https://s
+ oco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6727&menuNo=400008
+URL:https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6727&menuN
+ o=400008
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-313161-end@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:1
+LAST-MODIFIED:20261116T030300Z
+DTSTART;VALUE=DATE:20261111
+DTEND;VALUE=DATE:20261119
+SUMMARY:[청약] 옥류서원 · 청약 기간 (11/18 마감)
+DESCRIPTION:일정: 청약 2026-11-11 ~ 2026-11-18\n공고 원문: https://
+ www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_i
+ tm_seq=2&seq=313161
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=313161
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:내일 청약 마감 · 옥류서원
+TRIGGER;VALUE=DATE-TIME:20261117T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:3시간 뒤 청약 마감 · 옥류서원
+TRIGGER;VALUE=DATE-TIME:20261118T120000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-312903-end@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030400Z
+DTSTART;VALUE=DATE:20261111
+DTEND;VALUE=DATE:20261112
+SUMMARY:[청약] 특화형 매입임대주택 · 청약 마감
+DESCRIPTION:일정: 서류접수\n공고 원문: https://www.i-sh.co.kr/app
+ /lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=31290
+ 3
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=312903
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:내일 청약 마감 · 특화형 매입임대주택
+TRIGGER;VALUE=DATE-TIME:20261110T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:3시간 뒤 청약 마감 · 특화형 매입임대주택
+TRIGGER;VALUE=DATE-TIME:20261111T120000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-312351-end@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:1
+LAST-MODIFIED:20261116T030400Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261110
+SUMMARY:[청약] 유니버설디자인하우스_수락 · 청약 기간 (11
+ /9 마감)
+DESCRIPTION:일정: 청약 2026-11-02 ~ 2026-11-09\n공고 원문: https://
+ www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_i
+ tm_seq=2&seq=312351
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=312351
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:내일 청약 마감 · 유니버설디자인하우스_수락
+TRIGGER;VALUE=DATE-TIME:20261108T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:3시간 뒤 청약 마감 · 유니버설디자인하우스_수
+ 락
+TRIGGER;VALUE=DATE-TIME:20261109T120000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-312351-announce@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030400Z
+DTSTART;VALUE=DATE:20261110
+DTEND;VALUE=DATE:20261111
+SUMMARY:[청약] 유니버설디자인하우스_수락 · 계약 대상자 
+ 및 예비 대상자 발표
+DESCRIPTION:일정: 계약 대상자 및 예비 대상자 발표\n공고 
+ 원문: https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247
+ /view.do?multi_itm_seq=2&seq=312351
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=312351
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-312053-end@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:1
+LAST-MODIFIED:20261116T030400Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261107
+SUMMARY:[청약] 특화형 매입임대주택(구로구) · 청약 기간 (
+ 11/6 18:00 마감)
+DESCRIPTION:일정: 청약 2026-11-02 ~ 2026-11-06 18:00\n공고 원문: ht
+ tps://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?m
+ ulti_itm_seq=2&seq=312053
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=312053
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:내일 청약 마감 · 특화형 매입임대주택(구로구)
+TRIGGER;VALUE=DATE-TIME:20261105T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:3시간 뒤 청약 마감 · 특화형 매입임대주택(구
+ 로구)
+TRIGGER;VALUE=DATE-TIME:20261106T060000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-312339-end@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:1
+LAST-MODIFIED:20261116T030400Z
+DTSTART;VALUE=DATE:20261109
+DTEND;VALUE=DATE:20261112
+SUMMARY:[청약] 2026년 3차 희망하우징(공공기숙사) 잔여세대
+  · 청약 기간 (11/11 17:00 마감)
+DESCRIPTION:일정: 청약 2026-11-09 ~ 2026-11-11 17:00\n공고 원문: ht
+ tps://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?m
+ ulti_itm_seq=2&seq=312339
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=312339
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:내일 청약 마감 · 2026년 3차 희망하우징(공공기
+ 숙사) 잔여세대
+TRIGGER;VALUE=DATE-TIME:20261110T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:3시간 뒤 청약 마감 · 2026년 3차 희망하우징(공
+ 공기숙사) 잔여세대
+TRIGGER;VALUE=DATE-TIME:20261111T050000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-312339-announce@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030400Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261114
+SUMMARY:[청약] 2026년 3차 희망하우징(공공기숙사) 잔여세대
+  · 서류심사대상자 발표
+DESCRIPTION:일정: 서류심사대상자 발표\n공고 원문: https://ww
+ w.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm
+ _seq=2&seq=312339
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=312339
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-312339-announce-1@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030400Z
+DTSTART;VALUE=DATE:20270126
+DTEND;VALUE=DATE:20270127
+SUMMARY:[청약] 2026년 3차 희망하우징(공공기숙사) 잔여세대
+  · 당첨자 발표
+DESCRIPTION:일정: 당첨자 발표\n공고 원문: https://www.i-sh.co.kr
+ /app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=3
+ 12339
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=312339
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-311987-end@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:1
+LAST-MODIFIED:20261116T030500Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261103
+SUMMARY:[청약] 유니버설디자인하우스_장안 · 청약 기간 (11
+ /2 마감)
+DESCRIPTION:일정: 청약 2026-10-26 ~ 2026-11-02\n공고 원문: https://
+ www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_i
+ tm_seq=2&seq=311987
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=311987
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:내일 청약 마감 · 유니버설디자인하우스_장안
+TRIGGER;VALUE=DATE-TIME:20261101T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:3시간 뒤 청약 마감 · 유니버설디자인하우스_장
+ 안
+TRIGGER;VALUE=DATE-TIME:20261102T120000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:sh-311987-announce@dionelee.github.io
+DTSTAMP:20261116T031308Z
+SEQUENCE:0
+LAST-MODIFIED:20261116T030500Z
+DTSTART;VALUE=DATE:20261103
+DTEND;VALUE=DATE:20261104
+SUMMARY:[청약] 유니버설디자인하우스_장안 · 계약 대상자 
+ 및 예비 대상자 발표
+DESCRIPTION:일정: 계약 대상자 및 예비 대상자 발표\n공고 
+ 원문: https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247
+ /view.do?multi_itm_seq=2&seq=311987
+URL:https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view
+ .do?multi_itm_seq=2&seq=311987
 END:VEVENT
 END:VCALENDAR

@@ -1,0 +1,251 @@
+{
+ "id": "youth-6719",
+ "v": 5,
+ "read": "2026-11-16",
+ "readAt": "2026-11-16 12:02",
+ "model": "gemini-3.5-flash-lite",
+ "src": "475432834ad280a2",
+ "att": "/coHouse/cmmn/file/fileDown.do?atchFileId=05af111b43184ddbad610d03529fa4ec&fileSn=1|민간_261103_송정역_케이제이타워_청년안심주택 최초모집공고문.pdf",
+ "target": "만 19~39세 무주택 청년 및 신혼부부",
+ "eligibility": [
+  "입주자모집공고일 현재 19세 이상 39세 이하인 자 (1986년 11월 04일부터 2007년 11월 03일 사이 출생자)",
+  "모든 계층의 신청자 및 입주 예정 세대원 전부는 무주택 요건 충족",
+  "청년 계층은 미혼, 신혼부부는 혼인 중이거나 입주 전까지 혼인사실 증명 가능",
+  "특별공급 청년 계층은 해당 세대 월평균 소득이 전년도 도시근로자 가구원수별 가구당 월평균 소득의 120% 이하",
+  "특별공급 신혼부부 계층은 세대구성원 모두의 월평균소득 합계가 전년도 도시근로자 가구원수별 가구당 월평균소득의 120% 이하",
+  "자동차 무소유·미운행자 또는 자동차가액 4,542만 원 이내의 자동차 소유·운행자",
+  "청년 본인 자산 가액 2억 5,100만 원 이하, 신혼부부 기준 세대 총 자산 가액 3억 4,500만 원 이하",
+  "청약자, 계약자, 입주자가 모두 동일인이어야 하며 신혼부부의 경우 청약자 명의로 계약 체결"
+ ],
+ "income": "전년도 도시근로자 가구원수별 가구당 월평균 소득의 120% 이하 (특별공급 해당)",
+ "asset": null,
+ "car": null,
+ "supply": [
+  {
+   "type": "21.19 (B TYPE)",
+   "area": null,
+   "units": "19 (특별 11, 일반 8)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "21.26 (A2 TYPE)",
+   "area": null,
+   "units": "1 (특별 0, 일반 1)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "22.05 (C1 TYPE)",
+   "area": null,
+   "units": "10 (특별 0, 일반 10)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "22.13 (A TYPE)",
+   "area": null,
+   "units": "3 (특별 0, 일반 3)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "22.13 (A1 TYPE)",
+   "area": null,
+   "units": "3 (특별 0, 일반 3)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "22.35 (C2 TYPE)",
+   "area": null,
+   "units": "1 (특별 0, 일반 1)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "23.04 (C TYPE)",
+   "area": null,
+   "units": "7 (특별 0, 일반 7)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "29.45 (D TYPE)",
+   "area": null,
+   "units": "2 (특별 0, 일반 2)",
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": "50.19 (E TYPE)",
+   "area": null,
+   "units": "40 (특별 7, 일반 33)",
+   "price": null,
+   "movein": null
+  }
+ ],
+ "schedule": [],
+ "apply": "인터넷 신청: https://kjtower.com",
+ "costs": [],
+ "special": [],
+ "contact": "02-6272-0157",
+ "addr": "서울특별시 강서구 공항동 50-5번지",
+ "near": {
+  "n": "송정역",
+  "exit": "4"
+ },
+ "notice": {
+  "kind": "임대",
+  "name": "송정역 케이제이타워 청년안심주택",
+  "noticeDate": "2026-11-03",
+  "incomeBase": [
+   3813363,
+   5866270,
+   8168429,
+   8802202,
+   9326985
+  ],
+  "rules": {
+   "newlywed": {
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": 34500,
+     "car": 4542,
+     "homeless": "세대",
+     "incomeMax": 120,
+     "incomeRanks": [
+      100,
+      110,
+      120
+     ],
+     "marriageDays": 2555,
+     "preMarried": true,
+     "single": false
+    }
+   },
+   "youth": {
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": 25100,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": 120,
+     "incomeRanks": [
+      100,
+      110,
+      120
+     ],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    }
+   }
+  },
+  "types": [
+   {
+    "area": 47.37,
+    "fee": 14.8,
+    "id": "56",
+    "prices": {
+     "general": [
+      [
+       14300,
+       121
+      ],
+      [
+       19000,
+       104
+      ],
+      [
+       23800,
+       86
+      ]
+     ],
+     "special": [
+      [
+       12000,
+       102
+      ],
+      [
+       16000,
+       88
+      ],
+      [
+       20000,
+       73
+      ]
+     ]
+    },
+    "rooms": 2,
+    "tier": "newlywed",
+    "units": {
+     "general": 33,
+     "special": 7
+    }
+   }
+  ],
+  "addr": "서울특별시 강서구 공항동 50-5",
+  "cite": {
+   "rules": "13"
+  },
+  "city": "서울특별시",
+  "contractPct": 10,
+  "id": "songjung-kj-2026",
+  "incomeExtra": 579278,
+  "notes": [
+   "청년안심주택 공공지원민간임대"
+  ],
+  "parking": 95,
+  "ratios": [
+   30,
+   35,
+   40
+  ],
+  "region": "강서구",
+  "schedule": [
+   {
+    "from": "2026-11-11",
+    "key": "apply",
+    "label": "청약 접수",
+    "to": "2026-11-15"
+   },
+   {
+    "from": "2026-11-17",
+    "key": "winner",
+    "label": "서류심사 대상자 발표",
+    "to": "2026-11-17"
+   },
+   {
+    "from": "2026-11-26",
+    "key": "contract",
+    "label": "계약체결",
+    "to": "2026-11-29"
+   }
+  ],
+  "short": "송정역 케이제이타워",
+  "station": "5호선 송정역",
+  "summary": "송정역 케이제이타워 청년안심주택 공공지원민간임대 입주자 모집",
+  "url": "https://kjtower.com"
+ },
+ "seq": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-11||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-15||23:00"
+  },
+  "announce": {
+   "n": 0,
+   "s": "2026-11-17||17:00"
+  }
+ }
+}

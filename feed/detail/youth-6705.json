@@ -1,0 +1,233 @@
+{
+ "id": "youth-6705",
+ "v": 5,
+ "read": "2026-11-16",
+ "readAt": "2026-11-16 11:59",
+ "model": "gemini-3.5-flash-lite",
+ "src": "f9f1e8058baf04b6",
+ "att": "/coHouse/cmmn/file/fileDown.do?atchFileId=0c9629f4962749799cbb263c1b0ae306&fileSn=1|민간_261022_신림역_최강타워_청년안심주택 추가모집공고문.pdf",
+ "target": "만 19세 이상 39세 이하 무주택 청년",
+ "eligibility": [
+  "입주자모집공고일 기준 만 19세 이상 39세 이하",
+  "신청자 및 입주 예정 세대원 전부 무주택요건 충족",
+  "청약자(당첨자)와 계약자, 입주자(전입자)가 모두 동일인",
+  "자동차(이륜차 포함)를 소유하지 않거나 4,542만원 이하의 차량 소유"
+ ],
+ "income": null,
+ "asset": null,
+ "car": "4,542만원 이하",
+ "supply": [
+  {
+   "type": "42A B1803호",
+   "area": "42A",
+   "units": "1세대",
+   "price": "보증금 98,000,000원 / 월임대료 78.9만원",
+   "movein": "2026.12.18. 이후"
+  }
+ ],
+ "schedule": [
+  {
+   "label": "모집공고일",
+   "date": "2026.10.22."
+  },
+  {
+   "label": "청약신청",
+   "date": "2026.10.23. 10:00 ~ 10.26. 23:00"
+  },
+  {
+   "label": "서류심사 대상자 발표",
+   "date": "2026.10.27. 11:00"
+  },
+  {
+   "label": "당첨자 서류 사본 제출",
+   "date": "~ 2026.10.28."
+  },
+  {
+   "label": "계약체결 및 원본서류제출",
+   "date": "2026.10.28. ~ 11.05. 10:00~17:00"
+  }
+ ],
+ "apply": "네이버폼 신청 (https://naver.me/GprzO4bt)",
+ "costs": [
+  "보증수수료 75% 임대사업자 · 25% 임차인 부담, 임대료와 별도",
+  "개인 사유 등 단지 외 사유로 계약 파기 시 해약금 100만원 부담",
+  "입주자 퇴거 시 고의·과실로 파손된 시설물 원상복구 비용 부담",
+  "입주 후 관리비 및 부대비용 별도 발생"
+ ],
+ "special": [
+  "기존 계약자들은 본 추가모집에 신청할 수 없으며 신청사실 확인 시 탈락",
+  "청약자 명의로 계약 체결 (공동명의 계약 불가)",
+  "세대 당 자동차 1대만 등록하여 사용 가능",
+  "청약신청 페이지의 네이버 청약 아이디 소유자와 청약 신청자 동일해야 함",
+  "특별공급과 일반공급 중 주택형별 1건만 신청 가능 (중복 신청 시 전부 무효)"
+ ],
+ "contact": "02-872-8886",
+ "addr": "서울특별시 관악구 남부순환로 180길 6",
+ "near": {
+  "n": "신림역",
+  "exit": "1"
+ },
+ "notice": {
+  "kind": "임대",
+  "name": "신림역 최강타워 입주자 추가 모집공고",
+  "noticeDate": "2026-10-22",
+  "incomeBase": [
+   381.3,
+   586.6,
+   816.8,
+   880.2,
+   932.7
+  ],
+  "rules": {
+   "newlywed": {
+    "general": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "세대",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": 2555,
+     "preMarried": true,
+     "single": false
+    },
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "세대",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": 2555,
+     "preMarried": true,
+     "single": false
+    }
+   },
+   "youth": {
+    "general": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    },
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    }
+   }
+  },
+  "types": [
+   {
+    "area": 42,
+    "fee": 78.9,
+    "id": "42A",
+    "prices": {
+     "general": [
+      [
+       9800,
+       78.9
+      ]
+     ],
+     "special": []
+    },
+    "rooms": null,
+    "tier": "youth",
+    "units": {
+     "general": 1,
+     "special": null
+    }
+   }
+  ],
+  "addr": "서울특별시 관악구 남부순환로 180길 6",
+  "cite": {
+   "rules": null
+  },
+  "city": "서울",
+  "contractPct": 10,
+  "id": "sillim-gangta워-2026",
+  "incomeExtra": 57.9,
+  "notes": [
+   "청년 및 신혼부부 통합 공급(일반공급)",
+   "기존 계약자분들은 본 추가모집에 신청 불가"
+  ],
+  "parking": null,
+  "ratios": [
+   40
+  ],
+  "region": "관악구",
+  "schedule": [
+   {
+    "from": "2026-10-23",
+    "key": "apply",
+    "label": "청약 신청",
+    "to": "2026-10-26"
+   },
+   {
+    "from": "2026-10-27",
+    "key": "announce",
+    "label": "서류심사 대상자 발표",
+    "to": "2026-10-27"
+   },
+   {
+    "from": "2026-10-28",
+    "key": "contract",
+    "label": "계약체결 및 원본서류제출",
+    "to": "2026-11-05"
+   }
+  ],
+  "short": "신림역 최강타워",
+  "station": "신림역",
+  "summary": "신림역 최강타워 청년안심주택 공공지원민간임대 입주자 추가 모집",
+  "url": "https://naver.me/GprzO4bt"
+ },
+ "seq": {
+  "start": {
+   "n": 0,
+   "s": "2026-10-23||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-10-26||23:00"
+  },
+  "announce": {
+   "n": 0,
+   "s": "2026-10-27||11:00"
+  },
+  "announce-1": {
+   "n": 0,
+   "s": "2026-10-27||11:00"
+  },
+  "docs": {
+   "n": 0,
+   "s": "2026-10-28||"
+  },
+  "contract": {
+   "n": 0,
+   "s": "2026-10-28|2026-11-05|"
+  }
+ }
+}
