@@ -542,10 +542,11 @@ footer p + p { margin-top: 6px; }
   </section>
       <template id="subQm"><i data-qm="sp"><details class="qm"><summary aria-label="특별공급 설명">?</summary><span>신혼부부·청년처럼 조건이 맞는 사람만 따로 뽑는 몫이에요. 소득·자산 기준이 있고 순위대로 뽑아요.</span></details></i><i data-qm="ge"><details class="qm"><summary aria-label="일반공급 설명">?</summary><span>조건(나이·무주택 등)만 맞으면 누구나 신청하는 몫이에요. 추첨으로 뽑아요.</span></details></i><i data-qm="hl"><details class="qm"><summary aria-label="무주택세대구성원 설명">?</summary><span>주민등록등본에 같이 올라 있는 가족 모두가 집이 없다는 뜻이에요.</span></details></i><i data-qm="hh"><details class="qm"><summary aria-label="가구원 수 설명">?</summary><span>등본에 같이 올라 있는 사람 수예요. 부부 2명에 자녀·태아를 더해요.</span></details></i><i data-qm="ri"><details class="qm"><summary aria-label="소득 순위 설명">?</summary><span>특별공급에서 소득이 낮을수록 먼저 뽑혀요. 기준의 100% 이하 1순위, 110% 이하 2순위, 120% 이하 3순위예요.</span></details></i><i data-qm="rr"><details class="qm"><summary aria-label="지역 순위 설명">?</summary><span>사는 곳이나 직장이 그 단지가 있는 구면 1순위, 서울이면 2순위, 그 밖이면 3순위예요.</span></details></i></template>
 </main>
-<script src="lib/feed-tools.js?v=2026-11-16a"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
+<script src="lib/feed-tools.js?v=2026-11-16b"></script><!-- ?v 는 sw.js VERSION 과 같게: 예전 서비스 워커의 저장본(옛 lib)을 쓰지 않게 · check.py 가 확인 -->
 <footer><div class="wrap">
   <p>계산은 이 브라우저 안에서만 해요. 입력한 내 상황(생년월일·소득·자산)과 공고는 이 기기에만 저장되고, 회원가입·서버 저장·방문자 분석은 하지 않아요. 통근 길찾기를 누를 때만 단지·회사 주소를 OpenStreetMap 위치 검색에 보내요. '지도'를 누를 때만 네이버 지도를 불러와요(내 조건은 보내지 않아요). AI 읽기를 쓸 때만 공고문을 Google Gemini로 보내요. 캘린더 파일은 브라우저에서 만들어져요. 관심 공고(★)·'신청 가능' 판정도 이 기기에서만 저장·계산하고 서버로 보내지 않아요. 구독 캘린더(webcal)에는 공고 공개 일정만 들어 있어요.</p>
   <p>공고 출처: 마이홈포털·LH 공공데이터 API, SH·서울 청년안심주택(원문 링크), 롯데건설 엘리스(제목·링크) · 지금은 서울 공고만 보여 줘요 · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a> · <a href="#settings">데이터 백업·옮기기</a></p>
+  <p id="apkLink"><a href="https://github.com/DioneLee/cheongyak-check/releases/latest/download/cheongyak-check.apk">Android 앱 테스트 설치(apk)</a> · Play 스토어 출시 전 테스트판이에요. 설치할 때 휴대폰에서 '출처를 알 수 없는 앱 설치'를 허용해야 하고, 자동 업데이트가 없어 새 버전은 이 링크에서 다시 받아요.</p>
   <p>본 서비스에서 제공하는 실제 월 부담·대출(LTV) 계산 및 청약 자격 판정은 의사결정을 돕기 위한 참고용 시뮬레이션이며 법적·금융적 효력이 없습니다. 실제 청약 신청 및 부동산 계약 전에는 반드시 모집공고문 원본과 금융기관을 통해 최종 확인하시기 바랍니다.</p>
 </div></footer>
 <script>
@@ -1531,7 +1532,7 @@ async function aiRead(kind, payload, signal) {   // kind 'notice'(payload = PDF 
 }
 const aiErrText = r => ({ cancel: '취소했어요.', busy: 'AI 서버가 지금 붐벼요. 잠시 후 다시 누르거나 직접 붙여넣기로 할 수 있어요.', timeout: '1분 안에 읽지 못했어요. 다시 해 보거나 직접 붙여넣기로 할 수 있어요.', 429: '오늘 AI 사용량이 다 찼어요. 직접 붙여넣기로 할 수 있어요.',
   0: 'AI에 연결하지 못했어요. 인터넷을 확인하거나 직접 붙여넣기로 할 수 있어요.', 403: 'Gemini 키가 맞지 않아요. AI 설정에서 확인하거나 직접 붙여넣기로 할 수 있어요.',
-  413: '너무 커요. PDF는 5MB, 글은 5,000자까지 보낼 수 있어요.', 503: '지금은 AI 읽기가 꺼져 있어요. 직접 붙여넣기로 해 주세요.' })[r] || 'AI가 읽지 못했어요. 직접 붙여넣기로 할 수 있어요.';
+  413: '너무 커요. PDF는 15MB, 글은 5,000자까지 보낼 수 있어요.', 503: '지금은 AI 읽기가 꺼져 있어요. 직접 붙여넣기로 해 주세요.' })[r] || 'AI가 읽지 못했어요. 직접 붙여넣기로 할 수 있어요.';
 // 버튼을 눌러야 보낸다 · 1분 지나면 끊고, 읽는 중엔 취소 · 끝나면(성공·실패·취소) '읽는 중' 문구를 바꾼다
 async function aiRun(box, kind, payload, done) {
   const q = x => box.querySelector(x), go = q('[data-go]'), stop = q('[data-stop]'), msg = q('[data-msg]');
@@ -1564,7 +1565,7 @@ $('#subManual').addEventListener('click', () => { showSteps(); $('#subSteps').sc
 $('#subPdf').addEventListener('change', e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return; const mb = (f.size / 1048576).toFixed(1);
   if (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name)) { $('#subMsg').textContent = 'PDF 파일만 읽을 수 있어요.'; return; }
-  if (f.size > 5 * 1048576) { $('#subMsg').textContent = `파일이 ${mb}MB예요. AI로는 5MB까지 보낼 수 있어요. 직접 붙여넣기로 해 주세요.`; showSteps(); return; }
+  if (f.size > 15 * 1048576) { $('#subMsg').textContent = `파일이 ${mb}MB예요. AI로는 15MB까지 보낼 수 있어요. 직접 붙여넣기로 해 주세요.`; showSteps(); return; }
   const rd = new FileReader();
   rd.onload = () => aiAsk($('#subSend'), 'notice', String(rd.result).split(',')[1], `${f.name} (${mb}MB)`, t => {
     const p = $('#subPaste'); p.value = t; pasteAi = true; p.dispatchEvent(new Event('input'));
@@ -1704,6 +1705,7 @@ function renderImport() {   // github.io 에서는 SUITABLE HOME 저장 데이�
   $('#importBanner').hidden = !show; $('#importHint').hidden = !show; $('#importLinks').hidden = can || hasMine(state);
 }
 function renderMoved() { $('#movedBar').hidden = !ON_OLD || IS_APP; $('#movedGo').href = NEW_SITE; }
+$('#apkLink').hidden = IS_APP; // 앱 안에서는 설치 링크가 필요 없음
 $('#importGo').addEventListener('click', () => { const o = oldData(); if (o) takeFrom(o, 'SUITABLE HOME'); });
 $('#importNo').addEventListener('click', () => { importOff = true; render(); });
 // 내보내기 파일의 브라우저 저장 값(공고 ★ · 단지 ★ · 본 공고 · 약관 확인) — 불러올 때는 지금 것과 합친다

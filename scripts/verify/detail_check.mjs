@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 process.env.GEMINI_API_KEY = 'TESTGEMINIKEY-only'; process.env.DETAIL_TEST = '1'; delete process.env.GITHUB_ACTIONS; delete process.env.DETAIL_ALLOW_REAL; process.env.DETAIL_RETRY_MS = '20';   // 503 뒤 기다림 (실제 30초)
 process.env.DETAIL_GAP_PRIMARY_MS = '40'; process.env.DETAIL_GAP_LITE_MS = '15';   // 호출 간격 (실제 13초 · 5초)
+process.env.SCRAPE_GAP_MS = '30';   // 게시판 요청 간격 (실제 3000)
 process.env.DETAIL_DEFER_LOG = join(tmpdir(), `detail-check-${process.pid}-미룸.md`);   // 저장소의 docs/work/미룸.md 는 건드리지 않음
 const D = await import('../detail.mjs');
 let ok = 0; const t = async (name, fn) => { await fn(); ok++; console.log('OK', name); };
@@ -15,6 +16,7 @@ let gem = () => new Response(JSON.stringify({ candidates: [{ content: { parts: [
 globalThis.fetch = async (url, o = {}) => {
   const u = new URL(url); calls.push({ u, o, at: Date.now() });
   if (u.hostname === 'generativelanguage.googleapis.com') return gem(u, o);
+  if (u.hostname === 'blocked.example' && u.pathname === '/robots.txt') return new Response('User-agent: *\nDisallow: /app/');
   if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do') && VIEW === 'throw') throw new TypeError('fetch failed');
   if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do') && VIEW === '404') return new Response('없음', { status: 404 });
   if (u.hostname === 'soco.seoul.go.kr' && u.pathname.endsWith('view.do')) return new Response(`<a href="/coHouse/cmmn/file/fileDown.do?atchFileId=${ATT}&amp;fileSn=2">배치도.jpg</a><a href="/coHouse/cmmn/file/fileDown.do?atchFileId=${ATT}&amp;fileSn=1" >${ATTNAME}</a>`);
@@ -23,6 +25,8 @@ globalThis.fetch = async (url, o = {}) => {
   if (u.hostname === 'www.myhome.go.kr' && u.pathname.includes('DetailView')) return new Response(`<a href="javascript:fnDownFile('1a18', '1')" >\n (영등포)행복주택 모집 공고문.pdf</a>`);
   return new Response(PDFNOW);
 };
+await t('robots.txt 가 막은 게시판은 받지 않음 (실패로 셈 · 미룸 아님)', async () => { const e = await D.findPdf({ id: 'sh-77', title: 'x', url: 'https://blocked.example/app/view.do?seq=1' }).catch(e => e);
+  assert.match(e.message, /robots\.txt 가/); assert.ok(!e.transient); assert.ok(!calls.some(c => c.u.hostname === 'blocked.example' && c.u.pathname !== '/robots.txt')); });
 await t('PDF 찾기: 청년안심주택 · 공고문 PDF 를 고름', async () => assert.equal((await D.findPdf({ id: 'youth-1', title: 'x', url: 'https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=1' })).url, 'https://soco.seoul.go.kr/coHouse/cmmn/file/fileDown.do?atchFileId=aa&fileSn=1'));
 await t('PDF 찾기: SH 미리보기 주소 → 원본 PDF', async () => { assert.equal((await D.findPdf({ id: 'sh-9', title: 'x', url: 'https://www.i-sh.co.kr/app/x/view.do?seq=9' })).url, 'https://www.i-sh.co.kr/app/upload/bbs/GS0401/2026/10/2026_abc.pdf');
   assert.ok(calls.some(c => c.u.pathname.endsWith('htmlConverter.do') && c.u.searchParams.get('file_seq') === '2')); });

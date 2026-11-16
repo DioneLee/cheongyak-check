@@ -281,6 +281,7 @@ ok('확인하면 불러온 내용으로', fw.eval('state.subs.notices.length') =
   ok('새 주소에서 불러오기: 내 조건·공고·돈 조건 + ★·약관 확인이 이 기기에 저장', fw.eval('state.subs.notices.length') === 1 && fw.eval('state.settings.myCash') === 3000 && JSON.parse(fw.localStorage.getItem('cheongyak-check-stars')).includes('lh-x1') && JSON.parse(fw.localStorage.getItem('cheongyak-check-danji-stars')).includes('x-elyes-mullae') && JSON.parse(fw.localStorage.getItem('cheongyak-check-danji-seen')).includes('elyes-z') && fw.localStorage.getItem('cheongyak-check-terms') === fw.eval('TERMS_V')); }
 { const qq = s => d.querySelector(s);
   ok('localhost·새 주소에서는 "주소가 바뀌었어요" 띠 없음', qq('#movedBar').hidden);
+  ok('Android 테스트 설치(apk) 링크: 웹에서 보임 · GitHub Releases 최신판 고정 주소 · 앱 안에서는 숨김(IS_APP)', !qq('#apkLink').hidden && qq('#apkLink a').href === 'https://github.com/DioneLee/cheongyak-check/releases/latest/download/cheongyak-check.apk' && fw.eval("typeof renderMoved") === 'function' && d.documentElement.innerHTML.includes("$('#apkLink').hidden = IS_APP"), qq('#apkLink a')?.href);
   fw.eval('ON_OLD = true; renderMoved()');
   const mb = qq('#movedBar'), go = qq('#movedGo');
   ok('예전 주소(github.io): 모든 탭 위 "주소가 바뀌었어요" · 새 주소 링크 · 내 조건 옮기기 · "캘린더 구독도 새 주소로 다시 해 주세요"', !mb.hidden && !mb.closest('[data-tab]') && go.href === fw.eval('NEW_SITE') && go.href === 'https://seoul-cheongyak-check.pages.dev/' && mb.textContent.includes('캘린더 구독도 새 주소로 다시 해 주세요') && !!qq('#movedExport'));

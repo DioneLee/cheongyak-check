@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { dirname } from 'node:path';
 import { addrFrom, nearFrom } from './enrich.mjs';
+import { polite, robotsOk } from './net.mjs';
 
 export const DETAIL_DIR = fileURLToPath(new URL('../feed/detail/', import.meta.url));
 export const DEFER_LOG = process.env.DETAIL_DEFER_LOG || fileURLToPath(new URL('../docs/work/미룸.md', import.meta.url));   // 검사는 DETAIL_DEFER_LOG 로 임시 파일에   // 마감까지 계속 미뤄진 공고 (인수인계 문서에서 링크)
@@ -41,8 +42,9 @@ export const DETAIL_SCHEMA = { type: 'OBJECT', required: ['target', 'eligibility
 export function geminiKey() { return (process.env.GEMINI_API_KEY || '').trim(); }
 export const scrubKey = m => { const k = geminiKey(); let s = String(m ?? ''); if (k.length >= 8) s = s.split(k).join('***'); return s.replace(/(key=)[^&\s]+/gi, '$1***'); };
 const abs = (base, p) => new URL(p.replace(/&amp;/g, '&'), base).href;
-async function get(url, opt = {}) {
-  let r; try { r = await fetch(url, { ...opt, headers: { ...UA, ...(opt.headers || {}) }, signal: AbortSignal.timeout(30000) }); }
+async function get(url, opt = {}) {   // 게시판·공고문 받기: 같은 사이트 3초 간격 + robots.txt 확인 (feed.mjs 와 기록 공유 · 2026-11-16 게시판 상세 다시 켬)
+  try { await robotsOk(url); } catch (e) { throw Object.assign(e, { transient: /확인하지 못해/.test(e.message) }); }   // 막힘 = 실패 · 확인 못 함 = 미룸
+  let r; try { r = await polite(url, { ...opt, headers: { ...UA, ...(opt.headers || {}) }, signal: AbortSignal.timeout(30000) }); }
   catch (e) { throw Object.assign(new Error(`${e?.name === 'TimeoutError' ? '시간 초과' : '연결 실패'} (${e?.cause?.code || e?.name || 'network'})`), { transient: true }); }
   if (!r.ok) throw Object.assign(new Error(`HTTP ${r.status}`), { transient: r.status === 429 || r.status >= 500 }); return r;   // 404·403 은 실패로 센다
 }

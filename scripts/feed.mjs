@@ -239,8 +239,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   tagDanji(raw, dj);
   for (const b of bad) console.error('실패 ·', b);
   if (bad.length === got.length) { console.error('모든 출처가 실패해서 피드를 그대로 둡니다.'); process.exit(1); }
-  // 게시판(SH·청년안심) 공고는 상세(본문·공고문 PDF 읽기)를 만들지 않음 → 예전 상세 파일은 addDetails 가 지움
-  const feed = buildFeed(raw), det = await addDetails(feed.items.filter(i => !/^(sh|youth|elyes)-/.test(i.id)), { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) });
+  // 게시판(SH·청년안심) 공고도 상세(공고문 PDF → Gemini 요약)를 만든다 (2026-11-16 다시 켬 · 요약만 저장, PDF 원본은 저장 안 함) · 엘리스는 공고문 경로 없음
+  const feed = buildFeed(raw), det = await addDetails(feed.items.filter(i => !/^elyes-/.test(i.id)), { basics: new Map(raw.filter(r => r.basic).map(r => [r.feedId, r.basic])) });
   await enrich(feed.items); const cal = await writeCalendar(feed.items); const wrote = await writeFeed(feed);   // 일정·자격 기준·주택형·역 거리 + 구독 캘린더
   // 단지 정보는 하루 1번 (지금 접수 중인 공고가 있는 단지 = 청약중) · 실패해도 공고 피드는 그대로
   try { const r = await refreshDanji({ openIds: new Set(feed.items.filter(i => i.danji && !i.closed && i.to && i.to >= todayKst()).map(i => i.danji)) }); console.log('단지 ·', r.note); }
