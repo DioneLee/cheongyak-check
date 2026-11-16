@@ -43,6 +43,9 @@ export async function noticeSpec() {
 // 사이트 noticeProblems 와 같은 최소 조건 (사이트가 쓰기 전에 한 번 더 검사)
 export const noticeOk = n => !!n && n.kind === '임대' && /^\d{4}-\d{2}-\d{2}$/.test(n.noticeDate || '') && Array.isArray(n.incomeBase) && n.incomeBase.length > 0 && !!n.rules
   && Array.isArray(n.types) && n.types.length > 0 && n.types.every(x => +x?.area > 0 && (x?.prices?.special?.length || x?.prices?.general?.length));
+// 소득 기준표를 만원으로 (AI 가 원·천원으로 읽어 오는 일이 있음 · 사이트 normNotice 의 toMan 과 같은 규칙)
+const toMan = (v, lim) => { if (!Number.isFinite(+v)) return v; v = +v; while (v >= lim) v /= 10; return +v.toFixed(4); };
+export function manUnits(n) { if (Array.isArray(n.incomeBase)) n.incomeBase = n.incomeBase.map(v => toMan(v, 2000)); if (n.incomeExtra != null) n.incomeExtra = toMan(n.incomeExtra, 200); return n; }
 const S = { type: 'STRING', nullable: true }, SA = { type: 'ARRAY', items: { type: 'STRING' } };
 export const DETAIL_SCHEMA = { type: 'OBJECT', required: ['target', 'eligibility'], properties: {
   target: S, eligibility: SA, income: S, asset: S, car: S,
@@ -263,6 +266,7 @@ export async function addDetails(items, { dir = DETAIL_DIR, max = MAX_NEW, maxFr
       const p = await findPdf(it); if (!p) continue;
       const { data } = await askGemini(await downloadPdf(p), p.text, { models: [MODELS[1]], ...(await noticeSpec()) });
       if (!noticeOk(data)) throw new Error('진단용 값이 모자람');
+      manUnits(data);
       const { noticeTry, noticeWhy, ...rest } = o;
       await writeFile(`${dir}${it.id}.json`, JSON.stringify({ ...rest, notice: data }, null, 1) + '\n', 'utf8'); madeNotice++; log(`상세 · ${it.id}: 진단용 값 읽음`);
     } catch (e) {

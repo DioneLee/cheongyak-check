@@ -238,6 +238,7 @@ await rm(od, { recursive: true });
 const NOTICE = { kind: '임대', name: '가 공고', noticeDate: '2026-11-10', incomeBase: [381.3, 586.6], rules: { youth: { special: { age: [19, 39] } } }, types: [{ id: '16A', tier: 'youth', area: 16.5, prices: { special: [[3000, 45]] } }] };
 await t('진단용 값 지시문은 index.html 의 AI_SPEC 그대로 (SUB_PROMPT · NOTICE_SCHEMA)', async () => { const s = await D.noticeSpec(), h = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
   assert.ok(h.includes(s.prompt.slice(0, 200))); assert.deepEqual(s.schema.required, ['kind', 'name', 'noticeDate', 'incomeBase', 'rules', 'types']); });
+await t('소득 기준표 단위 맞추기(manUnits): 원·천원 → 만원', async () => { const n = D.manUnits({ incomeBase: [3813363, 4576.036, 880.2], incomeExtra: 579278 }); assert.deepEqual(n.incomeBase, [381.3363, 457.6036, 880.2]); assert.equal(n.incomeExtra, 57.9278); });
 await t('진단용 값 검사(noticeOk): 주택형·소득 기준·가격이 있어야 함', async () => { assert.ok(D.noticeOk(NOTICE)); assert.ok(!D.noticeOk(FULL)); assert.ok(!D.noticeOk({ ...NOTICE, types: [{ id: 'a', area: 16 }] })); assert.ok(!D.noticeOk({ ...NOTICE, incomeBase: [] })); });
 { const nd = await mkdtemp(join(tmpdir(), 'det-n-')) + '/', nrd = async id => JSON.parse(await readFile(nd + id + '.json', 'utf8')), isN = o => String(o?.body).includes('임대주택 입주자 모집공고문을 읽고');
   let nbad = false; gem = (u, o) => J(isN(o) ? (nbad ? { ...NOTICE, types: [] } : NOTICE) : FULL);

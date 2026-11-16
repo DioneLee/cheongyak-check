@@ -6,7 +6,7 @@
 
 - **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
 
-- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-15h`)
+- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-16g`)
 - 단지 탭 `#danji` + 단지 직접 공고(엘리스) (2026-11-09, `docs/design/단지.md`): 메뉴 "공고/단지/진단/설정" · 서울 청년안심주택 100곳 + 그 밖의 서울 민간임대 6곳 · 관심 단지 ★ → 새 공고 띠(앱은 알림)
 - 지도로 보기 (2026-11-13 · 건물 점 2026-11-14, `docs/design/지도로_보기.md`): 공고·단지 탭 '목록 / 지도' · 멀리 = 구별 동그라미(겹치지 않게 밀어 놓음) · 가까이 = 건물 점(단지 좌표 `danji.json` ll — 서울시·엘리스 단지 화면 지도 값) · 단지와 연결 안 된 공고(SH·LH)는 가까운 역 핀
   - 지도 엔진 (2026-11-15): 웹은 **네이버 지도**(Client ID `NAVER_ID` 공개 값 · 네이버 클라우드 콘솔 앱 'cheongyak-check' · 등록 주소 pages.dev·github.io·localhost · 월 600만·하루 20만 한도) · Android 앱도 네이버 · iOS 앱(bridge.js 가 CC_MAP_ENGINE='leaflet')과 네이버 안 될 때(스크립트 막힘·인증 실패)는 Leaflet+OSM · CSP script-src 에 nrbe.pstatic.net(https 지도 모양)도 필요 · 네이버 사용 기록(nelo)은 CSP 로 막음 · 새 주소에서 쓰려면 네이버 콘솔에 주소 추가
@@ -74,6 +74,7 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
 - [ ] 특이사항 점수: 한부모·부모 밑 세대·부모님 재정 등 공고별 가점을 판정에 넣을지 (실사용자 질문, 2026-11-06)
 - [ ] 상세 다음 단계: '이 공고로 내 조건 진단' 버튼(판정용 공고 JSON 도 읽기) · LH 공고문 PDF 찾기
 - [ ] 신청 가능 배지: '기타 조건'(청약자=계약자 동일인 등)은 판정하지 않음 → 이대로 둘지
+- [ ] 진단용 값(AI)의 소득 기준표: 단위는 자동 보정(원·천원 → 만원, 2026-11-16) · 100% 대신 120% 표를 읽은 경우(sh-312351 의심)는 못 잡음 → 기준표가 2026 고시값(1인 381.3 · 2인 586.6 …)과 크게 다르면 경고할지
 - [ ] 정정공고 표시는 이름이 겹칠 때만 잡힘 (피드 제목과 공고 이름이 많이 다르면 놓침)
 - [x] SUITABLE HOME 에서 청약 화면을 뺌 (2026-11-09, SUITABLE HOME v28) · 메뉴 링크 '청약 체크 ↗' 는 2027-01-20 까지 유지
 - [ ] lite↔첫 모델 비교 · 상세 다음 단계는 게시판 상세를 안 만들면서 대상이 거의 없어짐 → 계속할지 결정
