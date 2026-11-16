@@ -102,6 +102,109 @@
    "s": "2026-10-29||17:00"
   }
  },
- "noticeTry": 2,
- "noticeWhy": "진단용 값이 모자람"
+ "notice": {
+  "kind": "임대",
+  "name": "구로디지털단지역 유벤투스240 예비입주자 모집공고",
+  "noticeDate": "2026-10-22",
+  "incomeBase": [
+   381.3,
+   586.6,
+   816.8,
+   880.2,
+   932.7
+  ],
+  "rules": {
+   "newlywed": null,
+   "youth": {
+    "general": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    },
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": null,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": null,
+     "incomeRanks": [],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    }
+   }
+  },
+  "types": [
+   {
+    "area": 16.56,
+    "fee": null,
+    "id": "17",
+    "prices": {
+     "general": [
+      [
+       7100,
+       51
+      ],
+      [
+       9000,
+       42
+      ],
+      [
+       10000,
+       38
+      ]
+     ],
+     "special": []
+    },
+    "rooms": null,
+    "tier": "youth",
+    "units": {
+     "general": null,
+     "special": null
+    }
+   }
+  ],
+  "addr": "서울특별시 관악구 신림로 1644-3",
+  "cite": {
+   "rules": null
+  },
+  "city": "서울",
+  "contractPct": null,
+  "id": "juventus-240-2026-10",
+  "incomeExtra": 57.9,
+  "notes": [
+   "1인 1주택형(타입)에 대해서만 청약 신청이 가능하며 중복 신청할 경우 청약이 모두 탈락 처리됩니다."
+  ],
+  "parking": null,
+  "ratios": [
+   40,
+   50,
+   60
+  ],
+  "region": "관악구",
+  "schedule": [
+   {
+    "from": "2026-10-26",
+    "key": "apply",
+    "label": "청약 신청",
+    "to": "2026-10-28"
+   }
+  ],
+  "short": "유벤투스240",
+  "station": "구로디지털단지역",
+  "summary": "구로디지털단지역 유벤투스240 공공지원민간임대 예비입주자 모집",
+  "url": "https://www.juventus240.com"
+ }
 }
