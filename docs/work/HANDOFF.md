@@ -7,6 +7,9 @@
 - **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
 
 - 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-16g`)
+- Android 테스트 설치 (2026-11-16): 사이트 맨 아래 'Android 앱 테스트 설치(apk)' → `https://github.com/DioneLee/cheongyak-check/releases/latest/download/cheongyak-check.apk` (앱 안에서는 숨김) · 지금 최신 **v1.2-test** (versionCode 3) · 새 판은 `assembleRelease` → 사용자가 apksigner 로 서명(업로드 키, 비밀번호는 사용자만) → `gh release create vX-test --latest` → 받은 파일 해시 확인 · Play 로 넘어갈 때는 지우고 다시 설치(Play 앱 서명)
+- 의견 보내기 (2026-11-16): 맨 아래 '의견 보내기 ↗' = Google 설문지 '청약 체크 의견 보내기'(질문 4개 · 이메일 수집 안 함 · 편집 docs.google.com/forms/d/1Rs6vrFEVn95s89XMGOBLqPD8J2a1u5AV8LswEMGdKyM/edit) · 커뮤니티 게시판(간편 로그인)은 의견이 모인 뒤 다시 논의
+- 민간 임대 단지 카드 '공고 보기 ↗' = 그 단지의 접수 중 공고 원문(새 창) · 관심 공고 캘린더 버튼은 목록/지도 줄 오른쪽 (2026-11-16)
 - 단지 탭 `#danji` + 단지 직접 공고(엘리스) (2026-11-09, `docs/design/단지.md`): 메뉴 "공고/단지/진단/설정" · 서울 청년안심주택 100곳 + 그 밖의 서울 민간임대 6곳 · 관심 단지 ★ → 새 공고 띠(앱은 알림)
 - 지도로 보기 (2026-11-13 · 건물 점 2026-11-14, `docs/design/지도로_보기.md`): 공고·단지 탭 '목록 / 지도' · 멀리 = 구별 동그라미(겹치지 않게 밀어 놓음) · 가까이 = 건물 점(단지 좌표 `danji.json` ll — 서울시·엘리스 단지 화면 지도 값) · 단지와 연결 안 된 공고(SH·LH)는 가까운 역 핀
   - 지도 엔진 (2026-11-15): 웹은 **네이버 지도**(Client ID `NAVER_ID` 공개 값 · 네이버 클라우드 콘솔 앱 'cheongyak-check' · 등록 주소 pages.dev·github.io·localhost · 월 600만·하루 20만 한도) · Android 앱도 네이버 · iOS 앱(bridge.js 가 CC_MAP_ENGINE='leaflet')과 네이버 안 될 때(스크립트 막힘·인증 실패)는 Leaflet+OSM · CSP script-src 에 nrbe.pstatic.net(https 지도 모양)도 필요 · 네이버 사용 기록(nelo)은 CSP 로 막음 · 새 주소에서 쓰려면 네이버 콘솔에 주소 추가
@@ -20,7 +23,7 @@
   - 게시판(SH·청년안심)은 목록에서 제목·기관·날짜·원문 링크 · 2026-11-16 부터 공고문 PDF 를 받아 Gemini 요약을 상세로 저장(PDF 원본은 저장 안 함) · 같은 사이트 요청 3초 간격 · 실행마다 robots.txt 확인 · 실제 실행 하루 약 4번
 - 공고 상세(신청 조건 요약): 마이홈은 API 기본 정보 · SH·청년안심은 공고문 PDF → Gemini 요약 + 진단용 값(notice → '진단 →' 바로 결과) (2026-11-16, `docs/design/공고상세.md`) · 엘리스·LH 는 공고문 경로 없음 → '공고 원문 보기'
 - 사용자 PDF 올리기(진단용 값 읽기): 15MB 까지 (사이트 + sjcu Worker `MAX_PDF` · 2026-11-16, Worker 배포는 사용자)
-- 검사 (2026-11-15 마지막): `python scripts/verify/check.py` 165/165 (판정 동등성은 기준 파일 있는 PC 에서만) · `map_check.py` 32 · `csp_check.py` 7 · `node scripts/verify/tools_check.mjs` 33 · `detail_check.mjs` 57 · `feed_check.mjs` 25 · `danji_check.mjs` 30 · `app_bridge_check.mjs` 32 · `cron_check.mjs` 5 · `sw_redirect_check.mjs` 10 (Pages 308 + 서비스 워커)
+- 검사 (2026-11-16 마지막: check 190/190 · detail 65/65 · sjcu worker_check 14/14) (2026-11-15): `python scripts/verify/check.py` 165/165 (판정 동등성은 기준 파일 있는 PC 에서만) · `map_check.py` 32 · `csp_check.py` 7 · `node scripts/verify/tools_check.mjs` 33 · `detail_check.mjs` 57 · `feed_check.mjs` 25 · `danji_check.mjs` 30 · `app_bridge_check.mjs` 32 · `cron_check.mjs` 5 · `sw_redirect_check.mjs` 10 (Pages 308 + 서비스 워커)
   - 한글 Windows 에서는 `PYTHONUTF8=1 PYTHONIOENCODING=utf-8` 를 붙여야 출력이 안 깨지고 check.py 가 cp949 오류를 안 냄
   - 판정 동등성 검사는 `../sjcu/index_v28_backup.html`(SUITABLE HOME 마지막 청약 버전)이 있는 PC 에서만 돈다
   - check.py 의 파일 불러오기·PDF 항목이 가끔 타이밍으로 NG → 다시 돌리면 OK
@@ -78,6 +81,9 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
 - [ ] 정정공고 표시는 이름이 겹칠 때만 잡힘 (피드 제목과 공고 이름이 많이 다르면 놓침)
 - [x] SUITABLE HOME 에서 청약 화면을 뺌 (2026-11-09, SUITABLE HOME v28) · 메뉴 링크 '청약 체크 ↗' 는 2027-01-20 까지 유지
 - [ ] lite↔첫 모델 비교 · 상세 다음 단계는 게시판 상세를 안 만들면서 대상이 거의 없어짐 → 계속할지 결정
+- [x] 진단용 값 못 읽은 3건(youth-6706·6720·6729)은 다음 갱신에서 읽힘 (2026-11-17 확인) · sh-313268(홀몸어르신 주택)은 신혼·청년 대상이 아니라 3번 실패 후 멈춤 — 정상
+- [ ] 커뮤니티 게시판(카카오·구글·네이버 간편 로그인): 설문 의견이 모인 뒤 다시 논의 (`/grill-me` 로 시작)
+- [ ] Play 개발자 계정(25달러) 생기면 aab 올리기 · versionCode 는 계속 올림(지금 3)
 - [ ] GH_TOKEN 만료(2027-11-06) 전에 새 토큰
 
 ## 사고와 교훈 (다시 안 겪게)
