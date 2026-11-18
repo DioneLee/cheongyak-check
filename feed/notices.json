@@ -1,281 +1,7 @@
 {
- "updated": "2026-11-18T18:49:10+09:00",
+ "updated": "2026-11-19T00:49:07+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
-  {
-   "id": "youth-6702",
-   "org": "청년안심",
-   "title": "[민간임대] 길동역 길동생활(B동) 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-15",
-   "from": "2026-10-19",
-   "to": "2026-10-20",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6702&menuNo=400008",
-   "time": "18:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000563",
-   "detail": true,
-   "dv": "087806d738",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-19"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-20",
-     "t": "18:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-21",
-     "t": "14:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-21",
-     "t": "14:00"
-    },
-    {
-     "k": "docs",
-     "l": "당첨자 서류 제출",
-     "d": "2026-10-21",
-     "e": "2026-10-28"
-    },
-    {
-     "k": "contract",
-     "l": "계약체결 및 원본서류제출",
-     "d": "2026-10-26",
-     "e": "2026-10-30"
-    }
-   ],
-   "cr": {
-    "c": [
-     {
-      "k": "age",
-      "min": 19,
-      "max": 39
-     },
-     {
-      "k": "homeless",
-      "scope": "세대"
-     },
-     {
-      "k": "car",
-      "max": 4542
-     },
-     {
-      "k": "asset",
-      "by": {
-       "youth": 25100,
-       "all": 4542
-      }
-     },
-     {
-      "k": "income",
-      "pct": 120,
-      "cond": true
-     }
-    ],
-    "x": 0
-   },
-   "ty": [
-    {
-     "n": "17A형 B-314 (특별공급)",
-     "a": 17.11,
-     "dep": 4300,
-     "rent": 42
-    },
-    {
-     "n": "17A형 B-411 (일반공급)",
-     "a": 17.11,
-     "dep": 4900,
-     "rent": 48
-    },
-    {
-     "n": "17A형 B-516 (일반공급)",
-     "a": 17.11,
-     "dep": 4900,
-     "rent": 48
-    },
-    {
-     "n": "17A형 B-1117 (일반공급)",
-     "a": 17.11,
-     "dep": 4900,
-     "rent": 48
-    },
-    {
-     "n": "17A형 B-1802 (일반공급)",
-     "a": 17.11,
-     "dep": 4900,
-     "rent": 48
-    },
-    {
-     "n": "17B형 B-305 (일반공급)",
-     "a": 17.01,
-     "dep": 4900,
-     "rent": 47
-    },
-    {
-     "n": "17B형 B-1605 (일반공급)",
-     "a": 17.01,
-     "dep": 4900,
-     "rent": 47
-    }
-   ],
-   "st": {
-    "n": "길동역",
-    "m": null,
-    "w": null,
-    "src": "name",
-    "exit": "1"
-   },
-   "lm": "2026-11-16 17:50"
-  },
-  {
-   "id": "youth-6701",
-   "org": "청년안심",
-   "title": "[민간임대] 길동역 길동생활(A동) 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-15",
-   "from": "2026-10-19",
-   "to": "2026-10-20",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6701&menuNo=400008",
-   "time": "18:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000562",
-   "detail": true,
-   "dv": "4a648d1fe8",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-19"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-20",
-     "t": "18:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-21",
-     "t": "14:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-10-21",
-     "t": "14:00"
-    },
-    {
-     "k": "docs",
-     "l": "당첨자 서류 제출",
-     "d": "2026-10-21",
-     "e": "2026-10-28"
-    },
-    {
-     "k": "contract",
-     "l": "계약체결 및 원본서류제출",
-     "d": "2026-10-26",
-     "e": "2026-10-30"
-    }
-   ],
-   "cr": {
-    "c": [
-     {
-      "k": "age",
-      "min": 19,
-      "max": 39
-     },
-     {
-      "k": "homeless",
-      "scope": "세대"
-     },
-     {
-      "k": "car",
-      "max": 4542
-     },
-     {
-      "k": "asset",
-      "by": {
-       "youth": 25100,
-       "newlywed": 34500
-      }
-     },
-     {
-      "k": "income",
-      "pct": 120,
-      "cond": true
-     }
-    ],
-    "x": 4
-   },
-   "ty": [
-    {
-     "n": "특별공급 36A A-1011호",
-     "a": 36.49,
-     "dep": 9400,
-     "rent": null
-    },
-    {
-     "n": "일반공급 17A A-404호",
-     "a": 17.11,
-     "dep": 6500,
-     "rent": null
-    },
-    {
-     "n": "일반공급 17A A-605호",
-     "a": 17.11,
-     "dep": 6500,
-     "rent": null
-    },
-    {
-     "n": "일반공급 17A A-1206호",
-     "a": 17.11,
-     "dep": 6500,
-     "rent": null
-    },
-    {
-     "n": "일반공급 17A A-1415호",
-     "a": 17.11,
-     "dep": 6500,
-     "rent": null
-    },
-    {
-     "n": "일반공급 34A A-1409호",
-     "a": 34.05,
-     "dep": 8900,
-     "rent": null
-    },
-    {
-     "n": "일반공급 36A A-414호",
-     "a": 36.49,
-     "dep": 10600,
-     "rent": null
-    }
-   ],
-   "st": {
-    "n": "길동역",
-    "m": null,
-    "w": null,
-    "src": "name",
-    "exit": "1"
-   },
-   "lm": "2026-11-16 17:51"
-  },
   {
    "id": "elyes-ZRQqYIezpoegIOefDerbnA",
    "org": "엘리스",
@@ -1446,7 +1172,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "a591d4f02a",
+   "dv": "1d970c89fb",
    "ev": [
     {
      "k": "start",
@@ -2551,7 +2277,7 @@
    "closed": false,
    "danji": "20000503",
    "detail": true,
-   "dv": "12db303185",
+   "dv": "6c38bbf134",
    "ev": [
     {
      "k": "end",
@@ -2634,7 +2360,7 @@
    "closed": false,
    "danji": "20000586",
    "detail": true,
-   "dv": "7f1b961d56",
+   "dv": "311ca2aa72",
    "ev": [
     {
      "k": "end",
@@ -2718,7 +2444,7 @@
    "closed": false,
    "danji": "20000577",
    "detail": true,
-   "dv": "64617fb452",
+   "dv": "14a8d8da4e",
    "ev": [
     {
      "k": "end",
@@ -2802,7 +2528,7 @@
    "closed": false,
    "danji": "20000386",
    "detail": true,
-   "dv": "00aec4e8ce",
+   "dv": "69b5a15c63",
    "ev": [
     {
      "k": "end",
@@ -2885,7 +2611,7 @@
    "closed": false,
    "danji": "20000603",
    "detail": true,
-   "dv": "e60d6c405c",
+   "dv": "3c38347fec",
    "ev": [
     {
      "k": "start",
@@ -2998,7 +2724,7 @@
    "closed": false,
    "danji": "20000560",
    "detail": true,
-   "dv": "28922a18cb",
+   "dv": "d9b441b1f4",
    "ev": [
     {
      "k": "start",
@@ -3116,7 +2842,7 @@
    "closed": false,
    "danji": "20000611",
    "detail": true,
-   "dv": "fa72f1a01d",
+   "dv": "179a5b0585",
    "ev": [
     {
      "k": "start",
@@ -3247,7 +2973,7 @@
    "closed": false,
    "danji": "20000356",
    "detail": true,
-   "dv": "8bc39955cc",
+   "dv": "8a79f24e43",
    "ev": [
     {
      "k": "start",
@@ -3348,7 +3074,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "f58d838674",
+   "dv": "f1f5119042",
    "ev": [
     {
      "k": "start",
@@ -3457,7 +3183,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "e9927c746c",
+   "dv": "bb9502b3f4",
    "ev": [
     {
      "k": "start",
@@ -3587,7 +3313,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "e3a4c4393c",
+   "dv": "cb4132792b",
    "ev": [
     {
      "k": "start",
@@ -3650,7 +3376,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "b6967ebd60",
+   "dv": "6afd06146a",
    "ev": [
     {
      "k": "end",
@@ -3741,7 +3467,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "ba3be95cb4",
+   "dv": "7031b928ff",
    "ev": [
     {
      "k": "start",
@@ -3831,7 +3557,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "97b0f71086",
+   "dv": "5629db1441",
    "ev": [
     {
      "k": "start",
@@ -3883,111 +3609,6 @@
     }
    ],
    "st": null,
-   "lm": "2026-11-16 12:04"
-  },
-  {
-   "id": "sh-312339",
-   "org": "SH",
-   "title": "2026년 3차 희망하우징(공공기숙사) 잔여세대 입주자 모집공고(2026. 10. 28.)",
-   "region": "서울",
-   "kind": "희망하우징",
-   "posted": "2026-10-28",
-   "from": "",
-   "to": "",
-   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312339",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": true,
-   "dv": "eea9cfbd75",
-   "ev": [
-    {
-     "k": "start",
-     "l": "신청접수",
-     "d": "2026-11-09",
-     "t": "10:00"
-    },
-    {
-     "k": "end",
-     "l": "신청접수",
-     "d": "2026-11-11",
-     "t": "17:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사대상자 발표",
-     "d": "2026-11-13"
-    },
-    {
-     "k": "docs",
-     "l": "심사서류 제출",
-     "d": "2026-11-18",
-     "e": "2026-11-20"
-    },
-    {
-     "k": "announce",
-     "l": "당첨자 발표",
-     "d": "2027-01-26"
-    },
-    {
-     "k": "contract",
-     "l": "계약체결",
-     "d": "2027-02-02",
-     "e": "2027-02-04"
-    }
-   ],
-   "cr": {
-    "c": [
-     {
-      "k": "homeless",
-      "scope": "본인"
-     },
-     {
-      "k": "single"
-     },
-     {
-      "k": "region",
-      "work": true
-     },
-     {
-      "k": "car",
-      "max": 4542,
-      "cond": true
-     },
-     {
-      "k": "asset",
-      "max": 34500,
-      "cond": true
-     },
-     {
-      "k": "income",
-      "pct": 100
-     }
-    ],
-    "x": 3
-   },
-   "ty": [
-    {
-     "n": "내발산 공공기숙사 원룸형 1인실 (장애인/일반)",
-     "a": 23.3,
-     "dep": null,
-     "rent": 12
-    },
-    {
-     "n": "정릉 희망하우징 원룸형 1인실",
-     "a": 14.2,
-     "dep": 109,
-     "rent": 9.09
-    }
-   ],
-   "st": {
-    "n": "마곡역",
-    "m": 686,
-    "w": 13,
-    "src": "geo"
-   },
    "lm": "2026-11-16 12:04"
   }
  ]
