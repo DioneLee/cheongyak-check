@@ -55,6 +55,7 @@ GitHub Actions '공고 피드' (매시 :17 schedule + Cloudflare Worker 매시 :
 - **index.html 인라인 스크립트를 고치면 `python scripts/csp.py --write`** (`_headers` CSP 해시 · check.py 가 다르면 NG) · 브라우저 확인 `python scripts/verify/csp_check.py`
 - `lib/` 를 바꾸면 sw.js VERSION 을 올리고 index.html 의 `lib/feed-tools.js?v=` 도 같은 값으로 (check.py 가 확인)
 - push 전에 항상 `git pull --rebase origin main` (Actions 가 피드 커밋을 자주 올림)
+- Claude Code 훅 (2026-11-18, `.claude/settings.json` → `.claude/hooks/guard.py`): 커밋 전 check.py 정적 검사 · Co-Authored-By 막음 · push 전 origin/main 이 HEAD 에 들어 있는지 확인 → 어기면 명령을 막고 이유를 돌려줌 · 끄기·보기는 `/hooks`
 
 ## 저장소 밖에 있는 설정
 
