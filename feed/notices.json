@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20T00:49:13+09:00",
+ "updated": "2026-11-20T06:49:14+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -404,7 +404,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "e17db6e60e",
+   "dv": "99b721b338",
    "ev": [
     {
      "k": "start",
@@ -1592,7 +1592,7 @@
    "closed": false,
    "danji": "20000586",
    "detail": true,
-   "dv": "2244c9c36c",
+   "dv": "eeb48f05b3",
    "ev": [
     {
      "k": "end",
@@ -1676,7 +1676,7 @@
    "closed": false,
    "danji": "20000577",
    "detail": true,
-   "dv": "fa2da08100",
+   "dv": "6f46b1cd60",
    "ev": [
     {
      "k": "end",
@@ -1998,7 +1998,7 @@
    "closed": false,
    "danji": "20000560",
    "detail": true,
-   "dv": "7a0cdae009",
+   "dv": "6a9094fa30",
    "ev": [
     {
      "k": "start",
@@ -2116,7 +2116,7 @@
    "closed": false,
    "danji": "20000611",
    "detail": true,
-   "dv": "a58c366c83",
+   "dv": "fbe684dfa5",
    "ev": [
     {
      "k": "start",
@@ -2382,7 +2382,7 @@
    "closed": false,
    "danji": "20000591",
    "detail": true,
-   "dv": "ad83c52f32",
+   "dv": "b0f658f3d4",
    "ev": [
     {
      "k": "end",
@@ -2465,7 +2465,7 @@
    "closed": false,
    "danji": "20000503",
    "detail": true,
-   "dv": "1ddfa87c71",
+   "dv": "7e996fc8ef",
    "ev": [
     {
      "k": "end",
@@ -2548,7 +2548,7 @@
    "closed": false,
    "danji": "20000366",
    "detail": true,
-   "dv": "d36c02197d",
+   "dv": "43180a6f3d",
    "ev": [
     {
      "k": "end",
@@ -2637,7 +2637,7 @@
    "closed": false,
    "danji": "20000599",
    "detail": true,
-   "dv": "a052f4c21e",
+   "dv": "8a0fbe9a0a",
    "ev": [
     {
      "k": "end",
@@ -2716,7 +2716,7 @@
    "closed": false,
    "danji": "20000363",
    "detail": true,
-   "dv": "1d9f5c109a",
+   "dv": "4abc6a125f",
    "ev": [
     {
      "k": "end",
@@ -2806,7 +2806,7 @@
    "closed": false,
    "danji": "20000418",
    "detail": true,
-   "dv": "1cfc5ec948",
+   "dv": "d5f74bb5d8",
    "ev": [
     {
      "k": "end",
@@ -2900,7 +2900,7 @@
    "closed": false,
    "danji": "20000580",
    "detail": true,
-   "dv": "114ae51de4",
+   "dv": "f10ca48cd9",
    "ev": [
     {
      "k": "start",
@@ -2989,7 +2989,7 @@
    "closed": false,
    "danji": "20000571",
    "detail": true,
-   "dv": "cc2906e1b4",
+   "dv": "a0e7c404dd",
    "ev": [
     {
      "k": "start",
@@ -3093,7 +3093,7 @@
    "closed": false,
    "danji": "20000588",
    "detail": true,
-   "dv": "e20c8ab5b1",
+   "dv": "a69dc1fe7d",
    "ev": [
     {
      "k": "start",
@@ -3187,7 +3187,7 @@
    "closed": false,
    "danji": "20000419",
    "detail": true,
-   "dv": "9c186e097f",
+   "dv": "acff010d4c",
    "ev": [
     {
      "k": "end",
@@ -3304,7 +3304,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "abfa6e61e6",
+   "dv": "06c05a1653",
    "ev": [
     {
      "k": "start",
@@ -3454,7 +3454,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "a6ff2e7a94",
+   "dv": "f9c093560d",
    "ev": [
     {
      "k": "start",
@@ -3555,7 +3555,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "ca9e6b5735",
+   "dv": "66483a7f29",
    "ev": [
     {
      "k": "start",
@@ -3684,7 +3684,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "12d885f1fd",
+   "dv": "bbf99cad08",
    "ev": [
     {
      "k": "start",
@@ -4062,7 +4062,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "cffb7b262a",
+   "dv": "c8464f3d2e",
    "ev": [
     {
      "k": "start",
@@ -4125,7 +4125,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "4b225123da",
+   "dv": "f3fd4c24b2",
    "ev": [
     {
      "k": "end",
@@ -4216,7 +4216,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "1f9530b536",
+   "dv": "4611d29122",
    "ev": [
     {
      "k": "start",
@@ -4306,7 +4306,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "4bdf2a702c",
+   "dv": "af9b7770fc",
    "ev": [
     {
      "k": "start",
