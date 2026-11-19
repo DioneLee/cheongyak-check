@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://seoul-cheongyak-check.pages.dev/sitemap.xml
