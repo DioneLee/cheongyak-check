@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-19T18:49:13+09:00",
+ "updated": "2026-11-20T00:49:13+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -404,7 +404,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "ace322b103",
+   "dv": "e17db6e60e",
    "ev": [
     {
      "k": "start",
@@ -1509,7 +1509,7 @@
    "closed": false,
    "danji": "20000503",
    "detail": true,
-   "dv": "1311529904",
+   "dv": "8c0b257014",
    "ev": [
     {
      "k": "end",
@@ -1525,13 +1525,13 @@
     },
     {
      "k": "announce",
-     "l": "서류심사대상자 발표",
+     "l": "서류심사 대상자 발표",
      "d": "2026-11-17",
      "t": "17:00"
     },
     {
      "k": "docs",
-     "l": "당첨자 서류사본 제출",
+     "l": "당첨자 서류 사본 제출(이메일)",
      "d": "2026-11-18"
     },
     {
@@ -1574,7 +1574,7 @@
     "src": "name",
     "exit": "3"
    },
-   "lm": "2026-11-16 12:02"
+   "lm": "2026-11-20 00:52"
   },
   {
    "id": "youth-6729",
@@ -1592,7 +1592,7 @@
    "closed": false,
    "danji": "20000586",
    "detail": true,
-   "dv": "3d1ef17491",
+   "dv": "2244c9c36c",
    "ev": [
     {
      "k": "end",
@@ -1676,7 +1676,7 @@
    "closed": false,
    "danji": "20000577",
    "detail": true,
-   "dv": "5c18cf0674",
+   "dv": "fa2da08100",
    "ev": [
     {
      "k": "end",
@@ -1998,7 +1998,7 @@
    "closed": false,
    "danji": "20000560",
    "detail": true,
-   "dv": "43ce1374bf",
+   "dv": "7a0cdae009",
    "ev": [
     {
      "k": "start",
@@ -2116,7 +2116,7 @@
    "closed": false,
    "danji": "20000611",
    "detail": true,
-   "dv": "bf7fb12b9c",
+   "dv": "a58c366c83",
    "ev": [
     {
      "k": "start",
@@ -2382,7 +2382,7 @@
    "closed": false,
    "danji": "20000591",
    "detail": true,
-   "dv": "34dff17dfd",
+   "dv": "ad83c52f32",
    "ev": [
     {
      "k": "end",
@@ -2465,7 +2465,7 @@
    "closed": false,
    "danji": "20000503",
    "detail": true,
-   "dv": "c27e40fa6a",
+   "dv": "1ddfa87c71",
    "ev": [
     {
      "k": "end",
@@ -2548,7 +2548,7 @@
    "closed": false,
    "danji": "20000366",
    "detail": true,
-   "dv": "2a146a54ff",
+   "dv": "d36c02197d",
    "ev": [
     {
      "k": "end",
@@ -2637,7 +2637,7 @@
    "closed": false,
    "danji": "20000599",
    "detail": true,
-   "dv": "f28a0fedfd",
+   "dv": "a052f4c21e",
    "ev": [
     {
      "k": "end",
@@ -2716,7 +2716,7 @@
    "closed": false,
    "danji": "20000363",
    "detail": true,
-   "dv": "7909653c81",
+   "dv": "1d9f5c109a",
    "ev": [
     {
      "k": "end",
@@ -2806,7 +2806,7 @@
    "closed": false,
    "danji": "20000418",
    "detail": true,
-   "dv": "975f06baf1",
+   "dv": "1cfc5ec948",
    "ev": [
     {
      "k": "end",
@@ -2900,7 +2900,7 @@
    "closed": false,
    "danji": "20000580",
    "detail": true,
-   "dv": "c5b28990eb",
+   "dv": "114ae51de4",
    "ev": [
     {
      "k": "start",
@@ -2989,7 +2989,7 @@
    "closed": false,
    "danji": "20000571",
    "detail": true,
-   "dv": "8ed92ac36f",
+   "dv": "cc2906e1b4",
    "ev": [
     {
      "k": "start",
@@ -3093,7 +3093,7 @@
    "closed": false,
    "danji": "20000588",
    "detail": true,
-   "dv": "89756edc4a",
+   "dv": "e20c8ab5b1",
    "ev": [
     {
      "k": "start",
@@ -3187,7 +3187,7 @@
    "closed": false,
    "danji": "20000419",
    "detail": true,
-   "dv": "7a43ca2fe9",
+   "dv": "9c186e097f",
    "ev": [
     {
      "k": "end",
@@ -3304,7 +3304,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "e1bcf72781",
+   "dv": "abfa6e61e6",
    "ev": [
     {
      "k": "start",
@@ -3454,7 +3454,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "4a9b3f1cd8",
+   "dv": "a6ff2e7a94",
    "ev": [
     {
      "k": "start",
@@ -3555,7 +3555,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "31d83a2c73",
+   "dv": "ca9e6b5735",
    "ev": [
     {
      "k": "start",
@@ -3684,7 +3684,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "6cbf04ee20",
+   "dv": "12d885f1fd",
    "ev": [
     {
      "k": "start",
@@ -4062,7 +4062,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "a06643c3d3",
+   "dv": "cffb7b262a",
    "ev": [
     {
      "k": "start",
@@ -4125,7 +4125,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "e5978be5a1",
+   "dv": "4b225123da",
    "ev": [
     {
      "k": "end",
@@ -4216,7 +4216,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "3d06ff5403",
+   "dv": "1f9530b536",
    "ev": [
     {
      "k": "start",
@@ -4306,7 +4306,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "747a4b4c32",
+   "dv": "4bdf2a702c",
    "ev": [
     {
      "k": "start",
