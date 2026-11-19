@@ -9,8 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ["index.html", "terms.html", "privacy.html"]
-SCRIPT_HOSTS = ["https://cdnjs.cloudflare.com", "oapi.map.naver.com", "nrbe.map.naver.net", "nrbe.pstatic.net"]   # 이 사이트(lib/feed-tools.js) + 지도(Leaflet · 네이버 지도 maps.js·인증 / 지도 모양(JSONP: http 는 nrbe.map.naver.net · https 는 nrbe.pstatic.net — 로컬 http 검사로는 https 쪽이 안 보임, 2026-11-15 배포 뒤 확인), 지도를 열 때만 · 네이버는 페이지와 같은 http/https 로 불러서 scheme 없이) · 글꼴 CSS 는 style 이라 따로 안 막음 · 네이버 사용 기록(nelo)은 connect-src 에 안 넣어 막음
-CONNECT = ["https://suitable-home-ai.demolee.workers.dev", "https://generativelanguage.googleapis.com", "https://nominatim.openstreetmap.org"]   # AI Worker · 내 키(고급 설정) · 주소 검색 · 피드는 이 사이트(self)
+SCRIPT_HOSTS = ["https://cdnjs.cloudflare.com", "oapi.map.naver.com", "nrbe.map.naver.net", "nrbe.pstatic.net", "https://static.cloudflareinsights.com"]   # 이 사이트(lib/feed-tools.js) + 지도(Leaflet · 네이버 지도 maps.js·인증 / 지도 모양(JSONP: http 는 nrbe.map.naver.net · https 는 nrbe.pstatic.net — 로컬 http 검사로는 https 쪽이 안 보임, 2026-11-15 배포 뒤 확인), 지도를 열 때만 · 네이버는 페이지와 같은 http/https 로 불러서 scheme 없이) · 글꼴 CSS 는 style 이라 따로 안 막음 · 네이버 사용 기록(nelo)은 connect-src 에 안 넣어 막음
+CONNECT = ["https://suitable-home-ai.demolee.workers.dev", "https://generativelanguage.googleapis.com", "https://nominatim.openstreetmap.org", "https://cloudflareinsights.com"]   # AI Worker · 내 키(고급 설정) · 주소 검색 · 피드는 이 사이트(self) · Cloudflare Web Analytics(beacon.min.js · 수집 주소)
 
 def inline_hashes():
     out = []
