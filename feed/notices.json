@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-19T06:49:03+09:00",
+ "updated": "2026-11-19T12:49:02+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -1172,7 +1172,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "9b78dca808",
+   "dv": "d7b73b73a0",
    "ev": [
     {
      "k": "start",
@@ -2277,7 +2277,7 @@
    "closed": false,
    "danji": "20000503",
    "detail": true,
-   "dv": "9fc4844b2e",
+   "dv": "c87d3fff27",
    "ev": [
     {
      "k": "end",
@@ -2360,7 +2360,7 @@
    "closed": false,
    "danji": "20000586",
    "detail": true,
-   "dv": "4f1f31d5d2",
+   "dv": "54c4904303",
    "ev": [
     {
      "k": "end",
@@ -2444,7 +2444,7 @@
    "closed": false,
    "danji": "20000577",
    "detail": true,
-   "dv": "980699c0bd",
+   "dv": "12c7848dad",
    "ev": [
     {
      "k": "end",
@@ -2528,7 +2528,7 @@
    "closed": false,
    "danji": "20000386",
    "detail": true,
-   "dv": "911c5fe904",
+   "dv": "cf488cde4c",
    "ev": [
     {
      "k": "end",
@@ -2611,7 +2611,7 @@
    "closed": false,
    "danji": "20000603",
    "detail": true,
-   "dv": "aa94819dde",
+   "dv": "de91813c76",
    "ev": [
     {
      "k": "start",
@@ -2724,7 +2724,7 @@
    "closed": false,
    "danji": "20000560",
    "detail": true,
-   "dv": "3127b068a0",
+   "dv": "05b4e5eab4",
    "ev": [
     {
      "k": "start",
@@ -2842,7 +2842,7 @@
    "closed": false,
    "danji": "20000611",
    "detail": true,
-   "dv": "8cefb6ebc9",
+   "dv": "5723731d6b",
    "ev": [
     {
      "k": "start",
@@ -2973,7 +2973,7 @@
    "closed": false,
    "danji": "20000356",
    "detail": true,
-   "dv": "8c9781b6c2",
+   "dv": "02c8681dcc",
    "ev": [
     {
      "k": "start",
@@ -3059,6 +3059,160 @@
    "lm": "2026-11-16 12:03"
   },
   {
+   "id": "lh-2015122300021109",
+   "org": "LH",
+   "title": "2026년 서울특별시 영구임대주택 예비입주자 모집",
+   "region": "서울",
+   "kind": "영구임대",
+   "posted": "2026-11-19",
+   "from": "",
+   "to": "2026-12-04",
+   "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancInfo.do?panId=2015122300021109&ccrCnntSysDsCd=03&uppAisTpCd=06&aisTpCd=09&mi=1026",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-12-04"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": null,
+   "lm": ""
+  },
+  {
+   "id": "sh-313537",
+   "org": "SH",
+   "title": "2026년 영구임대주택 예비입주자 모집 공고",
+   "region": "서울",
+   "kind": "영구임대",
+   "posted": "2026-11-19",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=313537",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "61779a2ff6",
+   "ev": [
+    {
+     "k": "start",
+     "l": "신청기간",
+     "d": "2026-11-30"
+    },
+    {
+     "k": "end",
+     "l": "신청기간",
+     "d": "2026-12-04"
+    },
+    {
+     "k": "announce",
+     "l": "예비입주자선정 발표",
+     "d": "2027-03-25",
+     "t": "16:00"
+    }
+   ],
+   "cr": {
+    "c": [
+     {
+      "k": "homeless",
+      "scope": "세대"
+     },
+     {
+      "k": "region",
+      "work": false
+     },
+     {
+      "k": "car",
+      "max": 4542
+     },
+     {
+      "k": "asset",
+      "max": 24500
+     },
+     {
+      "k": "income",
+      "pct": 90
+     }
+    ],
+    "x": 3
+   },
+   "ty": [
+    {
+     "n": "대치1 25타입",
+     "a": 25,
+     "dep": 170,
+     "rent": 4.19
+    },
+    {
+     "n": "대치1 33타입",
+     "a": 33,
+     "dep": 223,
+     "rent": 5.47
+    },
+    {
+     "n": "세곡2-3 49타입",
+     "a": 49,
+     "dep": 460,
+     "rent": 9.17
+    },
+    {
+     "n": "세곡2-4 49타입",
+     "a": 49,
+     "dep": 460,
+     "rent": 9.17
+    },
+    {
+     "n": "수서1 25타입",
+     "a": 25,
+     "dep": 171,
+     "rent": 4.22
+    },
+    {
+     "n": "수서1 33타입",
+     "a": 33,
+     "dep": 228,
+     "rent": 5.62
+    },
+    {
+     "n": "수서6 23타입",
+     "a": 23,
+     "dep": 161,
+     "rent": 3.97
+    },
+    {
+     "n": "가양4 24타입",
+     "a": 24,
+     "dep": 165,
+     "rent": 4.09
+    },
+    {
+     "n": "방화2-1 24타입",
+     "a": 24,
+     "dep": 167,
+     "rent": 3.97
+    },
+    {
+     "n": "방화2-1 30타입",
+     "a": 30,
+     "dep": 214,
+     "rent": 5.09
+    }
+   ],
+   "st": null,
+   "lm": "2026-11-19 12:50"
+  },
+  {
    "id": "sh-313424",
    "org": "SH",
    "title": "2026년 마포구 신혼부부,청년(수요자맞춤형)주택 잔여세대 입주자 모집 공고",
@@ -3074,7 +3228,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "b57908d973",
+   "dv": "8eec60f35d",
    "ev": [
     {
      "k": "start",
@@ -3183,7 +3337,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "66c02f4d89",
+   "dv": "6cac9d2c7b",
    "ev": [
     {
      "k": "start",
@@ -3313,7 +3467,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "85325d53d7",
+   "dv": "a06643c3d3",
    "ev": [
     {
      "k": "start",
@@ -3376,7 +3530,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "484dd99ea5",
+   "dv": "e5978be5a1",
    "ev": [
     {
      "k": "end",
@@ -3467,7 +3621,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "95eb7186cc",
+   "dv": "3d06ff5403",
    "ev": [
     {
      "k": "start",
@@ -3557,7 +3711,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "04f83ea1d4",
+   "dv": "747a4b4c32",
    "ev": [
     {
      "k": "start",
