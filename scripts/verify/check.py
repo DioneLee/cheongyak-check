@@ -1,7 +1,7 @@
 """청약 체크 자동 검사 — 임시 Chrome 프로필 + localhost 테스트 서버 (실제 저장 데이터와 섞이지 않음)
 
 사용: python scripts/verify/check.py            (서버는 이 스크립트가 띄우고 끝나면 끈다)
-  1) 정적 검사: 기존 저장 키에 쓰기 없음 · API 키 없음 · 방문자 분석 도구 없음 · sw.js VERSION
+  1) 정적 검사: 기존 저장 키에 쓰기 없음 · API 키 없음 · 광고·외부 추적 코드 없음 · sw.js VERSION
   2) 기능 (PC 1280): 첫 화면 · 2단 · 질문 · 예시 공고 · 아코디언 · 문구 · 저장 · 피드 5개 · AI PDF 읽기 · 내보내기/불러오기
   3) 휴대폰 390: 첫 화면 · 가로 넘침 · 같은 저장 공간 가져오기(원본 그대로) · SUITABLE HOME 파일 불러오기
   4) 판정 동등성: 같은 내 상황을 SUITABLE HOME 마지막 청약 버전(../sjcu/index_v28_backup.html)과 이 사이트에 넣고 결과 글자 비교 (시나리오 7 × 신혼부부·청년)
@@ -34,7 +34,7 @@ ok("네이버 지도 Client ID 는 index.html 한 곳 · Client Secret 없음", 
 _swv = re.search(r"VERSION = 'cheongyak-check-([\w-]+)'", (REPO / "sw.js").read_text(encoding="utf-8")).group(1)
 ok("lib/feed-tools.js?v= 가 sw.js VERSION 과 같음 (배포 직후 옛 lib 가 섞이지 않게)", f'lib/feed-tools.js?v={_swv}"' in src, _swv)
 ok("맨 아래 '의견 보내기 ↗' = Google 설문지 (새 창) · 개인정보처리방침에 같은 설명", re.search(r'<a href="https://docs\.google\.com/forms/d/e/[\w-]+/viewform" target="_blank" rel="noopener noreferrer">의견 보내기 ↗</a>', src) is not None and "의견 보내기" in (REPO / "privacy.html").read_text(encoding="utf-8"))
-ok("방문자 분석·광고 도구 없음", not re.search(r"googletagmanager|gtag\(|google-analytics|clarity\.ms|hotjar|mixpanel|amplitude|plausible", src))
+ok("광고·외부 추적 코드 없음 (Cloudflare 방문 수 제외)", not re.search(r"googletagmanager|gtag\(|google-analytics|clarity\.ms|hotjar|mixpanel|amplitude|plausible", src))
 try:
     changed = subprocess.run(["git", "-C", str(REPO), "diff", "--name-only", "HEAD"], capture_output=True, text=True).stdout.split()
     ok("index.html·아이콘·예시를 바꿨으면 sw.js VERSION 도 바꿈", not any(c.startswith(("index.html", "icons/", "samples/", "manifest", "lib/")) for c in changed) or "sw.js" in changed, changed)

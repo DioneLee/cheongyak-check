@@ -5,7 +5,7 @@ SUITABLE HOME(https://dionelee.github.io/suitable-home/)의 청약 화면을 따
 
 - 주소: https://seoul-cheongyak-check.pages.dev/ (Cloudflare Pages · 2026-11-12 옮김) · 예전 주소 https://dionelee.github.io/cheongyak-check/ 도 당분간 열림('주소가 바뀌었어요' 띠 · 구독 캘린더 계속 갱신)
 - 단일 `index.html` + CDN(Pretendard)만 · 빌드 없음
-- 입력(생년월일·소득·자산)은 이 기기 localStorage `cheongyak-check-v1` 에만. 회원가입·서버 저장·방문자 분석 없음
+- 입력(생년월일·소득·자산)은 이 기기 localStorage `cheongyak-check-v1` 에만. 회원가입·서버 저장 없음. 웹사이트 방문 수만 쿠키 없는 Cloudflare Web Analytics로 집계(페이지 주소·들어온 경로·브라우저·기기·국가 정도, 입력 정보는 안 보냄)
 - 지역: **서울 공고만** (피드·공고 추가·가져오기 모두)
 - 유형: 신혼부부 · 청년(미혼). 일반·생애최초는 "준비 중" 표시만
 
