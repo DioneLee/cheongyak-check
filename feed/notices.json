@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20T06:49:14+09:00",
+ "updated": "2026-11-20T12:49:11+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -404,7 +404,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "99b721b338",
+   "dv": "681ceca1ad",
    "ev": [
     {
      "k": "start",
@@ -1592,7 +1592,7 @@
    "closed": false,
    "danji": "20000586",
    "detail": true,
-   "dv": "eeb48f05b3",
+   "dv": "7efddad212",
    "ev": [
     {
      "k": "end",
@@ -1676,7 +1676,7 @@
    "closed": false,
    "danji": "20000577",
    "detail": true,
-   "dv": "6f46b1cd60",
+   "dv": "686fb031b6",
    "ev": [
     {
      "k": "end",
@@ -1998,7 +1998,7 @@
    "closed": false,
    "danji": "20000560",
    "detail": true,
-   "dv": "6a9094fa30",
+   "dv": "709fd4d4ca",
    "ev": [
     {
      "k": "start",
@@ -2116,7 +2116,7 @@
    "closed": false,
    "danji": "20000611",
    "detail": true,
-   "dv": "fbe684dfa5",
+   "dv": "0523716da2",
    "ev": [
     {
      "k": "start",
@@ -2382,7 +2382,7 @@
    "closed": false,
    "danji": "20000591",
    "detail": true,
-   "dv": "b0f658f3d4",
+   "dv": "ac15005ba9",
    "ev": [
     {
      "k": "end",
@@ -2465,7 +2465,7 @@
    "closed": false,
    "danji": "20000503",
    "detail": true,
-   "dv": "7e996fc8ef",
+   "dv": "48afec0f36",
    "ev": [
     {
      "k": "end",
@@ -2548,7 +2548,7 @@
    "closed": false,
    "danji": "20000366",
    "detail": true,
-   "dv": "43180a6f3d",
+   "dv": "2e6e69e8ee",
    "ev": [
     {
      "k": "end",
@@ -2637,7 +2637,7 @@
    "closed": false,
    "danji": "20000599",
    "detail": true,
-   "dv": "8a0fbe9a0a",
+   "dv": "2253aa40ec",
    "ev": [
     {
      "k": "end",
@@ -2716,7 +2716,7 @@
    "closed": false,
    "danji": "20000363",
    "detail": true,
-   "dv": "4abc6a125f",
+   "dv": "5b01554826",
    "ev": [
     {
      "k": "end",
@@ -2806,7 +2806,7 @@
    "closed": false,
    "danji": "20000418",
    "detail": true,
-   "dv": "d5f74bb5d8",
+   "dv": "5c87875443",
    "ev": [
     {
      "k": "end",
@@ -2900,7 +2900,7 @@
    "closed": false,
    "danji": "20000580",
    "detail": true,
-   "dv": "f10ca48cd9",
+   "dv": "fa07abf0ec",
    "ev": [
     {
      "k": "start",
@@ -2989,7 +2989,7 @@
    "closed": false,
    "danji": "20000571",
    "detail": true,
-   "dv": "a0e7c404dd",
+   "dv": "6f048d519b",
    "ev": [
     {
      "k": "start",
@@ -3093,7 +3093,7 @@
    "closed": false,
    "danji": "20000588",
    "detail": true,
-   "dv": "a69dc1fe7d",
+   "dv": "d2f8d02430",
    "ev": [
     {
      "k": "start",
@@ -3187,7 +3187,7 @@
    "closed": false,
    "danji": "20000419",
    "detail": true,
-   "dv": "acff010d4c",
+   "dv": "12fb05ed56",
    "ev": [
     {
      "k": "end",
@@ -3304,7 +3304,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "06c05a1653",
+   "dv": "63b26b409a",
    "ev": [
     {
      "k": "start",
@@ -3439,6 +3439,144 @@
    "lm": ""
   },
   {
+   "id": "sh-313509",
+   "org": "SH",
+   "title": "[토지지원 사회주택]에어스페이스 신림4호점_어울리 입주자 모집 공고",
+   "region": "서울",
+   "kind": "사회주택",
+   "posted": "2026-11-20",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=313509",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "f0c3844706",
+   "ev": [],
+   "cr": {
+    "c": [
+     {
+      "k": "homeless",
+      "scope": "본인"
+     },
+     {
+      "k": "region",
+      "work": false
+     },
+     {
+      "k": "car",
+      "max": 4542
+     },
+     {
+      "k": "asset",
+      "by": {
+       "youth": 25100
+      }
+     },
+     {
+      "k": "income",
+      "pct": 120,
+      "amt": {
+       "1": 458
+      }
+     }
+    ],
+    "x": 2
+   },
+   "ty": [
+    {
+     "n": "303호 원룸",
+     "a": 23.55,
+     "dep": 12151,
+     "rent": 26.3
+    }
+   ],
+   "st": null,
+   "lm": "2026-11-20 12:50"
+  },
+  {
+   "id": "sh-313503",
+   "org": "SH",
+   "title": "[토지지원 사회주택]에어스페이스 신림3호점_어울리 입주자 모집 공고",
+   "region": "서울",
+   "kind": "사회주택",
+   "posted": "2026-11-20",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=313503",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "39dfef6a32",
+   "ev": [],
+   "cr": {
+    "c": [
+     {
+      "k": "homeless",
+      "scope": "본인"
+     },
+     {
+      "k": "region",
+      "work": false
+     },
+     {
+      "k": "car",
+      "max": 4542
+     },
+     {
+      "k": "asset",
+      "by": {
+       "youth": 25100
+      }
+     },
+     {
+      "k": "income",
+      "pct": 120
+     }
+    ],
+    "x": 0
+   },
+   "ty": [
+    {
+     "n": "202호 15.0평",
+     "a": 35.16,
+     "dep": 15210.3,
+     "rent": 50.6
+    }
+   ],
+   "st": null,
+   "lm": "2026-11-20 12:50"
+  },
+  {
+   "id": "elyes-2cnG5zGoH7OyWqtiEX8VWQ",
+   "org": "엘리스",
+   "title": "[어바니엘 충정로] 공실세대 모집공고 (공고일:'26.11.20)",
+   "region": "서울 서대문구",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-20",
+   "from": "",
+   "to": "",
+   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=2cnG5zGoH7OyWqtiEX8VWQ%3D%3D",
+   "time": "",
+   "startOnly": false,
+   "direct": true,
+   "closed": false,
+   "danji": "20000352",
+   "detail": false,
+   "dv": "",
+   "ev": [],
+   "cr": null,
+   "ty": [],
+   "st": null,
+   "lm": ""
+  },
+  {
    "id": "sh-313227",
    "org": "SH",
    "title": "2026년 하반기 금천구 홀몸어르신(수요자맞춤형)주택 잔여세대 입주자 모집 공고",
@@ -3454,7 +3592,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "f9c093560d",
+   "dv": "e208c354dc",
    "ev": [
     {
      "k": "start",
@@ -3555,7 +3693,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "66483a7f29",
+   "dv": "457e506a8c",
    "ev": [
     {
      "k": "start",
@@ -3684,7 +3822,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "bbf99cad08",
+   "dv": "f12ef82e3e",
    "ev": [
     {
      "k": "start",
@@ -4019,34 +4157,6 @@
    "lm": "2026-11-19 19:05"
   },
   {
-   "id": "elyes-D2wVcsoVimDbMXYqYiSjbg",
-   "org": "엘리스",
-   "title": "[남영역 롯데캐슬] 공실세대 모집공고 (공고일:'26.11.13)",
-   "region": "서울 용산구",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-11-13",
-   "from": "",
-   "to": "",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=D2wVcsoVimDbMXYqYiSjbg%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "20000574",
-   "detail": false,
-   "dv": "",
-   "ev": [],
-   "cr": null,
-   "ty": [],
-   "st": {
-    "n": "남영역",
-    "m": null,
-    "w": null,
-    "src": "name"
-   },
-   "lm": ""
-  },
-  {
    "id": "sh-313161",
    "org": "SH",
    "title": "[토지임대부 사회주택] 옥류서원 입주자 모집 공고문",
@@ -4062,7 +4172,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "c8464f3d2e",
+   "dv": "923c1326f2",
    "ev": [
     {
      "k": "start",
@@ -4125,7 +4235,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "f3fd4c24b2",
+   "dv": "1d77e558b5",
    "ev": [
     {
      "k": "end",
@@ -4178,29 +4288,6 @@
    "lm": "2026-11-16 12:04"
   },
   {
-   "id": "elyes-zETTp2QDf5U2zqyGgyj9ig",
-   "org": "엘리스",
-   "title": "[어바니엘 충정로] 공실세대 모집공고 (공고일:'26.11.06)",
-   "region": "서울 서대문구",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-11-06",
-   "from": "",
-   "to": "",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=zETTp2QDf5U2zqyGgyj9ig%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "20000352",
-   "detail": false,
-   "dv": "",
-   "ev": [],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
    "id": "sh-312351",
    "org": "SH",
    "title": "[토지지원 사회주택]유니버설디자인하우스_수락 입주자 모집 공고",
@@ -4216,7 +4303,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "4611d29122",
+   "dv": "49fb043a68",
    "ev": [
     {
      "k": "start",
@@ -4306,7 +4393,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "af9b7770fc",
+   "dv": "937c2d476c",
    "ev": [
     {
      "k": "start",

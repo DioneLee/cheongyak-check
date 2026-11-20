@@ -119,8 +119,6 @@
  "contact": "서울주택도시개발공사 콜센터 1600-3456",
  "addr": "서울특별시 강남구 개포로 109길5(개포동12)",
  "near": null,
- "noticeTry": 2,
- "noticeWhy": "진단용 값이 모자람",
  "seq": {
   "start": {
    "n": 0,
@@ -136,8 +134,56 @@
   }
  },
  "defer": {
-  "n": 2,
+  "n": 3,
   "why": "gemini-3.6-flash 오늘 예산 다 씀 (18/18)",
-  "at": "2026-11-20 06:50"
+  "at": "2026-11-20 12:49"
+ },
+ "notice": {
+  "kind": "임대",
+  "name": "2026년 서울주택도시개발공사 영구임대주택 예비입주자 모집공고",
+  "noticeDate": "2026-11-19",
+  "incomeBase": [
+   381.3363,
+   586.627,
+   816.8429,
+   880.2202,
+   932.6985
+  ],
+  "rules": {
+   "newlywed": null,
+   "youth": null
+  },
+  "types": [
+   {
+    "area": 24,
+    "fee": null,
+    "id": "daechi1-25",
+    "prices": {
+     "general": [
+      [
+       5120,
+       7
+      ]
+     ],
+     "special": [
+      [
+       1700,
+       4
+      ]
+     ]
+    },
+    "rooms": 1,
+    "tier": "newlywed",
+    "units": {
+     "general": 150,
+     "special": 5
+    }
+   }
+  ],
+  "addr": "서울특별시 강남구 개포로 621",
+  "city": "서울특별시",
+  "region": "강남구",
+  "station": null,
+  "url": "www.i-sh.co.kruba.or.kr/default.do?bbsId=BBSMSTR_000000000217&nttId=121212&searchCnd=&searchWrd="
  }
 }
