@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20T12:49:11+09:00",
+ "updated": "2026-11-20T18:49:16+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -404,7 +404,7 @@
    "closed": false,
    "danji": "20000607",
    "detail": true,
-   "dv": "681ceca1ad",
+   "dv": "774495d618",
    "ev": [
     {
      "k": "start",
@@ -450,22 +450,22 @@
    },
    "ty": [
     {
-     "n": "19TYPE 예비자",
+     "n": "19TYPE (청년 일반)",
      "a": 19.86,
      "dep": 11900,
-     "rent": 47
+     "rent": 28
     },
     {
-     "n": "36TYPE 예비자",
+     "n": "36TYPE (청년/신혼부부 일반)",
      "a": 36.93,
      "dep": 20400,
-     "rent": 81
+     "rent": 48
     },
     {
-     "n": "59TYPE 예비자",
+     "n": "59TYPE (신혼부부 일반)",
      "a": 59.88,
      "dep": 29400,
-     "rent": 117
+     "rent": 70
     }
    ],
    "st": {
@@ -474,7 +474,7 @@
     "w": null,
     "src": "name"
    },
-   "lm": "2026-11-16 12:01"
+   "lm": "2026-11-20 18:50"
   },
   {
    "id": "youth-6715",
@@ -1131,74 +1131,6 @@
    "lm": ""
   },
   {
-   "id": "elyes-ZnFqgHCpPQYDqQ58j7CbHw",
-   "org": "엘리스",
-   "title": "[어바니엘 천호] 공실세대 모집공고 (접수기간: 11/13~11/15)",
-   "region": "서울 강동구",
-   "kind": "민간임대",
-   "posted": "2026-11-13",
-   "from": "2026-11-13",
-   "to": "2026-11-15",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=ZnFqgHCpPQYDqQ58j7CbHw%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-cheonho",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-11-13"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-15"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
-   "id": "elyes-vItM44_JyUlvNrb9QEBxVw",
-   "org": "엘리스",
-   "title": "[어바니엘 가산] 공실세대 모집공고 (접수기간: 11/13~11/15)",
-   "region": "서울 금천구",
-   "kind": "민간임대",
-   "posted": "2026-11-13",
-   "from": "2026-11-13",
-   "to": "2026-11-15",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=vItM44%2FJyUlvNrb9QEBxVw%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-gasan",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-11-13"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-15"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
    "id": "youth-6719",
    "org": "청년안심",
    "title": "[민간임대] 송정역 케이제이타워 최초모집공고",
@@ -1592,7 +1524,7 @@
    "closed": false,
    "danji": "20000586",
    "detail": true,
-   "dv": "7efddad212",
+   "dv": "d2af4fafa1",
    "ev": [
     {
      "k": "end",
@@ -1658,7 +1590,7 @@
     "src": "name",
     "exit": "4"
    },
-   "lm": "2026-11-16 12:02"
+   "lm": "2026-11-20 18:51"
   },
   {
    "id": "youth-6726",
@@ -1676,7 +1608,7 @@
    "closed": false,
    "danji": "20000577",
    "detail": true,
-   "dv": "686fb031b6",
+   "dv": "d0727a435a",
    "ev": [
     {
      "k": "end",
@@ -1725,7 +1657,7 @@
       "max": 4542
      }
     ],
-    "x": 1
+    "x": 2
    },
    "ty": [
     {
@@ -1742,7 +1674,7 @@
     "src": "name",
     "pre": true
    },
-   "lm": "2026-11-16 12:02"
+   "lm": "2026-11-20 18:52"
   },
   {
    "id": "youth-6725",
@@ -1998,7 +1930,7 @@
    "closed": false,
    "danji": "20000560",
    "detail": true,
-   "dv": "709fd4d4ca",
+   "dv": "aaa4572809",
    "ev": [
     {
      "k": "start",
@@ -2116,7 +2048,7 @@
    "closed": false,
    "danji": "20000611",
    "detail": true,
-   "dv": "0523716da2",
+   "dv": "d29bcfca5d",
    "ev": [
     {
      "k": "start",
@@ -2158,68 +2090,68 @@
       "max": 4542
      }
     ],
-    "x": 3
+    "x": 4
    },
    "ty": [
     {
      "n": "37TYPE 2008호",
      "a": 37.36,
      "dep": 12820,
-     "rent": 109
+     "rent": 94
     },
     {
      "n": "42TYPE 311호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 313호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 511호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 514호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 612호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 614호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 615호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 711호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     },
     {
      "n": "42TYPE 813호",
      "a": 42.57,
      "dep": 14560,
-     "rent": 124
+     "rent": 107
     }
    ],
    "st": {
@@ -2229,7 +2161,7 @@
     "src": "name",
     "exit": "1"
    },
-   "lm": "2026-11-16 12:03"
+   "lm": "2026-11-20 18:55"
   },
   {
    "id": "youth-6727",
@@ -2333,6 +2265,108 @@
    "lm": "2026-11-19 19:03"
   },
   {
+   "id": "elyes-HQfLV8PkT-P2xsk3cruf0w",
+   "org": "엘리스",
+   "title": "[어바니엘 염창] 공실세대 모집공고 (접수기간: 11/20~11/22)",
+   "region": "서울 강서구",
+   "kind": "민간임대",
+   "posted": "2026-11-20",
+   "from": "2026-11-20",
+   "to": "2026-11-22",
+   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=HQfLV8PkT%2BP2xsk3cruf0w%3D%3D",
+   "time": "",
+   "startOnly": false,
+   "direct": true,
+   "closed": false,
+   "danji": "x-elyes-yeomchang",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-11-20"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-22"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": null,
+   "lm": ""
+  },
+  {
+   "id": "elyes-JZGTkpzO9PqGg09FZnmFQg",
+   "org": "엘리스",
+   "title": "[어바니엘 천호] 공실세대 모집공고 (접수기간: 11/20~11/22)",
+   "region": "서울 강동구",
+   "kind": "민간임대",
+   "posted": "2026-11-20",
+   "from": "2026-11-20",
+   "to": "2026-11-22",
+   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=JZGTkpzO9PqGg09FZnmFQg%3D%3D",
+   "time": "",
+   "startOnly": false,
+   "direct": true,
+   "closed": false,
+   "danji": "x-elyes-cheonho",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-11-20"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-22"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": null,
+   "lm": ""
+  },
+  {
+   "id": "elyes-qpfYXeT-bSPXI4wJayYSUw",
+   "org": "엘리스",
+   "title": "[어바니엘 가산] 공실세대 모집공고 (접수기간: 11/20~11/22)",
+   "region": "서울 금천구",
+   "kind": "민간임대",
+   "posted": "2026-11-20",
+   "from": "2026-11-20",
+   "to": "2026-11-22",
+   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=qpfYXeT%2BbSPXI4wJayYSUw%3D%3D",
+   "time": "",
+   "startOnly": false,
+   "direct": true,
+   "closed": false,
+   "danji": "x-elyes-gasan",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-11-20"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-11-22"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": null,
+   "lm": ""
+  },
+  {
    "id": "elyes-YEbfJqs0OHANwcNKkALdmA",
    "org": "엘리스",
    "title": "[어바니엘 한강] 공실세대 모집공고 (접수기간: 11/20~11/22)",
@@ -2382,7 +2416,7 @@
    "closed": false,
    "danji": "20000591",
    "detail": true,
-   "dv": "ac15005ba9",
+   "dv": "660273f8d3",
    "ev": [
     {
      "k": "end",
@@ -2404,7 +2438,7 @@
     },
     {
      "k": "docs",
-     "l": "당첨자 서류 사본 제출",
+     "l": "당첨자 서류 사본 제출(이메일)",
      "d": "2026-11-26"
     },
     {
@@ -2447,7 +2481,7 @@
     "src": "name",
     "exit": "3"
    },
-   "lm": "2026-11-19 19:05"
+   "lm": "2026-11-20 18:55"
   },
   {
    "id": "youth-6805",
@@ -3552,6 +3586,34 @@
    ],
    "st": null,
    "lm": "2026-11-20 12:50"
+  },
+  {
+   "id": "elyes-eCp34RPA9NVKYhe5gS2xjA",
+   "org": "엘리스",
+   "title": "[남영역 롯데캐슬] 공실세대 모집공고 (공고일:'26.11.20)",
+   "region": "서울 용산구",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-20",
+   "from": "",
+   "to": "",
+   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=eCp34RPA9NVKYhe5gS2xjA%3D%3D",
+   "time": "",
+   "startOnly": false,
+   "direct": true,
+   "closed": false,
+   "danji": "20000574",
+   "detail": false,
+   "dv": "",
+   "ev": [],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "남영역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
+   "lm": ""
   },
   {
    "id": "elyes-2cnG5zGoH7OyWqtiEX8VWQ",
