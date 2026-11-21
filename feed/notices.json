@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-22T00:49:11+09:00",
+ "updated": "2026-11-22T06:49:11+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -3769,7 +3769,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "12725f45d0",
+   "dv": "5f239a009b",
    "ev": [
     {
      "k": "start",
@@ -3898,7 +3898,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "e4974d91ce",
+   "dv": "a0199f7bad",
    "ev": [
     {
      "k": "start",
@@ -4315,7 +4315,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "f9f8f85a6c",
+   "dv": "edfc11ee21",
    "ev": [
     {
      "k": "end",
@@ -4473,7 +4473,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "1fa9ee4f18",
+   "dv": "d6b4b36c2d",
    "ev": [
     {
      "k": "start",
