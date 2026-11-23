@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23T00:49:11+09:00",
+ "updated": "2026-11-23T12:49:11+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -1060,40 +1060,6 @@
     "w": null,
     "src": "name"
    },
-   "lm": ""
-  },
-  {
-   "id": "elyes-Pk3JJo6YTuIi90Gdez7ojA",
-   "org": "엘리스",
-   "title": "[어바니엘 한강] 공실세대 모집공고 (접수기간: 11/13~11/15)",
-   "region": "서울 동작구",
-   "kind": "민간임대",
-   "posted": "2026-11-13",
-   "from": "2026-11-13",
-   "to": "2026-11-15",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=Pk3JJo6YTuIi90Gdez7ojA%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-hankang",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-11-13"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-15"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
    "lm": ""
   },
   {
@@ -3476,6 +3442,145 @@
    "lm": ""
   },
   {
+   "id": "sh-313481",
+   "org": "SH",
+   "title": "[청년형] 특화형 매입임대주택(서초구) 입주자 모집 공고(운영기관 : 마을과집 협동조합)",
+   "region": "서울 서초구",
+   "kind": "매입임대",
+   "posted": "2026-11-23",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=313481",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "43f8cec8ae",
+   "ev": [
+    {
+     "k": "start",
+     "l": "서류접수",
+     "d": "2026-11-23"
+    },
+    {
+     "k": "end",
+     "l": "서류접수",
+     "d": "2026-11-27",
+     "t": "18:00"
+    }
+   ],
+   "cr": {
+    "c": [
+     {
+      "k": "age",
+      "min": 19,
+      "max": 39
+     },
+     {
+      "k": "homeless",
+      "scope": "본인"
+     },
+     {
+      "k": "single"
+     },
+     {
+      "k": "car",
+      "max": 4542
+     },
+     {
+      "k": "asset",
+      "max": 34500
+     },
+     {
+      "k": "income",
+      "pct": 100
+     }
+    ],
+    "x": 3
+   },
+   "ty": [
+    {
+     "n": "1.5룸 201호",
+     "a": 36.47,
+     "dep": 7339.5,
+     "rent": 55.05
+    },
+    {
+     "n": "원룸 301호",
+     "a": 29.55,
+     "dep": 5964,
+     "rent": 46.58
+    }
+   ],
+   "st": null,
+   "lm": "2026-11-23 12:51"
+  },
+  {
+   "id": "sh-313647",
+   "org": "SH",
+   "title": "[토지임대부 사회주택] 옥류서원 입주자 모집 공고문",
+   "region": "서울",
+   "kind": "사회주택",
+   "posted": "2026-11-23",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=313647",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "a3e4ab9cac",
+   "ev": [
+    {
+     "k": "start",
+     "l": "입주 신청서 접수",
+     "d": "2026-11-23"
+    },
+    {
+     "k": "end",
+     "l": "입주 신청서 접수",
+     "d": "2026-11-30"
+    }
+   ],
+   "cr": {
+    "c": [
+     {
+      "k": "homeless",
+      "scope": "세대"
+     },
+     {
+      "k": "region",
+      "work": true
+     },
+     {
+      "k": "income",
+      "pct": 120
+     }
+    ],
+    "x": 2
+   },
+   "ty": [
+    {
+     "n": "2F 101호",
+     "a": 47.28,
+     "dep": 19000,
+     "rent": 79
+    },
+    {
+     "n": "3F 201호",
+     "a": 47.28,
+     "dep": 19400,
+     "rent": 81
+    }
+   ],
+   "st": null,
+   "lm": "2026-11-23 12:51"
+  },
+  {
    "id": "sh-313509",
    "org": "SH",
    "title": "[토지지원 사회주택]에어스페이스 신림4호점_어울리 입주자 모집 공고",
@@ -4236,73 +4341,6 @@
    ],
    "st": null,
    "lm": "2026-11-19 19:05"
-  },
-  {
-   "id": "sh-313161",
-   "org": "SH",
-   "title": "[토지임대부 사회주택] 옥류서원 입주자 모집 공고문",
-   "region": "서울",
-   "kind": "사회주택",
-   "posted": "2026-11-11",
-   "from": "",
-   "to": "",
-   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=313161",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": true,
-   "dv": "9f78a3f2fe",
-   "ev": [
-    {
-     "k": "start",
-     "l": "입주 신청서 접수",
-     "d": "2026-11-11"
-    },
-    {
-     "k": "end",
-     "l": "입주 신청서 접수",
-     "d": "2026-11-18"
-    }
-   ],
-   "cr": {
-    "c": [
-     {
-      "k": "homeless",
-      "scope": "세대"
-     },
-     {
-      "k": "region",
-      "work": true
-     },
-     {
-      "k": "income",
-      "pct": 120,
-      "amt": {
-       "1": 267,
-       "2": 411
-      }
-     }
-    ],
-    "x": 0
-   },
-   "ty": [
-    {
-     "n": "2F 101호",
-     "a": 47.28,
-     "dep": 19000,
-     "rent": 79
-    },
-    {
-     "n": "3F 201호",
-     "a": 47.28,
-     "dep": 19400,
-     "rent": 81
-    }
-   ],
-   "st": null,
-   "lm": "2026-11-21 19:04"
   },
   {
    "id": "sh-312903",
