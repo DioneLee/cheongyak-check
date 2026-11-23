@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23T12:49:11+09:00",
+ "updated": "2026-11-23T18:49:12+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -3374,15 +3374,15 @@
    "lm": "2026-11-22 00:52"
   },
   {
-   "id": "lh-2015122300021098",
+   "id": "lh-2015122300021131",
    "org": "LH",
-   "title": "서울삼전,강동천호,LH수서1,LH수서2 행복주택 예비입주자 모집공고",
+   "title": "[정정공고]서울삼전,강동천호,LH수서1,LH수서2 행복주택 예비입주자 모집공고",
    "region": "서울 송파구 외 2곳",
    "kind": "행복주택",
-   "posted": "2026-11-19",
+   "posted": "2026-11-23",
    "from": "2026-11-30",
    "to": "2026-12-01",
-   "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancInfo.do?panId=2015122300021098&ccrCnntSysDsCd=03&uppAisTpCd=06&aisTpCd=10&mi=1026",
+   "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancInfo.do?panId=2015122300021131&ccrCnntSysDsCd=03&uppAisTpCd=06&aisTpCd=10&mi=1026",
    "time": "",
    "startOnly": false,
    "direct": false,
@@ -3457,7 +3457,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "43f8cec8ae",
+   "dv": "1d1abcb8a3",
    "ev": [
     {
      "k": "start",
@@ -3495,27 +3495,30 @@
      },
      {
       "k": "income",
-      "pct": 100
+      "pct": 100,
+      "amt": {
+       "1": 458
+      }
      }
     ],
     "x": 3
    },
    "ty": [
     {
-     "n": "1.5룸 201호",
+     "n": "강남대로10길 60-13 201호",
      "a": 36.47,
      "dep": 7339.5,
      "rent": 55.05
     },
     {
-     "n": "원룸 301호",
+     "n": "강남대로6길 82-15 301호",
      "a": 29.55,
      "dep": 5964,
      "rent": 46.58
     }
    ],
    "st": null,
-   "lm": "2026-11-23 12:51"
+   "lm": "2026-11-23 18:51"
   },
   {
    "id": "sh-313647",
@@ -3533,7 +3536,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "a3e4ab9cac",
+   "dv": "2ad8195510",
    "ev": [
     {
      "k": "start",
@@ -3554,11 +3557,15 @@
      },
      {
       "k": "region",
-      "work": true
+      "work": false
      },
      {
       "k": "income",
-      "pct": 120
+      "pct": 120,
+      "amt": {
+       "1": 267,
+       "2": 411
+      }
      }
     ],
     "x": 2
@@ -3578,7 +3585,7 @@
     }
    ],
    "st": null,
-   "lm": "2026-11-23 12:51"
+   "lm": "2026-11-23 18:52"
   },
   {
    "id": "sh-313509",
@@ -4414,169 +4421,6 @@
    ],
    "st": null,
    "lm": "2026-11-23 00:52"
-  },
-  {
-   "id": "sh-312351",
-   "org": "SH",
-   "title": "[토지지원 사회주택]유니버설디자인하우스_수락 입주자 모집 공고",
-   "region": "서울",
-   "kind": "사회주택",
-   "posted": "2026-11-02",
-   "from": "",
-   "to": "",
-   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312351",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": true,
-   "dv": "fe304d1412",
-   "ev": [
-    {
-     "k": "start",
-     "l": "입주신청기간",
-     "d": "2026-11-02"
-    },
-    {
-     "k": "end",
-     "l": "입주신청기간",
-     "d": "2026-11-09"
-    },
-    {
-     "k": "announce",
-     "l": "계약 대상자 및 예비 대상자 발표",
-     "d": "2026-11-10"
-    },
-    {
-     "k": "docs",
-     "l": "주택 열람 및 자격검증 서류제출·보완",
-     "d": "2026-11-10",
-     "e": "2026-11-17"
-    },
-    {
-     "k": "contract",
-     "l": "계약체결",
-     "d": "2026-11-17"
-    }
-   ],
-   "cr": {
-    "c": [
-     {
-      "k": "age",
-      "min": 19,
-      "max": null
-     },
-     {
-      "k": "homeless",
-      "scope": "본인"
-     },
-     {
-      "k": "region",
-      "work": true,
-      "cond": true
-     },
-     {
-      "k": "car",
-      "max": 4542
-     },
-     {
-      "k": "asset",
-      "by": {
-       "youth": 25100,
-       "all": 34500
-      }
-     },
-     {
-      "k": "income",
-      "pct": 120
-     }
-    ],
-    "x": 2
-   },
-   "ty": [
-    {
-     "n": "수락 203호",
-     "a": 43,
-     "dep": 16033.84,
-     "rent": 44.4
-    }
-   ],
-   "st": null,
-   "lm": "2026-11-21 19:06"
-  },
-  {
-   "id": "sh-312053",
-   "org": "SH",
-   "title": "[청년형] 특화형 매입임대주택(구로구) 입주자 모집 공고(운영기관 : 마을과집 협동조합)",
-   "region": "서울 구로구",
-   "kind": "매입임대",
-   "posted": "2026-11-02",
-   "from": "",
-   "to": "",
-   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=312053",
-   "time": "",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "",
-   "detail": true,
-   "dv": "7b2a1b9a8a",
-   "ev": [
-    {
-     "k": "start",
-     "l": "서류접수",
-     "d": "2026-11-02"
-    },
-    {
-     "k": "end",
-     "l": "서류접수",
-     "d": "2026-11-06",
-     "t": "18:00"
-    }
-   ],
-   "cr": {
-    "c": [
-     {
-      "k": "age",
-      "min": 19,
-      "max": 39
-     },
-     {
-      "k": "homeless",
-      "scope": "본인"
-     },
-     {
-      "k": "single"
-     },
-     {
-      "k": "car",
-      "max": 4542
-     },
-     {
-      "k": "asset",
-      "max": 34500
-     },
-     {
-      "k": "income",
-      "pct": 100,
-      "amt": {
-       "1": 458
-      }
-     }
-    ],
-    "x": 3
-   },
-   "ty": [
-    {
-     "n": "2룸 502호",
-     "a": 52.42,
-     "dep": 3150,
-     "rent": 44.43
-    }
-   ],
-   "st": null,
-   "lm": "2026-11-22 18:55"
   }
  ]
 }
