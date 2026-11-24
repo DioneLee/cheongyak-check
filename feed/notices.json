@@ -1,41 +1,7 @@
 {
- "updated": "2026-11-24T18:49:17+09:00",
+ "updated": "2026-11-25T00:49:16+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
-  {
-   "id": "elyes-ZRQqYIezpoegIOefDerbnA",
-   "org": "엘리스",
-   "title": "[어바니엘 염창] 공실세대 모집공고 (접수기간: 10/23~10/25)",
-   "region": "서울 강서구",
-   "kind": "민간임대",
-   "posted": "2026-10-23",
-   "from": "2026-10-23",
-   "to": "2026-10-25",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=ZRQqYIezpoegIOefDerbnA%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-yeomchang",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-10-23"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-10-25"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
   {
    "id": "elyes-_sh1K4UfAo2S9rSP1AiVTg",
    "org": "엘리스",
