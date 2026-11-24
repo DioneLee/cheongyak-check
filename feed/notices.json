@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T00:49:12+09:00",
+ "updated": "2026-11-24T18:49:17+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -270,121 +270,6 @@
     "w": null,
     "src": "name",
     "exit": "4"
-   },
-   "lm": "2026-11-16 19:05"
-  },
-  {
-   "id": "youth-6711",
-   "org": "청년안심",
-   "title": "[민간임대] 영등포구청역 포레나당산 추가모집공고",
-   "region": "서울",
-   "kind": "청년안심주택(민간)",
-   "posted": "2026-10-29",
-   "from": "2026-11-02",
-   "to": "2026-11-02",
-   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6711&menuNo=400008",
-   "time": "23:00",
-   "startOnly": false,
-   "direct": false,
-   "closed": false,
-   "danji": "20000475",
-   "detail": true,
-   "dv": "e9fc657d0a",
-   "ev": [
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-02",
-     "t": "23:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-11-04",
-     "t": "15:00"
-    },
-    {
-     "k": "announce",
-     "l": "서류심사 대상자 발표",
-     "d": "2026-11-04",
-     "t": "15:00"
-    }
-   ],
-   "cr": {
-    "c": [
-     {
-      "k": "age",
-      "min": 19,
-      "max": 39
-     },
-     {
-      "k": "homeless",
-      "scope": "세대"
-     },
-     {
-      "k": "car",
-      "max": 4542
-     },
-     {
-      "k": "asset",
-      "by": {
-       "youth": 25400,
-       "newlywed": 33700
-      },
-      "cond": true
-     },
-     {
-      "k": "income",
-      "pct": 120,
-      "cond": true
-     }
-    ],
-    "x": 4
-   },
-   "ty": [
-    {
-     "n": "17㎡ 특별공급",
-     "a": 17,
-     "dep": 6260,
-     "rent": 38
-    },
-    {
-     "n": "17㎡ 일반공급",
-     "a": 17,
-     "dep": 7962,
-     "rent": 37
-    },
-    {
-     "n": "26㎡ 일반공급",
-     "a": 26,
-     "dep": 9341,
-     "rent": 62
-    },
-    {
-     "n": "33㎡ 일반공급",
-     "a": 33,
-     "dep": 11088,
-     "rent": 68
-    },
-    {
-     "n": "36㎡ 일반공급",
-     "a": 36,
-     "dep": 13679,
-     "rent": 67
-    },
-    {
-     "n": "41㎡ 일반공급",
-     "a": 41,
-     "dep": 15050,
-     "rent": 71
-    }
-   ],
-   "st": {
-    "n": "영등포구청역",
-    "m": 211,
-    "w": 4,
-    "src": "geo",
-    "exit": "6"
    },
    "lm": "2026-11-16 19:05"
   },
@@ -3440,6 +3325,204 @@
    "ty": [],
    "st": null,
    "lm": ""
+  },
+  {
+   "id": "youth-6833",
+   "org": "청년안심",
+   "title": "[민간임대] 돌곶이역 화랑어반트리움 최초모집공고",
+   "region": "서울",
+   "kind": "청년안심주택(민간)",
+   "posted": "2026-11-24",
+   "from": "2026-12-05",
+   "to": "2026-12-07",
+   "url": "https://soco.seoul.go.kr/youth/bbs/BMSR00015/view.do?boardId=6833&menuNo=400008",
+   "time": "23:00",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": false,
+   "dv": "",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-12-05"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-12-07",
+     "t": "23:00"
+    },
+    {
+     "k": "announce",
+     "l": "서류심사 대상자 발표",
+     "d": "2026-12-09",
+     "t": "17:00"
+    }
+   ],
+   "cr": null,
+   "ty": [],
+   "st": {
+    "n": "돌곶이역",
+    "m": null,
+    "w": null,
+    "src": "name"
+   },
+   "lm": ""
+  },
+  {
+   "id": "myhome-21605",
+   "org": "LH",
+   "title": "[서울지역본부] 고령자 매입임대주택 예비입주자 모집공고",
+   "region": "서울 강동구 외 2곳",
+   "kind": "매입임대",
+   "posted": "2026-11-24",
+   "from": "2026-12-21",
+   "to": "2026-12-23",
+   "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21605",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "302da3b978",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-12-21"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-12-23"
+    },
+    {
+     "k": "announce",
+     "l": "당첨자 발표",
+     "d": "2027-04-30"
+    }
+   ],
+   "cr": null,
+   "ty": [
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    }
+   ],
+   "st": null,
+   "lm": "2026-11-24 18:49"
+  },
+  {
+   "id": "myhome-21604",
+   "org": "LH",
+   "title": "[서울지역본부] 일반 매입임대주택 예비입주자 모집공고",
+   "region": "서울 서초구 외 8곳",
+   "kind": "매입임대",
+   "posted": "2026-11-24",
+   "from": "2026-12-21",
+   "to": "2026-12-23",
+   "url": "https://www.myhome.go.kr/hws/portal/sch/selectRsdtRcritNtcDetailView.do?pblancId=21604",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "ea13f915a4",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약 시작",
+     "d": "2026-12-21"
+    },
+    {
+     "k": "end",
+     "l": "청약 마감",
+     "d": "2026-12-23"
+    },
+    {
+     "k": "announce",
+     "l": "당첨자 발표",
+     "d": "2027-04-30"
+    }
+   ],
+   "cr": null,
+   "ty": [
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "",
+     "a": null,
+     "dep": null,
+     "rent": null
+    }
+   ],
+   "st": null,
+   "lm": "2026-11-24 18:49"
   },
   {
    "id": "sh-313481",
