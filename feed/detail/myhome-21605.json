@@ -1,0 +1,65 @@
+{
+ "id": "myhome-21605",
+ "v": 5,
+ "source": "api",
+ "read": "2026-11-25",
+ "readAt": "2026-11-25 13:49",
+ "model": null,
+ "target": null,
+ "eligibility": [],
+ "income": null,
+ "asset": null,
+ "car": null,
+ "supply": [
+  {
+   "type": null,
+   "area": "다가구주택",
+   "units": null,
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": null,
+   "area": "다가구주택",
+   "units": null,
+   "price": null,
+   "movein": null
+  },
+  {
+   "type": null,
+   "area": "다가구주택",
+   "units": null,
+   "price": null,
+   "movein": null
+  }
+ ],
+ "schedule": [
+  {
+   "label": "접수",
+   "date": "2026.12.21 ~ 2026.12.23"
+  },
+  {
+   "label": "당첨자 발표",
+   "date": "2027.04.30"
+  }
+ ],
+ "apply": "공급기관 공고: https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancInfo.do?panId=2015122300021105&ccrCnntSysDsCd=03&uppAisTpCd=13&aisTpCd=26&mi=1026",
+ "costs": [],
+ "special": [],
+ "contact": "LH 콜센터 : 1600-1004 (평일 : 09:00 ~ 18:00)",
+ "addr": null,
+ "seq": {
+  "start": {
+   "n": 0,
+   "s": "2026-12-21||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-12-23||"
+  },
+  "announce": {
+   "n": 0,
+   "s": "2027-04-30||"
+  }
+ }
+}
