@@ -170,7 +170,7 @@ fw.__today = '2026-11-07'; fw.eval('setFeed')({ updated: '', source: '', items: 
 const r2 = qa('#subFeed .flist > li').map(li => li.textContent.replace(/\s+/g, ' '));
 ok('청년안심주택: D-day 는 마감일 기준 (11.7 → 11.10 23:00 마감 D-3)', r2.length === 1 && r2[0].includes('D-3') && r2[0].includes('11.10(화) 23:00 마감'), r2.join(' / '));
 q('#subFeed [data-ftab="plan"]').click(); await W(50); const r3 = qa('#subFeed .flist > li').map(li => li.textContent.replace(/\s+/g, ' '));
-ok('예정 탭: 시작 전 공고 · "시작 D-5" · 마감일 모르면 시작일 표시', r3.length === 1 && r3[0].includes('시작 D-5') && r3[0].includes('청약신청일 11.12(목) · 마감일은 공고 원문에서'), r3.join(' / '));
+ok('예정 탭: 시작 전 공고 · "접수 D-5" · 마감일 모르면 시작일 표시', r3.length === 1 && r3[0].includes('접수 D-5') && r3[0].includes('청약신청일 11.12(목) · 마감일은 공고 원문에서'), r3.join(' / '));
 q('#subFeed [data-ftab="now"]').click(); await W(50);
 fw.eval('setFeed')({ updated: '', source: '', items: [{ ...fi('sh-f1', '2099-01-01'), org: 'SH', title: '[정정] 고덕강일 3단지 입주자모집공고' }] }); await W(50);
 ok('정정공고는 배지', q('#subFeed .dd.fix')?.textContent === '정정공고' && q('#subFeed .nm').textContent.startsWith('고덕강일 3단지'));
@@ -214,19 +214,19 @@ ok('캘린더: 일정 있는 공고는 버튼 · 없는 공고는 "일정은 공
     DN = { ...fi('lh-d9', '2026-11-05'), title: 'LH 마포구 행복주택 모집공고', ev: [{ k: 'end', l: '청약 마감', d: '2026-11-05' }] }, CL = { ...fi('elyes-c9', '2026-11-30'), org: '엘리스', title: '[어바니엘 염창] 공실세대 모집공고 -->마감되었습니다.', direct: true, closed: true, region: '서울 강서구' };
   fw.eval('setFeed')({ updated: '', source: '', items: [P, LHX, PL, DN, CL] }); await W(80);
   const tabs = () => qa('#subFeed [data-ftab]').map(b => b.textContent + (b.getAttribute('aria-selected') === 'true' ? '*' : '')).join(), ids = () => qa('#subFeed .flist > li').map(l => l.dataset.fid).join();
-  ok('세부 탭 3개 · 개수 · 처음은 진행 중 · 예전 필터 없음', tabs() === '진행 중2*,예정1,완료2' && ids() === 'youth-6720,lh-77' && !q('#subFeed .ffilter') && !q('#subFeed select[data-f]'), tabs() + ' / ' + ids());
+  ok('세부 탭 3개 · 개수 · 처음은 진행 중 · 예전 필터 없음', tabs() === '진행 중2*,접수 예정1,완료2' && ids() === 'youth-6720,lh-77' && !q('#subFeed .ffilter') && !q('#subFeed select[data-f]'), tabs() + ' / ' + ids());
   q('#subFeed [data-ftab="plan"]').click(); await W(50);
-  ok('예정 탭: 모집 시작 전 공고 · 시작 D-11', ids() === 'youth-p1' && q('#subFeed [data-fid="youth-p1"]').textContent.includes('시작 D-11'), ids());
+  ok('예정 탭: 모집 시작 전 공고 · 접수 D-11', ids() === 'youth-p1' && q('#subFeed [data-fid="youth-p1"]').textContent.includes('접수 D-11'), ids());
   q('#subFeed [data-ftab="done"]').click(); await W(50);
   ok("완료 탭: 마감 지난 공고 + '마감되었습니다' 공고 · '마감됨' · 캘린더 버튼 없음", ids() === 'elyes-c9,lh-d9' && qa('#subFeed .flist > li').every(l => l.textContent.includes('마감됨') && !l.querySelector('[data-ics]')), ids());
   q('#subFeed [data-ftab="now"]').click(); await W(50);
   const inp = q('#subFeed input[data-fq="q"]'); inp.value = '건대'; inp.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50);
-  ok('검색 "건대" → 더포디엄830 만 · 탭 개수도 검색 결과 · 검색 칸은 다시 안 그림(한글 입력 유지)', ids() === 'youth-6720' && tabs() === '진행 중1*,예정0,완료0' && q('#subFeed input[data-fq="q"]') === inp, ids() + ' / ' + tabs());
+  ok('검색 "건대" → 더포디엄830 만 · 탭 개수도 검색 결과 · 검색 칸은 다시 안 그림(한글 입력 유지)', ids() === 'youth-6720' && tabs() === '진행 중1*,접수 예정0,완료0' && q('#subFeed input[data-fq="q"]') === inp, ids() + ' / ' + tabs());
   inp.value = ''; inp.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50);
   const gs = q('#subFeed select[data-fq="gu"]');
   ok('구 선택: 공고에 있는 구만 (지역·제목에서)', [...gs.options].map(o => o.value).join() === ',강서구,광진구,마포구', [...gs.options].map(o => o.value).join());
   gs.value = '강서구'; gs.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50);
-  ok('구 "강서구" → 진행 중 0 · 예정 1 · 완료 1 · 없을 때 안내', tabs() === '진행 중0*,예정1,완료1' && q('#subFeed .fnone')?.textContent === '검색에 맞는 공고가 없어요.', tabs());
+  ok('구 "강서구" → 진행 중 0 · 예정 1 · 완료 1 · 없을 때 안내', tabs() === '진행 중0*,접수 예정1,완료1' && q('#subFeed .fnone')?.textContent === '검색에 맞는 공고가 없어요.', tabs());
   gs.value = ''; gs.dispatchEvent(new fw.Event('input', { bubbles: true })); await W(50); }
 delete fw.__today;
 { const yn = fw.eval('state.subs.notices[0]');
@@ -308,7 +308,8 @@ const APP = '앱을 열면 관심 단지 새 공고를 알려 드려요', OTH = 
 fw.location.hash = 'notices'; await W(150); kl('danji').click(); await W(300);
 const cards = () => qa('#danjiList li[data-did]'), main = () => qa('#danjiList .flist')[0]?.children.length ?? 0;
 ok('단지 탭: 안쪽 탭 "민간 임대" → #danji · 단지 탭만 · 제목 포커스 · 지금 탭 표시 · 위 메뉴는 그대로 "청약 공고"', fw.location.hash === '#danji' && vis() === 'danji' && cur() === 'danji' && q('header [aria-current="page"]')?.textContent === '청약 공고' && d.activeElement === q('#h-danji'), vis() + ' ' + d.activeElement?.id);
-ok('단지 탭: 청년안심주택 100곳 + "그 밖의 서울 민간임대" 6곳 (서울 밖 없음 · 단지 아닌 글 없음)', main() === 100 && !/모집공고/.test(qa('#danjiList .flist')[0].textContent) && /그 밖의 서울 민간임대 6곳/.test(q('#danjiList .fgroup')?.textContent) && qa('#danjiList .flist')[1].children.length === 6 && !/부산|양산|김포|화성/.test(q('#danjiList').textContent), main());
+const DJ = await (await fw.fetch('feed/danji.json', { cache: 'no-store' })).json();   // 단지 수는 그날 피드 기준 (새 단지가 들어와도 검사가 안 깨지게)
+ok('단지 탭: 청년안심주택 ' + DJ.danji.length + '곳 (feed/danji.json 과 같음) + "그 밖의 서울 민간임대" 6곳 (서울 밖 없음 · 단지 아닌 글 없음)', main() === DJ.danji.length && main() >= 100 && !/모집공고/.test(qa('#danjiList .flist')[0].textContent) && /그 밖의 서울 민간임대 6곳/.test(q('#danjiList .fgroup')?.textContent) && qa('#danjiList .flist')[1].children.length === 6 && !/부산|양산|김포|화성/.test(q('#danjiList').textContent), main());
 ok('단지 탭: 그 밖의 민간임대 카드마다 "' + OTH + '"', qa('#danjiList .flist')[1].querySelectorAll('.dj-other').length === 6 && [...qa('#danjiList .flist')[1].querySelectorAll('.dj-other')].every(p => p.textContent === OTH) && !qa('#danjiList .flist')[0].querySelector('.dj-other'));
 ok('단지 탭에만 정확히 "' + APP + '" (설정에서는 뺌)', [...q('#danjiSec').querySelectorAll('p')].some(p => p.textContent.trim() === APP) && !q('[data-tab="settings"]').textContent.includes(APP));
 { const c = q('#danjiList li[data-did="20000413"]') || qa('#danjiList li[data-did]').find(l => l.textContent.includes('마에스트로')), ln = c.querySelector('.dj-links a[href^="http"]');

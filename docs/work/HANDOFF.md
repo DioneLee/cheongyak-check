@@ -7,7 +7,7 @@
 - 화면 디자인 (2026-11-24): '안내서' 테마(숲녹색 · 제목 Noto Serif KR) = index.html `</style>` 바로 앞 CSS 묶음 · 비교했던 다른 버전과 만든 도구는 이 저장소 밖 `orca/projects/cheongyak-variants` ([변경기록.md](변경기록.md) 2026-11-24)
 - **앱(Android·iOS)은 [HANDOFF_app.md](HANDOFF_app.md)** — Capacitor 8 · 테스트 앱 ID · iOS 는 집 Mac 에서
 
-- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-24a`)
+- 배포: **https://seoul-cheongyak-check.pages.dev/** (Cloudflare Pages · Git 연결 main · 빌드 없음 · 출력 `/` · `_headers` 로 피드 no-cache·CORS) · 예전 https://dionelee.github.io/cheongyak-check/ (GitHub Pages = main / root · 끄지 말 것: 구독 캘린더가 여기서 계속 갱신 · '주소가 바뀌었어요' 띠) · 서비스 워커 `cheongyak-check-2026-11-25a`)
 - Android 테스트 설치 (2026-11-16): 사이트 맨 아래 'Android 앱 테스트 설치(apk)' → `https://github.com/DioneLee/cheongyak-check/releases/latest/download/cheongyak-check.apk` (앱 안에서는 숨김) · 지금 최신 **v1.3-test** (versionCode 4 · 2026-11-25 안내서 디자인) · 새 판은 `assembleRelease` → 사용자가 apksigner 로 서명(업로드 키, 비밀번호는 사용자만) → `gh release create vX-test --latest` → 받은 파일 해시 확인 · Play 로 넘어갈 때는 지우고 다시 설치(Play 앱 서명)
 - 의견 보내기 (2026-11-16): 맨 아래 '의견 보내기 ↗' = Google 설문지 '청약 체크 의견 보내기'(질문 4개 · 이메일 수집 안 함 · 편집 docs.google.com/forms/d/1Rs6vrFEVn95s89XMGOBLqPD8J2a1u5AV8LswEMGdKyM/edit) · 커뮤니티 게시판(간편 로그인)은 의견이 모인 뒤 다시 논의
 - 민간 임대 단지 카드 '공고 보기 ↗' = 그 단지의 접수 중 공고 원문(새 창) · 관심 공고 캘린더 버튼은 목록/지도 줄 오른쪽 (2026-11-16)
