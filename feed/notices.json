@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25T13:49:06+09:00",
+ "updated": "2026-11-25T19:49:12+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -3593,6 +3593,79 @@
    ],
    "st": null,
    "lm": "2026-11-25 13:49"
+  },
+  {
+   "id": "sh-313843",
+   "org": "SH",
+   "title": "2026년 제2차 보증금지원형 장기안심주택 입주자 모집공고",
+   "region": "서울",
+   "kind": "임대",
+   "posted": "2026-11-25",
+   "from": "",
+   "to": "",
+   "url": "https://www.i-sh.co.kr/app/lay2/program/S48T1581C563/www/brd/m_247/view.do?multi_itm_seq=2&seq=313843",
+   "time": "",
+   "startOnly": false,
+   "direct": false,
+   "closed": false,
+   "danji": "",
+   "detail": true,
+   "dv": "d48186aa7e",
+   "ev": [
+    {
+     "k": "start",
+     "l": "청약접수",
+     "d": "2026-12-14"
+    },
+    {
+     "k": "end",
+     "l": "청약접수",
+     "d": "2026-12-16"
+    },
+    {
+     "k": "docs",
+     "l": "서류제출",
+     "d": "2026-12-24"
+    },
+    {
+     "k": "announce",
+     "l": "당첨자 발표",
+     "d": "2027-03-18"
+    },
+    {
+     "k": "contract",
+     "l": "계약 체결",
+     "d": "2028-03-17"
+    }
+   ],
+   "cr": {
+    "c": [
+     {
+      "k": "homeless",
+      "scope": "세대"
+     },
+     {
+      "k": "region",
+      "work": false
+     },
+     {
+      "k": "car",
+      "max": 4542
+     },
+     {
+      "k": "asset",
+      "max": 21550
+     },
+     {
+      "k": "income",
+      "pct": null
+     }
+    ],
+    "x": 1
+   },
+   "ty": [],
+   "st": null,
+   "lm": "2026-11-25 19:51"
   },
   {
    "id": "sh-313481",
