@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25T19:49:12+09:00",
+ "updated": "2026-11-26T01:49:14+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -3610,7 +3610,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "d48186aa7e",
+   "dv": "051e8c9efc",
    "ev": [
     {
      "k": "start",
@@ -3658,14 +3658,51 @@
      },
      {
       "k": "income",
-      "pct": null
+      "pct": 180
      }
     ],
-    "x": 1
+    "x": 6
    },
-   "ty": [],
+   "ty": [
+    {
+     "n": "일반공급",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "특별공급 청년",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "특별공급 신혼부부 (미리내집 연계형)",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "특별공급 세대통합",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "특별공급 중장년",
+     "a": null,
+     "dep": null,
+     "rent": null
+    },
+    {
+     "n": "특별공급 임대의무기간 만료주택 거주가구",
+     "a": null,
+     "dep": null,
+     "rent": null
+    }
+   ],
    "st": null,
-   "lm": "2026-11-25 19:51"
+   "lm": "2026-11-26 01:51"
   },
   {
    "id": "sh-313481",
