@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-26T07:49:21+09:00",
+ "updated": "2026-11-26T13:49:13+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -2150,40 +2150,6 @@
    "lm": ""
   },
   {
-   "id": "elyes-qpfYXeT-bSPXI4wJayYSUw",
-   "org": "엘리스",
-   "title": "[어바니엘 가산] 공실세대 모집공고 (접수기간: 11/20~11/22)",
-   "region": "서울 금천구",
-   "kind": "민간임대",
-   "posted": "2026-11-20",
-   "from": "2026-11-20",
-   "to": "2026-11-22",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=qpfYXeT%2BbSPXI4wJayYSUw%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-gasan",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-11-20"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-22"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
    "id": "elyes-YEbfJqs0OHANwcNKkALdmA",
    "org": "엘리스",
    "title": "[어바니엘 한강] 공실세대 모집공고 (접수기간: 11/20~11/22)",
@@ -3610,7 +3576,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "3e67535a8e",
+   "dv": "7897986c3f",
    "ev": [
     {
      "k": "start",
