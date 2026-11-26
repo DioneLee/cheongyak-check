@@ -97,5 +97,136 @@
    "n": 0,
    "s": "2026-12-18|2026-12-19|"
   }
+ },
+ "notice": {
+  "kind": "임대",
+  "name": "신대방삼거리역 골드타워 청년안심주택 입주자 추가 모집공고",
+  "noticeDate": "2026-11-26",
+  "incomeBase": [
+   381.3,
+   586.6,
+   816.8,
+   880.2,
+   932.7
+  ],
+  "rules": {
+   "newlywed": {
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": 34500,
+     "car": 4542,
+     "homeless": "세대",
+     "incomeMax": 120,
+     "incomeRanks": [
+      100,
+      110,
+      120
+     ],
+     "marriageDays": 2555,
+     "preMarried": true,
+     "single": false
+    }
+   },
+   "youth": {
+    "special": {
+     "age": [
+      19,
+      39
+     ],
+     "asset": 25100,
+     "car": 4542,
+     "homeless": "본인",
+     "incomeMax": 120,
+     "incomeRanks": [
+      100,
+      110,
+      120
+     ],
+     "marriageDays": null,
+     "preMarried": false,
+     "single": true
+    }
+   }
+  },
+  "types": [
+   {
+    "area": 19.42,
+    "fee": null,
+    "id": "19",
+    "prices": {
+     "general": [
+      [
+       7800,
+       27
+      ],
+      [
+       5700,
+       36
+      ]
+     ],
+     "special": []
+    },
+    "rooms": 1,
+    "tier": "youth",
+    "units": {
+     "general": 2,
+     "special": null
+    }
+   }
+  ],
+  "addr": "서울특별시 동작구 보라매로 105",
+  "cite": {
+   "rules": null
+  },
+  "city": "서울시",
+  "contractPct": null,
+  "id": "gold-tower-2026",
+  "incomeExtra": 57.9,
+  "notes": [
+   "금번 모집공고 호실은 보증보험 미가입 대상에 해당하여 임차인 동의서를 제출해야 합니다."
+  ],
+  "parking": 12,
+  "ratios": [
+   30
+  ],
+  "region": "동작구",
+  "schedule": [
+   {
+    "from": "2026-11-30",
+    "key": "apply",
+    "label": "청약 접수",
+    "to": "2026-11-30"
+   },
+   {
+    "from": "2026-12-02",
+    "key": "announcement",
+    "label": "서류심사 대상자 발표",
+    "to": "2026-12-02"
+   },
+   {
+    "from": "2026-12-09",
+    "key": "document",
+    "label": "당첨자 서류 사본 제출",
+    "to": "2026-12-09"
+   },
+   {
+    "from": "2026-12-18",
+    "key": "contract",
+    "label": "계약체결 및 원본서류제출",
+    "to": "2026-12-19"
+   }
+  ],
+  "short": "골드타워",
+  "station": "신대방삼거리역",
+  "summary": "서울특별시 동작구 보라매로 105 골드타워 청년안심주택 공공지원민간임대 입주자 추가 모집",
+  "url": "https://soco.seoul.go.kr/youth/main/main.do"
+ },
+ "defer": {
+  "n": 1,
+  "why": "gemini-3.6-flash: 503 붐빔 · 다음 갱신에",
+  "at": "2026-11-27 01:54"
  }
 }
