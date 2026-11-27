@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-27T07:49:12+09:00",
+ "updated": "2026-11-27T13:49:11+09:00",
  "source": "마이홈포털·LH 공식 API · SH·청년안심주택 게시판 · 롯데건설 엘리스(제목·링크)",
  "items": [
   {
@@ -1179,40 +1179,6 @@
    "lm": "2026-11-19 19:03"
   },
   {
-   "id": "elyes-HQfLV8PkT-P2xsk3cruf0w",
-   "org": "엘리스",
-   "title": "[어바니엘 염창] 공실세대 모집공고 (접수기간: 11/20~11/22)",
-   "region": "서울 강서구",
-   "kind": "민간임대",
-   "posted": "2026-11-20",
-   "from": "2026-11-20",
-   "to": "2026-11-22",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=HQfLV8PkT%2BP2xsk3cruf0w%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-yeomchang",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-11-20"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-22"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
    "id": "elyes-JZGTkpzO9PqGg09FZnmFQg",
    "org": "엘리스",
    "title": "[어바니엘 천호] 공실세대 모집공고 (접수기간: 11/20~11/22)",
@@ -1227,40 +1193,6 @@
    "direct": true,
    "closed": false,
    "danji": "x-elyes-cheonho",
-   "detail": false,
-   "dv": "",
-   "ev": [
-    {
-     "k": "start",
-     "l": "청약 시작",
-     "d": "2026-11-20"
-    },
-    {
-     "k": "end",
-     "l": "청약 마감",
-     "d": "2026-11-22"
-    }
-   ],
-   "cr": null,
-   "ty": [],
-   "st": null,
-   "lm": ""
-  },
-  {
-   "id": "elyes-YEbfJqs0OHANwcNKkALdmA",
-   "org": "엘리스",
-   "title": "[어바니엘 한강] 공실세대 모집공고 (접수기간: 11/20~11/22)",
-   "region": "서울 동작구",
-   "kind": "민간임대",
-   "posted": "2026-11-19",
-   "from": "2026-11-20",
-   "to": "2026-11-22",
-   "url": "https://www.elyes.co.kr/post/recruit/detail?i_sNtCode=BHCT&nt_idx=YEbfJqs0OHANwcNKkALdmA%3D%3D",
-   "time": "",
-   "startOnly": false,
-   "direct": true,
-   "closed": false,
-   "danji": "x-elyes-hankang",
    "detail": false,
    "dv": "",
    "ev": [
@@ -2303,7 +2235,7 @@
    "closed": false,
    "danji": "20000443",
    "detail": true,
-   "dv": "93addef0a0",
+   "dv": "d3593561c2",
    "ev": [
     {
      "k": "end",
@@ -2417,7 +2349,7 @@
    "closed": false,
    "danji": "20000552",
    "detail": true,
-   "dv": "0f67f95e93",
+   "dv": "e06aacdc48",
    "ev": [
     {
      "k": "end",
@@ -2500,7 +2432,7 @@
    "closed": false,
    "danji": "20000580",
    "detail": true,
-   "dv": "09e5894892",
+   "dv": "e072ad37b4",
    "ev": [
     {
      "k": "start",
@@ -2577,7 +2509,7 @@
    "closed": false,
    "danji": "",
    "detail": true,
-   "dv": "02de94cf88",
+   "dv": "7d44921aee",
    "ev": [
     {
      "k": "end",
@@ -2685,7 +2617,7 @@
    "closed": false,
    "danji": "20000564",
    "detail": true,
-   "dv": "2ecaf1c3b0",
+   "dv": "9782e3c1cc",
    "ev": [
     {
      "k": "end",
@@ -2803,7 +2735,7 @@
    "closed": false,
    "danji": "20000600",
    "detail": true,
-   "dv": "484098e04a",
+   "dv": "93a10f2a73",
    "ev": [
     {
      "k": "start",
