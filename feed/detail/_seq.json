@@ -167,17 +167,6 @@
   }
  },
  "elyes-2cnG5zGoH7OyWqtiEX8VWQ": {},
- "elyes-JZGTkpzO9PqGg09FZnmFQg": {
-  "start": {
-   "n": 0,
-   "s": "2026-11-20||"
-  },
-  "end": {
-   "n": 0,
-   "s": "2026-11-22||"
-  }
- },
- "elyes-eCp34RPA9NVKYhe5gS2xjA": {},
  "youth-6833": {
   "start": {
    "n": 0,
@@ -241,5 +230,46 @@
    "n": 0,
    "s": "2026-12-02||17:00"
   }
- }
+ },
+ "elyes-TvIrkTqC5BufN4Rkjm9Iig": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-27||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-29||"
+  }
+ },
+ "elyes-Dae9Qq2R1a_AVP3CD5vXww": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-27||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-29||"
+  }
+ },
+ "elyes-KCo5buiL6zzK07KP4y4KAg": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-27||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-29||"
+  }
+ },
+ "elyes-vgtkoNoQyWxd7AZAxJnCTg": {
+  "start": {
+   "n": 0,
+   "s": "2026-11-27||"
+  },
+  "end": {
+   "n": 0,
+   "s": "2026-11-29||"
+  }
+ },
+ "elyes-LL0GAZ_7zu49-Kdhk7WQEg": {}
 }
